@@ -1,6 +1,13 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/authModel");
+const Token = require("../models/tokenModel");
+const Cryptr = require("cryptr");
+const { OAuth2Client } = require("google-auth-library");
+
+const cryptr = new Cryptr(process.env.CRYPTR_KEY);
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 //POST
 const register = asyncHandler(async (req, res) => {});
@@ -20,7 +27,20 @@ const updateUser = asyncHandler(async (req, res) => {});
 const verifyUser = asyncHandler(async (req, res) => {});
 
 //DELETE
-const deleteUser = asyncHandler(async (req, res) => {});
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = User.findById(req.params.id);
+
+  !user &&
+    (() => {
+      res.status(404);
+      throw new Error("Not found!");
+    })();
+
+  await user.deleteOne();
+  res.status(200).json({
+    message: "User deleted successfully",
+  });
+});
 
 module.exports = {
   register,
