@@ -11,9 +11,17 @@ const jwt = require("jsonwebtoken");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const validateUserInput = (reqBody) => {
-  const { name, emailAddress, password, phone, gender } = reqBody;
+  const { firstName, lastName, emailAddress, password, phone, gender } =
+    reqBody;
 
-  if (!name || !gender || !phone || !emailAddress || !password) {
+  if (
+    !firstName ||
+    !lastName ||
+    !gender ||
+    !phone ||
+    !emailAddress ||
+    !password
+  ) {
     throw new Error("Please fill in all the required fields.");
   }
 };
@@ -47,16 +55,28 @@ const register = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const { _id, name, emailAddress, phone, gender, role, isVerified } = user;
-
-    res.status(201).json({
+    const {
       _id,
-      name,
+      firstName,
+      lastName,
       emailAddress,
       phone,
       gender,
       role,
       isVerified,
+      photo,
+    } = user;
+
+    res.status(201).json({
+      _id,
+      firstName,
+      lastName,
+      emailAddress,
+      phone,
+      gender,
+      role,
+      isVerified,
+      photo,
       token,
     });
   } else {
@@ -100,16 +120,28 @@ const login = asyncHandler(async (req, res) => {
       secure: true,
     });
 
-    const { _id, name, emailAddress, phone, gender, role, isVerified } = user;
-
-    res.status(201).json({
+    const {
       _id,
-      name,
+      firstName,
+      lastName,
       emailAddress,
       phone,
       gender,
       role,
       isVerified,
+      photo,
+    } = user;
+
+    res.status(201).json({
+      _id,
+      firstName,
+      lastName,
+      emailAddress,
+      phone,
+      gender,
+      role,
+      isVerified,
+      photo,
       token,
     });
   } else {
@@ -214,7 +246,7 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
   });
 
   const payload = ticket.getPayload();
-  const { name, emailAddress, sub } = payload;
+  const { firstName, lastName, email, picture, sub } = payload;
   const password = Date.now() + sub;
 
   // Check if user exists
@@ -223,11 +255,13 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
   if (!user) {
     //   Create new user
     const newUser = await User.create({
-      name,
-      emailAddress,
+      firstName,
+      lastName,
+      emailAddress: email,
       password,
       phone,
       gender,
+      photo: picture,
       isVerified: true,
     });
 
@@ -244,11 +278,21 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
         secure: true,
       });
 
-      const { _id, name, emailAddress, phone, gender, role, isVerified } = user;
+      const {
+        _id,
+        firstName,
+        lastName,
+        emailAddress,
+        phone,
+        gender,
+        role,
+        isVerified,
+      } = user;
 
       res.status(201).json({
         _id,
-        name,
+        firstName,
+        lastName,
         emailAddress,
         phone,
         gender,
@@ -272,11 +316,21 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
       secure: true,
     });
 
-    const { _id, name, emailAddress, phone, gender, role, isVerified } = user;
+    const {
+      _id,
+      firstName,
+      lastName,
+      emailAddress,
+      phone,
+      gender,
+      role,
+      isVerified,
+    } = user;
 
     res.status(201).json({
       _id,
-      name,
+      firstName,
+      lastName,
       emailAddress,
       phone,
       gender,
@@ -381,15 +435,27 @@ const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { _id, name, emailAddress, phone, gender, role, isVerified } = user;
-
-    res.status(201).json({
+    const {
       _id,
-      name,
+      firstName,
+      lastName,
       emailAddress,
       phone,
       gender,
       role,
+      photo,
+      isVerified,
+    } = user;
+
+    res.status(201).json({
+      _id,
+      firstName,
+      lastName,
+      emailAddress,
+      phone,
+      gender,
+      role,
+      photo,
       isVerified,
     });
   } else {
@@ -427,21 +493,34 @@ const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { _id, name, emailAddress, phone, gender, role, isVerified } = user;
-
-    user.emailAddress = emailAddress;
-    user.name = req.body.name || name;
-    user.name = req.body.phone || phone;
-
-    res.status(201).json({
+    const {
       _id,
-      name,
+      firstName,
+      lastName,
       emailAddress,
       phone,
       gender,
       role,
+      photo,
       isVerified,
-      token,
+    } = user;
+
+    user.emailAddress = emailAddress;
+    user.firstName = req.body.firstName || firstName;
+    user.lastName = req.body.lastName || lastName;
+    user.phone = req.body.phone || phone;
+    user.photo = req.body.photo || photo;
+
+    res.status(201).json({
+      _id,
+      firstName,
+      lastName,
+      emailAddress,
+      phone,
+      gender,
+      role,
+      photo,
+      isVerified,
     });
   } else {
     res.status(400);
