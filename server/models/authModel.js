@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-
 const authSchema = new Schema(
   {
-    name: {
+    firstName: {
       type: String,
-      required: [true, "Please add a name"],
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
     },
     emailAddress: {
       type: String,
@@ -18,6 +21,7 @@ const authSchema = new Schema(
       type: String,
       required: [true, "Please add a password"],
     },
+    photo: { type: String, default: "" },
     phone: {
       type: String,
       default: "+234",

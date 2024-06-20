@@ -62,14 +62,7 @@ function App() {
         }
       />
 
-      <Route
-        path="/verify/:verificationToken"
-        element={
-          <Layout>
-            <Verify />
-          </Layout>
-        }
-      />
+      <Route path="/verify/:verificationToken" element={<Verify />} />
 
       <Route
         path="/profile"
@@ -80,14 +73,7 @@ function App() {
         }
       />
 
-      <Route
-        path="/change-password"
-        element={
-          <Layout>
-            <ChangePassword />
-          </Layout>
-        }
-      />
+      <Route path="/change-password" element={<ChangePassword />} />
     </Routes>
   );
 }

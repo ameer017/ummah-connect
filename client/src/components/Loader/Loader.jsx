@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
 
 const Loader = () => {
   return (
-    <div>Loader</div>
-  )
-}
+    <div className="text-center">
+      <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"></div>
+      <p className="text-zinc-600 dark:text-zinc-400">
+        As Salam Alaekum Wa Rahmatullohi Wa Barokatuhu
+      </p>
+    </div>
+  );
+};
 
-export default Loader
+export default Loader;
