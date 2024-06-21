@@ -1,79 +1,40 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Loader from "./components/Loader/Loader";
 import Home from "./pages/home/Home";
-import Login from "./pages/auth/Login";
-import Signup from "./pages/auth/Signup";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import ResetPassword from "./pages/auth/ResetPassword";
-import Verify from "./pages/auth/Verify";
+import AppRoutes from "./AppRoutes";
 import Layout from "./components/Layout/Layout";
-import ChangePassword from "./pages/auth/ChangePassword";
-import Profile from "./pages/profile/Profile";
-import CreateContent from "./components/Content/CreateContent";
-import EditContent from "./components/Content/EditContent";
-import ContentListPage from "./components/Content/ContentListPage";
-import ContentCategories from "./components/Content/ContentCategories";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
+    } else {
+      setIsLoading(false);
+    }
+  }, [location.pathname]);
+
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <Layout>
-            <Home />
-          </Layout>
-        }
-      />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
-
-      <Route
-        path="/create-content"
-        element={
-          <Layout>
-            <CreateContent />
-          </Layout>
-        }
-      />
-      <Route
-        path="/edit-content/:contentId"
-        element={
-          <Layout>
-            <EditContent />
-          </Layout>
-        }
-      />
-      <Route
-        path="/content-list"
-        element={
-          <Layout>
-            <ContentListPage />
-          </Layout>
-        }
-      />
-      <Route
-        path="/content-categories"
-        element={
-          <Layout>
-            <ContentCategories />
-          </Layout>
-        }
-      />
-
-      <Route path="/verify/:verificationToken" element={<Verify />} />
-
-      <Route
-        path="/profile"
-        element={
-          <Layout>
-            <Profile />
-          </Layout>
-        }
-      />
-
-      <Route path="/change-password" element={<ChangePassword />} />
+      {location.pathname === "/" && isLoading ? (
+        <Route path="/" element={<Loader />} />
+      ) : (
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Home />
+            </Layout>
+          }
+        />
+      )}
+      <Route path="/*" element={<AppRoutes />} />
     </Routes>
   );
 }
