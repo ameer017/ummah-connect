@@ -11,12 +11,20 @@ const jwt = require("jsonwebtoken");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const validateUserInput = (reqBody) => {
-  const { firstName, lastName, emailAddress, password, phone, gender } =
-    reqBody;
+  const {
+    firstName,
+    lastName,
+    username,
+    emailAddress,
+    password,
+    phone,
+    gender,
+  } = reqBody;
 
   if (
     !firstName ||
     !lastName ||
+    !username ||
     !gender ||
     !phone ||
     !emailAddress ||
@@ -65,6 +73,11 @@ const register = asyncHandler(async (req, res) => {
       role,
       isVerified,
       photo,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     } = user;
 
     res.status(201).json({
@@ -77,6 +90,11 @@ const register = asyncHandler(async (req, res) => {
       role,
       isVerified,
       photo,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
       token,
     });
   } else {
@@ -130,6 +148,11 @@ const login = asyncHandler(async (req, res) => {
       role,
       isVerified,
       photo,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     } = user;
 
     res.status(201).json({
@@ -142,6 +165,11 @@ const login = asyncHandler(async (req, res) => {
       role,
       isVerified,
       photo,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
       token,
     });
   } else {
@@ -287,6 +315,11 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
         gender,
         role,
         isVerified,
+        username,
+        location,
+        profession,
+        interests,
+        socialMediaLinks,
       } = user;
 
       res.status(201).json({
@@ -299,6 +332,11 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
         role,
         isVerified,
         token,
+        username,
+        location,
+        profession,
+        interests,
+        socialMediaLinks,
       });
     }
   }
@@ -325,6 +363,11 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
       gender,
       role,
       isVerified,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     } = user;
 
     res.status(201).json({
@@ -337,6 +380,11 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
       role,
       isVerified,
       token,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     });
   }
 });
@@ -445,6 +493,11 @@ const getUser = asyncHandler(async (req, res) => {
       role,
       photo,
       isVerified,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     } = user;
 
     res.status(201).json({
@@ -457,6 +510,11 @@ const getUser = asyncHandler(async (req, res) => {
       role,
       photo,
       isVerified,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     });
   } else {
     res.status(400);
@@ -503,13 +561,24 @@ const updateUser = asyncHandler(async (req, res) => {
       role,
       photo,
       isVerified,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     } = user;
 
     user.emailAddress = emailAddress;
+    user.gender = gender;
     user.firstName = req.body.firstName || firstName;
     user.lastName = req.body.lastName || lastName;
     user.phone = req.body.phone || phone;
     user.photo = req.body.photo || photo;
+    user.username = req.body.username || username;
+    user.location = req.body.location || location;
+    user.profession = req.body.profession || profession;
+    user.interests = req.body.interests || interests;
+    user.socialMediaLinks = req.body.socialMediaLinks || socialMediaLinks;
 
     res.status(201).json({
       _id,
@@ -521,6 +590,11 @@ const updateUser = asyncHandler(async (req, res) => {
       role,
       photo,
       isVerified,
+      username,
+      location,
+      profession,
+      interests,
+      socialMediaLinks,
     });
   } else {
     res.status(400);

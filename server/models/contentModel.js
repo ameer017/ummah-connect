@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const categorySchema = new Schema({
-  name: { type: String, required: true, unique: true },
+  type: { type: String, enum: ["article", "video", "audio"], required: true },
   description: { type: String },
 });
 

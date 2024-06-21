@@ -11,6 +11,14 @@ const authSchema = new Schema(
       type: String,
       required: true,
     },
+    username: { type: String, required: true },
+    location: { type: String, required: true },
+    profession: { type: String, default: "Student" },
+    interests: {
+      type: String,
+      required: true,
+    },
+
     emailAddress: {
       type: String,
       required: [true, "Please add an email"],
@@ -38,6 +46,12 @@ const authSchema = new Schema(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    socialMediaLinks: {
+      facebook: { type: String, default: "" },
+      twitter: { type: String, default: "" },
+      instagram: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
     },
   },
   {

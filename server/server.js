@@ -36,6 +36,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", require("./routes/authRoute"));
 app.use("/content", require("./routes/contentRoute"));
+app.use("/discussion", require("./routes/forumRoute"));
 
 const PORT = process.env.PORT || 5000;
 
