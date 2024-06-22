@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import PasswordInput from "../../components/PasswordInput/PasswordInput";
 
 const Login = () => {
   return (
@@ -14,11 +15,7 @@ const Login = () => {
               type="email"
             />
 
-            <input
-              placeholder="Password"
-              className="text-gray-200 border rounded-md p-2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-              type="password"
-            />
+            <PasswordInput/>
 
             <Link to="/forgot-password" className="underline text-right">
               Forgot Password
@@ -32,15 +29,27 @@ const Login = () => {
             </button>
           </form>
 
-          <p className="text-black mt-4 text-center">
-            Don&apos;t have an account? <br />
+          
+
+          <div className="flex justify-between mt-4">
+              <p>
+                <Link
+                  to="/"
+                  className="hover:text-[#35d7ff] text-black hover:underline"
+                >
+                  - Home
+                </Link>
+              </p>
+              <p>
+              Don&apos;t have an account? &nbsp;
             <Link
               className=" hover:text-[#35d7ff] text-black hover:underline mt-4"
               to="/register"
             >
-              Register
+              - Register
             </Link>
-          </p>
+              </p>
+            </div>
         </div>
       </div>
     </div>

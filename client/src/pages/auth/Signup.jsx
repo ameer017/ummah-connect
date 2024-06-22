@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import PasswordInput from "../../components/PasswordInput/PasswordInput";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   return (
@@ -48,17 +50,16 @@ const Signup = () => {
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
-            <input
-              placeholder="Password"
-              className="text-gray-200 border rounded-md p-2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-              type="password"
-            />
-            <input
-              placeholder="Confirm Password"
-              className="text-gray-200 border rounded-md p-2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-              type="password"
-            />
 
+            <PasswordInput />
+
+            <PasswordInput
+              onPaste={(e) => {
+                e.preventDefault();
+                toast.error("Cannot paste into input field");
+                return false;
+              }}
+            />
             <button
               className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
               type="submit"
@@ -67,34 +68,25 @@ const Signup = () => {
             </button>
           </form>
 
-          <p className="text-black mt-4 text-center">
-            Already have an account? <br />
-            <Link
-              className=" hover:text-[#35d7ff] text-black hover:underline mt-4"
-              to="/login"
-            >
-              Login
-            </Link>
-          </p>
-
           <div className="flex justify-between mt-4">
-              <p>
-                <Link
-                  to="/"
-                  className="hover:text-[#35d7ff] text-black hover:underline"
-                >
-                  - Home
-                </Link>
-              </p>
-              <p>
-                <Link
-                  to="/login"
-                  className="hover:text-[#35d7ff] text-black hover:underline"
-                >
-                  - Login
-                </Link>
-              </p>
-            </div>
+            <p>
+              <Link
+                to="/"
+                className="hover:text-[#35d7ff] text-black hover:underline"
+              >
+                - Home
+              </Link>
+            </p>
+            <p>
+              Already have an account? &nbsp;
+              <Link
+                to="/login"
+                className="hover:text-[#35d7ff] text-black hover:underline"
+              >
+                - Login
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
