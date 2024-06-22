@@ -73,7 +73,7 @@ const Footer = () => {
 
             <ul className="text-gray-700 list-none p-0 font-thin flex flex-col text-left w-full">
               <li className="inline-block py-2 px-3 text-white uppercase font-medium tracking-wide">
-                Developers
+                Quick Links
               </li>
               <li>
                 <a
