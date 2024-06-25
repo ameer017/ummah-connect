@@ -5,7 +5,7 @@ const Category = require('../models/contentModel');
 // Create new content
 exports.createContent = async (req, res) => {
     try {
-        const { title, type, url, description, topics, categoryId, submittedBy } = req.body;
+        const { title, type,  description, topics, categoryId, submittedBy } = req.body;
 
         const category = await Category.findById(categoryId);
         if (!category) {
@@ -15,7 +15,6 @@ exports.createContent = async (req, res) => {
         const newContent = new Content({
             title,
             type,
-            url,
             description,
             topics,
             category: categoryId,
@@ -33,7 +32,7 @@ exports.createContent = async (req, res) => {
 // Update existing content
 exports.updateContentById = async (req, res) => {
     try {
-        const { title, type, url, description, topics, categoryId, status } = req.body;
+        const { title, type,  description, topics, categoryId, status } = req.body;
 
         const category = await Category.findById(categoryId);
         if (!category) {
