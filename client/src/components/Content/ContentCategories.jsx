@@ -1,88 +1,108 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import Modal from "./Modal";
+
+const staticCategories = [
+  { id: 1, name: "Quran and Tafsir" },
+  { id: 2, name: "Fiqh (Islamic Jurisprudence)" },
+  { id: 3, name: "Hadith" },
+  { id: 4, name: "Aqeedah (Creed and Belief)" },
+  { id: 5, name: "Seerah (Biography of the Prophet Muhammad)" },
+  { id: 6, name: "Da'wah (Invitation to Islam)" },
+];
+
+const staticContent = [
+  {
+    id: 1,
+    title: "Understanding Quran",
+    category: "Quran and Tafsir",
+    type: "article",
+    url: "#",
+  },
+  {
+    id: 2,
+    title: "Basics of Fiqh",
+    category: "Fiqh (Islamic Jurisprudence)",
+    type: "video",
+    url: "#",
+  },
+  {
+    id: 3,
+    title: "Hadith Compilation",
+    category: "Hadith",
+    type: "audio",
+    url: "#",
+  },
+  {
+    id: 4,
+    title: "Islamic Creed",
+    category: "Aqeedah (Creed and Belief)",
+    type: "article",
+    url: "#",
+  },
+  {
+    id: 5,
+    title: "Life of the Prophet",
+    category: "Seerah (Biography of the Prophet Muhammad)",
+    type: "video",
+    url: "#",
+  },
+  {
+    id: 6,
+    title: "Invitation to Islam",
+    category: "Da'wah (Invitation to Islam)",
+    type: "article",
+    url: "#",
+  },
+];
 
 const ContentCategories = () => {
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [categoryContent, setCategoryContent] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/api/categories");
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  const handleCategoryClick = async (category) => {
-    try {
-      const response = await axios.get(`/api/content?category=${category._id}`);
-      setCategoryContent(response.data);
-      setSelectedCategory(category);
-      setShowModal(true);
-    } catch (error) {
-      console.error("Error fetching category content:", error);
-    }
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setShowModal(false);
+    setIsModalOpen(false);
     setSelectedCategory(null);
-    setCategoryContent([]);
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Categories</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {categories.map((category) => (
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">Categories</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {staticCategories.map((category) => (
           <div
-            key={category._id}
-            className="p-4 border rounded-lg cursor-pointer hover:bg-gray-200"
-            onClick={() => handleCategoryClick(category)}
+            key={category.id}
+            className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100"
+            onClick={() => handleCategoryClick(category.name)}
           >
-            <h2 className="text-lg font-semibold">{category.type}</h2>
-            <p>{category.description}</p>
+            {category.name}
           </div>
         ))}
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg w-11/12 md:w-2/3 lg:w-1/2">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">
-                {selectedCategory.type} Content
-              </h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-red-500 font-bold text-xl"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="max-h-96 overflow-y-auto">
-              {categoryContent.map((content) => (
-                <div
-                  key={content._id}
-                  className="p-2 border-b cursor-pointer hover:bg-gray-100"
-                  onClick={() =>
-                    (window.location.href = `/content/${content._id}`)
-                  }
+      {isModalOpen && (
+        <Modal onClose={handleCloseModal}>
+          <h2 className="text-2xl font-bold mb-4">
+            Content in {selectedCategory}
+          </h2>
+          <div className="flex flex-col space-y-2">
+            {staticContent
+              .filter((content) => content.category === selectedCategory)
+              .map((content) => (
+                <a
+                  key={content.id}
+                  href={content.url}
+                  className="text-blue-500 hover:underline"
                 >
-                  <h3 className="text-lg font-semibold">{content.title}</h3>
-                  <p>{content.description}</p>
-                </div>
+                  {content.title} ({content.type})
+                </a>
               ))}
-            </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentTime = new Date().getFullYear();
@@ -76,28 +77,19 @@ const Footer = () => {
                 Quick Links
               </li>
               <li>
-                <a
-                  href="#"
-                  className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
-                >
-                  Developer API
-                </a>
+                <Link to="/about" className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline">
+                  About
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
-                >
-                  Documentation
-                </a>
+                <Link to="/about" className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline">
+                  Service
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
-                >
-                  Guides
-                </a>
+                <Link to="/about" className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline">
+                  Contact
+                </Link>
               </li>
             </ul>
             <div className="text-gray-700 flex flex-col w-full">
