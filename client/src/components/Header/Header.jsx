@@ -3,10 +3,10 @@ import { RiMenuUnfold2Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 
 const navItems = [
-  { id: 1, title: "About", url: "/profile" },
+  { id: 1, title: "About", url: "/about" },
   { id: 2, title: "Content", url: null },
   { id: 3, title: "Profile", url: "/profile" },
-  { id: 4, title: "Profile", url: "/profile" },
+  { id: 4, title: "Contact", url: "/contact" },
 ];
 
 const contentDropdownItems = [
@@ -58,7 +58,7 @@ const Header = () => {
                         {dropdownVisible && (
                           <ul className="absolute left-0 mt-2 w-48 bg-white border rounded shadow-lg">
                             {contentDropdownItems.map(({ id, title, url }) => (
-                              <li key={id}>
+                              <li key={id} onClick={onDropdownToggle}>
                                 <Link
                                   to={url}
                                   className="block px-4 py-2 hover:bg-gray-100"
