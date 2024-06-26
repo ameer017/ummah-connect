@@ -31,7 +31,7 @@ const Header = () => {
 
   return (
     <div>
-      <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] ">
+      <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] bg-gray-900">
         <nav className="flex justify-between">
           <Link
             to="/"

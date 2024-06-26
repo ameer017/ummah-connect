@@ -11,11 +11,15 @@ const Login = () => {
           <form className="flex flex-col">
             <input
               placeholder="Email"
-              className="text-gray-200 border rounded-md p-2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+              className="text-gray-500 border rounded-md p-2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
               type="email"
             />
 
-            <PasswordInput/>
+            <input
+              placeholder="Password"
+              className="text-gray-500 border rounded-md p-2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+              type="password"
+            />
 
             <Link to="/forgot-password" className="underline text-right">
               Forgot Password
