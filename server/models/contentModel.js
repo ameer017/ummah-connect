@@ -9,7 +9,7 @@ const categorySchema = new Schema({
 const contentSchema = new Schema({
   title: { type: String, required: true },
   type: { type: String, enum: ["article", "video", "audio"], required: true },
-  url: { type: String, required: true },
+  url: { type: String },
   description: { type: String },
   topics: [
     {

@@ -11,6 +11,8 @@ import CreateContent from "./components/Content/CreateContent";
 import EditContent from "./components/Content/EditContent";
 import ContentListPage from "./components/Content/ContentListPage";
 import ContentCategories from "./components/Content/ContentCategories";
+import About from "./pages/about/About";
+import Contact from "./pages/contact/Contact";
 
 const AppRoutes = () => (
   <Routes>
@@ -56,6 +58,22 @@ const AppRoutes = () => (
       element={
         <Layout>
           <Profile />
+        </Layout>
+      }
+    />
+    <Route
+      path="/about"
+      element={
+        <Layout>
+          <About />
+        </Layout>
+      }
+    />
+    <Route
+      path="/contact"
+      element={
+        <Layout>
+          <Contact />
         </Layout>
       }
     />
