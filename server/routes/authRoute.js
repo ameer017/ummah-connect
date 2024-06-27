@@ -14,6 +14,7 @@ const {
   deleteUser,
   upgradeUser,
   logoutUser,
+  sendAutomatedEmail,
 } = require("../controllers/authController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 const route = express.Router();
@@ -25,6 +26,8 @@ route.post("/reset-password", resetPassword);
 route.post("/sendVerificationEmail", protect, sendVerificationEmail);
 route.post("/upgradeUser", protect, adminOnly, upgradeUser);
 route.post("/logout", logoutUser);
+route.post("/sendAutomatedEmail", protect, sendAutomatedEmail);
+
 
 
 route.post("/login-with-google/callback", loginWithGoogle);

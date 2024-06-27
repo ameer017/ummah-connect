@@ -1,6 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { RESET, verifyUser } from "../../redux/feature/auth/authSlice";
 
 const Verify = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { verificationToken } = useParams();
+
+  const { isLoading, isSuccess } = useSelector((state) => state.auth);
+
+  const verifyAccount = async (e) => {
+    e.preventDefault();
+    await dispatch(verifyUser(verificationToken));
+    await dispatch(RESET());
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/profile");
+    }
+  }, [isSuccess, navigate]);
   return (
     <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">
       <div className="flex flex-col items-center justify-center light">
@@ -15,6 +35,7 @@ const Verify = () => {
             <button
               type="submit"
               className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
+              onClick={verifyAccount}
             >
               Verify Account
             </button>

@@ -1,8 +1,66 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import PasswordInput from "../../components/PasswordInput/PasswordInput";
+import {
+  changePassword,
+  logout,
+  RESET,
+} from "../../redux/feature/auth/authSlice";
+import { sendAutomatedEmail } from "../../redux/feature/email/emailSlice";
+
+const initialState = {
+  oldPassword: "",
+  password: "",
+  password2: "",
+};
 
 const ChangePassword = () => {
+  const [formData, setFormData] = useState(initialState);
+  const { oldPassword, password, password2 } = formData;
+
+  const { isLoading, user } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const updatePassword = async (e) => {
+    e.preventDefault();
+
+    if (!oldPassword || !password || !password2) {
+      return toast.error("All fields are required");
+    }
+
+    if (password !== password2) {
+      return toast.error("Passwords do not match");
+    }
+
+    const userData = {
+      oldPassword,
+      password,
+    };
+
+    const emailData = {
+      subject: "Password Changed - UmmahConnect",
+      send_to: user.emailAddress,
+      reply_to: "noreply@zino",
+      template: "changePassword",
+      url: "/forgot",
+    };
+
+    await dispatch(changePassword(userData));
+    await dispatch(sendAutomatedEmail(emailData));
+    await dispatch(logout());
+    await dispatch(RESET(userData));
+    navigate("/login");
+  };
+
   return (
     <div className="h-[100vh] border  flex items-center justify-center">
       <div className="flex flex-col items-center justify-center light">
@@ -11,21 +69,28 @@ const ChangePassword = () => {
             Change Password
           </h2>
 
-          <form className="flex flex-col">
-            <input
-              type="password"
-              className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-              placeholder="current password"
-            />
-
-            <PasswordInput />
+          <form className="flex flex-col" onSubmit={updatePassword}>
+           
 
             <PasswordInput
-              onPaste={(e) => {
-                e.preventDefault();
-                toast.error("Cannot paste into input field");
-                return false;
-              }}
+              placeholder="current password"
+              name="oldPassword"
+              value={oldPassword}
+              onChange={handleInputChange}
+            />
+
+            <PasswordInput
+              placeholder="New Password"
+              name="password"
+              value={password}
+              onChange={handleInputChange}
+            />
+
+            <PasswordInput
+              placeholder="Confirm Password"
+              name="password2"
+              value={password2}
+              onChange={handleInputChange}
             />
 
             <button

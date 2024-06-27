@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 
 const staticContent = [
   {
@@ -47,6 +48,7 @@ const staticContent = [
 ];
 
 const ContentListPage = () => {
+  useRedirectLoggedOutUser("/login")
   const [selectedContent, setSelectedContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editableContent, setEditableContent] = useState(null);

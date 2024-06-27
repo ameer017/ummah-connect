@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 
 const staticCategories = [
   { id: 1, name: "Quran and Tafsir" },
@@ -56,6 +57,7 @@ const staticContent = [
 ];
 
 const ContentCategories = () => {
+  useRedirectLoggedOutUser("/login")
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
