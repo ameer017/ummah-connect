@@ -7,6 +7,7 @@ const { OAuth2Client } = require("google-auth-library");
 const { generateToken, hashToken } = require("../utils");
 const sendEmail = require("../utils/sendEmail");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -475,7 +476,7 @@ const upgradeUser = asyncHandler(async (req, res) => {
   await user.save();
 
   res.status(200).json({
-    message: `User role updated to ${role}`,
+    message: `User role upgraded to ${role}`,
   });
 });
 //GET
@@ -568,8 +569,13 @@ const updateUser = asyncHandler(async (req, res) => {
       socialMediaLinks,
     } = user;
 
-    user.emailAddress = emailAddress;
+    const updatedSocialMediaLinks = {
+      ...socialMediaLinks.toObject(),
+      ...req.body.socialMediaLinks,
+    };
+
     user.gender = gender;
+    user.emailAddress = emailAddress;
     user.firstName = req.body.firstName || firstName;
     user.lastName = req.body.lastName || lastName;
     user.phone = req.body.phone || phone;
@@ -578,23 +584,25 @@ const updateUser = asyncHandler(async (req, res) => {
     user.location = req.body.location || location;
     user.profession = req.body.profession || profession;
     user.interests = req.body.interests || interests;
-    user.socialMediaLinks = req.body.socialMediaLinks || socialMediaLinks;
+    user.socialMediaLinks = updatedSocialMediaLinks;
+
+    await user.save();
 
     res.status(201).json({
-      _id,
-      firstName,
-      lastName,
-      emailAddress,
-      phone,
-      gender,
-      role,
-      photo,
-      isVerified,
-      username,
-      location,
-      profession,
-      interests,
-      socialMediaLinks,
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      emailAddress: user.emailAddress,
+      phone: user.phone,
+      gender: user.gender,
+      role: user.role,
+      photo: user.photo,
+      isVerified: user.isVerified,
+      username: user.username,
+      location: user.location,
+      profession: user.profession,
+      interests: user.interests,
+      socialMediaLinks: user.socialMediaLinks,
     });
   } else {
     res.status(400);
@@ -679,6 +687,43 @@ const deleteUser = asyncHandler(async (req, res) => {
   });
 });
 
+const sendAutomatedEmail = asyncHandler(async (req, res) => {
+  const { subject, send_to, reply_to, template, url } = req.body;
+
+  if (!subject || !send_to || !reply_to || !template) {
+    res.status(500);
+    throw new Error("Missing email parameter");
+  }
+
+  // Get user
+  const user = await User.findOne({ emailAddress: send_to });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const sent_from = process.env.EMAIL_USER;
+  const name = user.firstName;
+  const link = `${process.env.FRONTEND_URL}${url}`;
+
+  try {
+    await sendEmail(
+      subject,
+      send_to,
+      sent_from,
+      reply_to,
+      template,
+      name,
+      link
+    );
+    res.status(200).json({ message: "Email Sent" });
+  } catch (error) {
+    res.status(500);
+    throw new Error("Email not sent, please try again");
+  }
+});
+
 module.exports = {
   register,
   login,
@@ -695,4 +740,5 @@ module.exports = {
   verifyUser,
   changePassword,
   deleteUser,
+  sendAutomatedEmail,
 };

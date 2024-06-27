@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 
 const topicsOptions = [
   "Quran and Tafsir",
@@ -11,6 +12,7 @@ const topicsOptions = [
 ];
 
 const CreateContent = () => {
+  useRedirectLoggedOutUser("/login")
   const [formData, setFormData] = useState({
     title: "",
     type: "",

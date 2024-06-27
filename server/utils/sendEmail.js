@@ -8,7 +8,7 @@ const sendEmail = async (
   sent_from,
   reply_to,
   template,
-  name,
+  firstName,
   link
 ) => {
   // Create Email Transporter
@@ -44,7 +44,7 @@ const sendEmail = async (
     subject,
     template,
     context: {
-      name,
+      firstName,
       link,
     },
   };

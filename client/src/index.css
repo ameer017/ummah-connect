@@ -5,3 +5,7 @@
 body {
   @apply bg-[#ececec];
 }
+
+html{
+  font-family: 'Inter', sans-serif;
+}
