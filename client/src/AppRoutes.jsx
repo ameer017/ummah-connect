@@ -13,6 +13,7 @@ import ContentListPage from "./components/Content/ContentListPage";
 import ContentCategories from "./components/Content/ContentCategories";
 import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
+import UserList from "./components/Lists/UsersList";
 
 const AppRoutes = () => (
   <Routes>
@@ -78,6 +79,15 @@ const AppRoutes = () => (
       }
     />
     <Route path="/change-password" element={<ChangePassword />} />
+
+    <Route
+      path="/users"
+      element={
+        <Layout>
+          <UserList />
+        </Layout>
+      }
+    />
   </Routes>
 );
 

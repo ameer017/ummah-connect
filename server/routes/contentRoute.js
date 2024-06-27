@@ -1,5 +1,5 @@
 const express = require("express");
-const route = express.route();
+const route = express.Router();
 const contentController = require("../controllers/contentController");
 
 // Create new content

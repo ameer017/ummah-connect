@@ -1,24 +1,72 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { RESET, resetPassword } from "../../redux/feature/auth/authSlice";
 
 const ResetPassword = () => {
+  const [formData, setFormData] = useState(initialState);
+  const { password, password2 } = formData;
+  const { resetToken } = useParams();
+  console.log(resetToken);
+
+  const { isLoading, isLoggedIn, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const reset = async (e) => {
+    e.preventDefault();
+
+    if (password.length < 6) {
+      return toast.error("Password must be up to 6 characters");
+    }
+    if (password !== password2) {
+      return toast.error("Passwords do not match");
+    }
+
+    const userData = {
+      password,
+    };
+
+    await dispatch(resetPassword({ userData, resetToken }));
+  };
+
+  useEffect(() => {
+    if (isSuccess && message.includes("Reset Successful")) {
+      navigate("/login");
+    }
+
+    dispatch(RESET());
+  }, [dispatch, navigate, message, isSuccess]);
   return (
     <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">
       <div className="flex flex-col items-center justify-center light">
         <div className="w-[300px] md:w-[500px] bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Reset Password</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Reset Password
+          </h2>
 
-          <form className="flex flex-col">
-            <input
-              type="password"
-              className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-              placeholder="password"
+          <form className="flex flex-col" onSubmit={reset}>
+            <PasswordInput
+              placeholder="Password"
+              name="password"
+              value={password}
+              onChange={handleInputChange}
             />
-
-            <input
-              type="password"
-              className="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-              placeholder="confirm password"
+            <PasswordInput
+              placeholder="Confirm Password"
+              name="password2"
+              value={password2}
+              onChange={handleInputChange}
             />
 
             <button
