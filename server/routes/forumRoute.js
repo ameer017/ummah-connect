@@ -4,10 +4,10 @@ const discussionController = require("../controllers/discussionController");
 const { protect } = require("../middleware/authMiddleware");
 
 // Thread routes
-router.post("/threads", protect, discussionController.createThread);
+router.post("/thread", protect, discussionController.createThread);
 router.put("/threads/:id", protect, discussionController.updateThread);
 router.delete("/threads/:id", protect, discussionController.deleteThread);
-router.get("/threads", protect, discussionController.getAllThreads);
+router.get("/all-threads", protect, discussionController.getAllThreads);
 router.get("/threads/:id", protect, discussionController.getThreadById);
 
 // Reply routes
@@ -25,7 +25,7 @@ router.get(
 );
 
 // Report routes
-router.post("/reports", protect, discussionController.createReport);
+router.post("/report", protect, discussionController.createReport);
 router.get("/reports", protect, discussionController.getAllReports);
 router.put("/reports/:id", protect, discussionController.updateReportStatus);
 

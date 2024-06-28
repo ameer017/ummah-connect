@@ -14,40 +14,33 @@ const Footer = () => {
           <div className="w-3/4 block sm:flex text-sm mt-6 lg:mt-0">
             <ul className="text-gray-700 list-none p-0 font-thin flex flex-col text-left w-full">
               <li className="inline-block py-2 px-3 text-white uppercase font-medium tracking-wide">
-                Product
+                Features
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/forum"
                   className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
                 >
-                  Features
-                </a>
+                  Forum
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/content-list"
                   className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
                 >
-                  Integrations
-                </a>
+                  Contents
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/content-categories"
                   className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
                 >
-                  Pricing
-                </a>
+                  Categories
+                </Link>
               </li>
-              <li>
-                <a
-                  href="#"
-                  className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
-                >
-                  FAQ
-                </a>
-              </li>
+              
             </ul>
 
             <ul className="text-gray-700 list-none p-0 font-thin flex flex-col text-left w-full">
