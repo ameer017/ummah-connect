@@ -8,14 +8,50 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
 import PageMenu from "../../components/PageMenu/PageMenu";
 import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
+import axios from "axios";
+import { AdminLink } from "../../components/Protect/HiddenLink";
+const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const Profile = ({ userId }) => {
-  useRedirectLoggedOutUser("/login")
+  useRedirectLoggedOutUser("/login");
   const dispatch = useDispatch();
   const { isLoading, isLoggedIn, isSuccess, message, user } = useSelector(
     (state) => state.auth
   );
 
+  const [threads, setThreads] = useState([]);
+
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        const response = await axios.get(`${URL}/discussion/all-threads`);
+        setThreads(response.data);
+        // console.log(response.data)
+      } catch (error) {
+        console.error("Error fetching threads:", error);
+      }
+    };
+
+    fetchThreads();
+  }, []);
+
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const response = await axios.get(`${URL}/discussion/reports`);
+        setReports(response.data.reports);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+  }, []);
 
   const initialState = {
     firstName: user?.firstName || "",
@@ -29,6 +65,11 @@ const Profile = ({ userId }) => {
     role: user?.role || "",
     interests: user?.interests || "",
     location: user?.location || "",
+    profession: user?.profession || "",
+    facebook: user?.socialMediaLinks.facebook || "",
+    linkedIn: user?.socialMediaLinks.linkedin || "",
+    instagram: user?.socialMediaLinks.instagram || "",
+    x: user?.socialMediaLinks.twitter || "",
   };
   const [profile, setProfile] = useState(initialState);
   const [profileImage, setProfileImage] = useState(null);
@@ -53,6 +94,11 @@ const Profile = ({ userId }) => {
         photo: user.photo,
         interests: user.interests,
         location: user.location,
+        profession: user.profession,
+        facebook: user?.socialMediaLinks.facebook,
+        linkedIn: user?.socialMediaLinks.linkedin,
+        instagram: user?.socialMediaLinks.instagram,
+        x: user?.socialMediaLinks.twitter,
       });
     }
   }, [user]);
@@ -76,7 +122,7 @@ const Profile = ({ userId }) => {
         <div className="w-full h-full shadow-xl shadow-neutral-900 p-3  rounded-xl flex-col gap-2 flex justify-center items-center text-white">
           {!profile.isVerified && <Notification />}
 
-          <PageMenu/>
+          <PageMenu />
 
           <div>
             <img
@@ -93,16 +139,16 @@ const Profile = ({ userId }) => {
           <p className="text-neutral-300">Role: {profile.role} </p>
 
           <div className="flex gap-4">
-            <a href="#">
+            <a href={profile.facebook}>
               <FaFacebookF size={20} color="white" />
             </a>
-            <a href="#">
+            <a href={profile.instagram} >
               <FaInstagram size={20} color="white" />
             </a>
-            <a href="#">
+            <a href={profile.linkedIn} >
               <FaLinkedin size={20} color="white" />
             </a>
-            <a href="#">
+            <a href={profile.x} >
               <BsTwitterX size={20} color="white" />
             </a>
 
@@ -115,24 +161,42 @@ const Profile = ({ userId }) => {
             />
           </div>
 
+          <AdminLink>
+            <hr className="border w-screen " />
+
+            <div className="flex flex-col items-center justify-center py-[10px] ">
+              <h2>Metrics</h2>
+
+              <div className="flex gap-[10px] w-300px flex-col md:w-screen md:flex-row  justify-center  text-center p-2">
+                <div>
+                  <h2 className="font-bold text-2xl">
+                    Forum Activities and Contributions
+                  </h2>
+                  <p>Total Forum Discussions: {threads.length}</p>
+                  <p>Total Forum Thread Reports: {reports.length}</p>
+                </div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </AdminLink>
           <hr className="border w-screen " />
-          <div className="flex gap-[10px] w-300px flex-col md:w-screen md:flex-row  justify-center  text-center p-2">
-            <div>
+          <div className="flex gap-[30px] w-300px flex-col md:w-screen md:flex-row  justify-center  text-center p-2">
+            {/* <div>
               <h2 className="font-bold text-2xl">Activity and Contributions</h2>
               <p>Posts: (List or Link to Posts)</p>
-              <p>Posts: (List or Link to Posts)</p>
-            </div>
+              <p>Posts: {threads.length}</p>
+            </div> */}
             <div>
               <h2 className="font-bold text-2xl">Personal Information</h2>
               <p>Location: {profile.location} </p>
-              
             </div>
             <div>
               <h2 className="font-bold text-2xl">
                 Educational and Professional Information
               </h2>
-              <p>Education: BSc in Computer Science, XYZ University</p>
-              <p>Profession: Software Engineer at ABC Corp</p>
+              <p>Profession: {profile.profession} </p>
+              <p>Interest: {profile.interests} </p>
             </div>
           </div>
         </div>

@@ -64,7 +64,9 @@ exports.getThreadById = async (req, res) => {
       return res.status(404).json({ message: "Thread not found" });
     }
 
-    res.status(200).json(thread);
+    const replies = await Reply.find({ thread: id }).populate("createdBy");
+
+    res.status(200).json({ thread, replies });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -72,12 +74,17 @@ exports.getThreadById = async (req, res) => {
 
 exports.createReply = async (req, res) => {
   try {
+    const { id } = req.params;
     const { content } = req.body;
-    const threadId = req.params.threadId;
     const createdBy = req.user._id;
 
-    const newReply = new Reply({ content, thread: threadId, createdBy });
-    const savedReply = await newReply.save();
+    const reply = new Reply({
+      thread: id,
+      content,
+      createdBy,
+    });
+
+    const savedReply = await reply.save();
     res.status(201).json(savedReply);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -87,15 +94,17 @@ exports.createReply = async (req, res) => {
 exports.updateReply = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+    const { content } = req.body;
 
-    const updatedReply = await Reply.findByIdAndUpdate(id, updates, {
-      new: true,
-    });
-    if (!updatedReply) {
-      return res.status(404).json({ message: "Reply not found" });
+    const reply = await Reply.findById(id);
+    if (!reply) {
+      return res.status(404).json({ message: 'Reply not found' });
     }
 
+    reply.content = content;
+    reply.updatedAt = Date.now();
+
+    const updatedReply = await reply.save();
     res.status(200).json(updatedReply);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -106,16 +115,18 @@ exports.deleteReply = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedReply = await Reply.findByIdAndDelete(id);
-    if (!deletedReply) {
-      return res.status(404).json({ message: "Reply not found" });
+    const reply = await Reply.findById(id);
+    if (!reply) {
+      return res.status(404).json({ message: 'Reply not found' });
     }
 
-    res.status(200).json({ message: "Reply deleted successfully" });
+    await reply.remove();
+    res.status(200).json({ message: 'Reply deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.getRepliesByThreadId = async (req, res) => {
   try {
@@ -150,7 +161,7 @@ exports.createReport = async (req, res) => {
 exports.getAllReports = async (req, res) => {
   try {
     const reports = await Report.find().populate("reportedBy");
-    res.status(200).json(reports);
+    res.status(200).json({reports});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

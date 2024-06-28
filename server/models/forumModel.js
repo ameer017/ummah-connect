@@ -27,6 +27,7 @@ const reportSchema = new Schema({
     enum: ["pending", "resolved", "dismissed"],
     default: "pending",
   },
+
   createdAt: { type: Date, default: Date.now },
   resolvedBy: { type: Schema.Types.ObjectId, ref: "User" },
   resolvedAt: { type: Date },

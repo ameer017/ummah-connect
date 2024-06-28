@@ -3,7 +3,7 @@ const route = express.Router();
 const contentController = require("../controllers/contentController");
 
 // Create new content
-route.post("/content", contentController.createContent);
+route.post("/create-content", contentController.createContent);
 
 // Update existing content
 route.put("/content/:id", contentController.updateContentById);

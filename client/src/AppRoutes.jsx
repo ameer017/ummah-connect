@@ -14,6 +14,10 @@ import ContentCategories from "./components/Content/ContentCategories";
 import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
 import UserList from "./components/Lists/UsersList";
+import ForumList from "./components/Forum/ForumList";
+import CreateThread from "./components/Forum/CreateThread";
+import ReportThread from "./components/Forum/ReportThread";
+import ThreadDetail from "./components/Forum/ThreadDetail";
 
 const AppRoutes = () => (
   <Routes>
@@ -85,6 +89,39 @@ const AppRoutes = () => (
       element={
         <Layout>
           <UserList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/forum"
+      element={
+        <Layout>
+          <ForumList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/create-thread"
+      element={
+        <Layout>
+          <CreateThread />
+        </Layout>
+      }
+    />
+    <Route
+      path="/threads/:id"
+      element={
+        <Layout>
+          <ThreadDetail />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/report-thread"
+      element={
+        <Layout>
+          <ReportThread />
         </Layout>
       }
     />
