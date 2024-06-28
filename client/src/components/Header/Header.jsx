@@ -8,8 +8,9 @@ import { useDispatch } from "react-redux";
 const navItems = [
   { id: 1, title: "About", url: "/about" },
   { id: 2, title: "Content", url: null },
-  { id: 3, title: "Profile", url: "/profile" },
-  { id: 4, title: "Contact", url: "/contact" },
+  { id: 3, title: "Forum", url: "/forum" },
+  { id: 4, title: "Profile", url: "/profile" },
+  { id: 5, title: "Contact", url: "/contact" },
 ];
 
 const contentDropdownItems = [

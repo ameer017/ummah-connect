@@ -36,7 +36,7 @@ route.get("/get-user/:userId", protect, getUser);
 route.get("/get-users", protect, getUsers);
 route.get("/login-status", loginStatus);
 
-route.patch("/update-user", updateUser);
+route.patch("/update-user", protect, updateUser);
 route.patch("/verify-user/:verificationToken", verifyUser);
 
 route.delete("/:id", protect, deleteUser);
