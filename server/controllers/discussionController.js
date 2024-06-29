@@ -1,4 +1,6 @@
+const User = require("../models/authModel");
 const { Thread, Reply, Report } = require("../models/forumModel");
+const sendEmail = require("../utils/sendEmail");
 
 exports.createThread = async (req, res) => {
   try {
@@ -98,7 +100,7 @@ exports.updateReply = async (req, res) => {
 
     const reply = await Reply.findById(id);
     if (!reply) {
-      return res.status(404).json({ message: 'Reply not found' });
+      return res.status(404).json({ message: "Reply not found" });
     }
 
     reply.content = content;
@@ -117,16 +119,15 @@ exports.deleteReply = async (req, res) => {
 
     const reply = await Reply.findById(id);
     if (!reply) {
-      return res.status(404).json({ message: 'Reply not found' });
+      return res.status(404).json({ message: "Reply not found" });
     }
 
     await reply.remove();
-    res.status(200).json({ message: 'Reply deleted successfully' });
+    res.status(200).json({ message: "Reply deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 exports.getRepliesByThreadId = async (req, res) => {
   try {
@@ -161,7 +162,7 @@ exports.createReport = async (req, res) => {
 exports.getAllReports = async (req, res) => {
   try {
     const reports = await Report.find().populate("reportedBy");
-    res.status(200).json({reports});
+    res.status(200).json({ reports });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -180,6 +181,11 @@ exports.updateReportStatus = async (req, res) => {
     );
     if (!updatedReport) {
       return res.status(404).json({ message: "Report not found" });
+    }
+
+    if (status === "approved") {
+      const thread = await Thread.findById(updatedReport.itemId);
+      await Thread.findByIdAndDelete(updatedReport.itemId);
     }
 
     res.status(200).json(updatedReport);
