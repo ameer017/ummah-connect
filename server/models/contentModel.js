@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const categorySchema = new Schema({
-  type: { type: String, enum: ["article", "video", "audio"], required: true },
-  description: { type: String },
-});
-
 const contentSchema = new Schema({
   title: { type: String, required: true },
   type: { type: String, enum: ["article", "video", "audio"], required: true },
@@ -45,7 +40,6 @@ contentSchema.methods.rejectContent = function () {
   return this.save();
 };
 
-const Category = mongoose.model("Category", categorySchema);
 const Content = mongoose.model("Content", contentSchema);
 
-module.exports = { Category, Content };
+module.exports = Content;
