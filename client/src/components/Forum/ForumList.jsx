@@ -10,7 +10,7 @@ const ForumList = () => {
     const fetchThreads = async () => {
       try {
         const response = await axios.get(`${URL}/discussion/all-threads`);
-        console.log(response)
+        // console.log(response)
         setThreads(response.data);
       } catch (error) {
         console.error("Error fetching threads:", error);
