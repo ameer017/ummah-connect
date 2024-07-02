@@ -44,11 +44,11 @@ const Header = () => {
 
   return (
     <div>
-      <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] bg-gray-900">
+      <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] bg-[#fff]  ">
         <nav className="flex justify-between">
           <Link
             to="/"
-            className="block mr-2 w-30 text-2xl font-serif font-bold text-[#fff]"
+            className="block mr-2 w-30 text-2xl font-serif font-bold text-[#000]"
           >
             Ummah Connect
           </Link>
@@ -58,7 +58,7 @@ const Header = () => {
                 {navItems.map(({ id, title, url }) => (
                   <li
                     key={id}
-                    className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#eee] to-[#000] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 text-[#fff]"
+                    className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#eee] to-[#000] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 text-[#000]"
                   >
                     {title === "Content" ? (
                       <div className="relative">
