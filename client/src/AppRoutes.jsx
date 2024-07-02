@@ -18,6 +18,9 @@ import ForumList from "./components/Forum/ForumList";
 import CreateThread from "./components/Forum/CreateThread";
 import ReportThread from "./components/Forum/ReportThread";
 import ThreadDetail from "./components/Forum/ThreadDetail";
+import EventList from "./components/Event/EventList";
+import EventDetails from "./components/Event/EventDetails";
+import EventCreate from "./components/Event/EventCreate";
 
 const AppRoutes = () => (
   <Routes>
@@ -122,6 +125,31 @@ const AppRoutes = () => (
       element={
         <Layout>
           <ReportThread />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/event-list"
+      element={
+        <Layout>
+          <EventList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/event/:id"
+      element={
+        <Layout>
+          <EventDetails />
+        </Layout>
+      }
+    />
+    <Route
+      path="/create-event"
+      element={
+        <Layout>
+          <EventCreate />
         </Layout>
       }
     />
