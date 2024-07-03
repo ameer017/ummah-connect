@@ -21,6 +21,9 @@ import ThreadDetail from "./components/Forum/ThreadDetail";
 import EventList from "./components/Event/EventList";
 import EventDetails from "./components/Event/EventDetails";
 import EventCreate from "./components/Event/EventCreate";
+import CourseList from "./components/Courses/CourseList";
+import MentorshipList from "./components/Courses/MentoshipList";
+import MentorshipForm from "./components/Courses/Mentorship";
 
 const AppRoutes = () => (
   <Routes>
@@ -138,6 +141,14 @@ const AppRoutes = () => (
       }
     />
     <Route
+      path="/course-list"
+      element={
+        <Layout>
+          <CourseList />
+        </Layout>
+      }
+    />
+    <Route
       path="/event/:id"
       element={
         <Layout>
@@ -150,6 +161,22 @@ const AppRoutes = () => (
       element={
         <Layout>
           <EventCreate />
+        </Layout>
+      }
+    />
+    <Route
+      path="/mentors-overview"
+      element={
+        <Layout>
+          <MentorshipList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/create-mentorship"
+      element={
+        <Layout>
+          <MentorshipForm />
         </Layout>
       }
     />

@@ -40,6 +40,22 @@ const Footer = () => {
                   Categories
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/content-categories"
+                  className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
+                >
+                  Courses
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/content-categories"
+                  className="inline-block py-2 pl-3 pr-5 text-gray-500 hover:text-white no-underline"
+                >
+                  Events
+                </Link>
+              </li>
               
             </ul>
 
