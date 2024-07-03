@@ -172,8 +172,8 @@ const Profile = ({ userId }) => {
                   <h2 className="font-bold text-2xl">
                     Forum Activities and Contributions
                   </h2>
-                  <p>Total Forum Discussions: {threads.length}</p>
-                  <p>Total Forum Thread Reports: {reports.length}</p>
+                  <p>Total Forum Discussions: {threads?.length}</p>
+                  <p>Total Forum Thread Reports: {reports?.length}</p>
                 </div>
                 <div></div>
                 <div></div>

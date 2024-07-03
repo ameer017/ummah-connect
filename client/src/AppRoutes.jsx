@@ -18,12 +18,7 @@ import ForumList from "./components/Forum/ForumList";
 import CreateThread from "./components/Forum/CreateThread";
 import ReportThread from "./components/Forum/ReportThread";
 import ThreadDetail from "./components/Forum/ThreadDetail";
-import EventList from "./components/Event/EventList";
-import EventDetails from "./components/Event/EventDetails";
-import EventCreate from "./components/Event/EventCreate";
-import CourseList from "./components/Courses/CourseList";
-import MentorshipList from "./components/Courses/MentoshipList";
-import MentorshipForm from "./components/Courses/Mentorship";
+import VideoUpload from "./components/Content/VideoUpload";
 
 const AppRoutes = () => (
   <Routes>
@@ -31,6 +26,14 @@ const AppRoutes = () => (
     <Route path="/register" element={<Signup />} />
     <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
+    <Route
+      path="/create-video"
+      element={
+        <Layout>
+          <VideoUpload />
+        </Layout>
+      }
+    />
     <Route
       path="/create-content"
       element={
@@ -63,6 +66,7 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+  
     <Route path="/verify/:verificationToken" element={<Verify />} />
     <Route
       path="/profile"

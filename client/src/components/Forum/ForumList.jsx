@@ -10,13 +10,14 @@ const ForumList = () => {
     const fetchThreads = async () => {
       try {
         const response = await axios.get(`${URL}/discussion/all-threads`);
+        // console.log(response)
         setThreads(response.data);
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
     };
 
-    fetchThreads();
+    fetchThreads(); 
   }, []);
 
   return (
@@ -42,9 +43,9 @@ const ForumList = () => {
       </div>
       <div className="w-3/4 bg-white p-4">
         <h1 className="text-2xl font-bold mb-4">All Threads</h1>
-        {threads.length > 0 ? (
+        {threads?.length > 0 ? (
           <ul>
-            {threads.map((thread) => (
+            {threads?.map((thread) => (
               <li key={thread._id} className="mb-4">
                 <Link
                   to={`/threads/${thread._id}`}
