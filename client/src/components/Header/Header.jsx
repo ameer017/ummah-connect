@@ -9,8 +9,10 @@ const navItems = [
   { id: 1, title: "About", url: "/about" },
   { id: 2, title: "Content", url: null },
   { id: 3, title: "Forum", url: "/forum" },
-  { id: 4, title: "Profile", url: "/profile" },
-  { id: 5, title: "Contact", url: "/contact" },
+  { id: 4, title: "Events", url: "/event-list" },
+  { id: 5, title: "Courses", url: "/course-list" },
+  { id: 6, title: "Profile", url: "/profile" },
+  { id: 7, title: "Contact", url: "/contact" },
 ];
 
 const contentDropdownItems = [
@@ -69,7 +71,7 @@ const Header = () => {
                           {title}
                         </button>
                         {dropdownVisible && (
-                          <ul className="absolute left-0 mt-2 w-48 bg-gray-900  rounded shadow-lg">
+                          <ul className="absolute left-0 mt-2 w-48 bg-white  rounded shadow-lg">
                             {contentDropdownItems.map(({ id, title, url }) => (
                               <li key={id} onClick={onDropdownToggle}>
                                 <Link
