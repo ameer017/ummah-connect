@@ -20,6 +20,11 @@ import ReportThread from "./components/Forum/ReportThread";
 import ThreadDetail from "./components/Forum/ThreadDetail";
 import VideoUpload from "./components/Content/VideoUpload";
 
+import EventList from "./components/Event/EventList";
+import EventDetails from "./components/Event/EventDetails";
+import EventCreate from "./components/Event/EventCreate";
+
+
 const AppRoutes = () => (
   <Routes>
     <Route path="/login" element={<Login />} />
@@ -145,6 +150,7 @@ const AppRoutes = () => (
       }
     />
     <Route
+
       path="/course-list"
       element={
         <Layout>
@@ -153,6 +159,7 @@ const AppRoutes = () => (
       }
     />
     <Route
+
       path="/event/:id"
       element={
         <Layout>
@@ -168,6 +175,7 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+
     <Route
       path="/mentors-overview"
       element={
@@ -184,6 +192,7 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+
   </Routes>
 );
 
