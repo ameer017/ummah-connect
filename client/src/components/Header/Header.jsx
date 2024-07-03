@@ -9,8 +9,10 @@ const navItems = [
   { id: 1, title: "About", url: "/about" },
   { id: 2, title: "Content", url: null },
   { id: 3, title: "Forum", url: "/forum" },
-  { id: 4, title: "Profile", url: "/profile" },
-  { id: 5, title: "Contact", url: "/contact" },
+  { id: 4, title: "Events", url: "/event-list" },
+  { id: 5, title: "Courses", url: "/course-list" },
+  { id: 6, title: "Profile", url: "/profile" },
+  { id: 7, title: "Contact", url: "/contact" },
 ];
 
 const contentDropdownItems = [
@@ -44,11 +46,11 @@ const Header = () => {
 
   return (
     <div>
-      <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] bg-gray-900">
+      <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] bg-[#fff]  ">
         <nav className="flex justify-between">
           <Link
             to="/"
-            className="block mr-2 w-30 text-2xl font-serif font-bold text-[#fff]"
+            className="block mr-2 w-30 text-2xl font-serif font-bold text-[#000]"
           >
             Ummah Connect
           </Link>
@@ -58,7 +60,7 @@ const Header = () => {
                 {navItems.map(({ id, title, url }) => (
                   <li
                     key={id}
-                    className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#eee] to-[#000] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 text-[#fff]"
+                    className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#eee] to-[#000] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 text-[#000]"
                   >
                     {title === "Content" ? (
                       <div className="relative">
@@ -69,7 +71,7 @@ const Header = () => {
                           {title}
                         </button>
                         {dropdownVisible && (
-                          <ul className="absolute left-0 mt-2 w-48 bg-gray-900  rounded shadow-lg">
+                          <ul className="absolute left-0 mt-2 w-48 bg-white  rounded shadow-lg">
                             {contentDropdownItems.map(({ id, title, url }) => (
                               <li key={id} onClick={onDropdownToggle}>
                                 <Link

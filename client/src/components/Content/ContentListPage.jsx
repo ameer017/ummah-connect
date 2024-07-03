@@ -51,7 +51,7 @@ const ContentListPage = () => {
       try {
         const response = await axios.get(`${URL}/content/contents`);
         setContents(response.data);
-        // console.log(response.data)
+        console.log(response.data)
       } catch (error) {
         console.error("Error fetching contents:", error);
       }

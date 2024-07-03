@@ -31,12 +31,14 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("Home Page");
+  res.send("UmmahConnect Page");
 });
 
 app.use("/auth", require("./routes/authRoute"));
 app.use("/content", require("./routes/contentRoute"));
 app.use("/discussion", require("./routes/forumRoute"));
+app.use("/events", require("./routes/eventRoute"));
+app.use("/mentorships", require("./routes/mentorship"));
 
 const PORT = process.env.PORT || 5000;
 
