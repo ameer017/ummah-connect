@@ -28,7 +28,7 @@ const FileUpload = ({
 	return (
 		<>
 			<div className="mb-4">
-				<label className="block text-gray-700">Video</label>
+				<label className="block text-gray-700">{fileType}</label>
 				<input
 					type="file"
 					accept={fileAccept}
