@@ -5,7 +5,6 @@ const contentSchema = new Schema({
 	title: { type: String, required: true },
 	type: { type: String, enum: ["article", "video", "audio"], required: true },
 	fileUrl: { type: String },
-	url: { type: String },
 	description: { type: String },
 	topics: [
 		{
@@ -20,7 +19,7 @@ const contentSchema = new Schema({
 			],
 		},
 	],
-	// category: { type: Schema.Types.ObjectId, ref: "Category" },
+	category: { type: Schema.Types.ObjectId, ref: "Category" },
 	status: {
 		type: String,
 		enum: ["pending", "approved", "rejected"],

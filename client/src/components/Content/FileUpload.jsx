@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
-const VideoUpload = ({
-	isOpen,
-	onClose,
+const FileUpload = ({
+
 	fileType,
 	setUploadFile,
 	uploadProgress,
@@ -57,4 +56,4 @@ const VideoUpload = ({
 	);
 };
 
-export default VideoUpload;
+export default FileUpload;

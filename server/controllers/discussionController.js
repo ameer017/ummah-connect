@@ -51,7 +51,7 @@ exports.deleteThread = async (req, res) => {
 exports.getAllThreads = async (req, res) => {
 	try {
 		const threads = await Thread.find().populate("createdBy");
-		console.log(threads);
+		// console.log(threads);
 		res.status(200).json(threads);
 	} catch (error) {
 		res.status(500).json({ message: error.message });

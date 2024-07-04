@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { useNavigate } from "react-router-dom";
-import VideoUpload from "./VideoUpload";
+import FileUpload from "./FileUpload";
 import { toast } from "react-toastify";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
@@ -10,19 +10,20 @@ const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
 const upload_preset = import.meta.env.VITE_APP_UPLOAD_PRESET;
 
 const topicsOptions = [
-	"",
-	"Quran and Tafsir",
-	"Fiqh (Islamic Jurisprudence)",
-	"Hadith",
-	"Aqeedah (Creed and Belief)",
-	"Seerah (Biography of the Prophet Muhammad)",
-	"Da'wah (Invitation to Islam)",
+  "",
+  "Quran and Tafsir",
+  "Fiqh (Islamic Jurisprudence)",
+  "Hadith",
+  "Aqeedah (Creed and Belief)",
+  "Seerah (Biography of the Prophet Muhammad)",
+  "Da'wah (Invitation to Islam)",
 ];
 
 const CreateContent = () => {
 	useRedirectLoggedOutUser("/login");
 	const [formData, setFormData] = useState({
 		title: "",
+		categoryId: "",
 		url: "",
 		description: "",
 		topics: [],
@@ -33,7 +34,7 @@ const CreateContent = () => {
 	const [error, setError] = useState("");
 	const [uploadProgress, setUploadProgress] = useState(0);
 
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchCategories = async () => {
@@ -41,7 +42,7 @@ const CreateContent = () => {
 				const response = await axios.get(`${URL}/content/categories`);
 				// console.log(response.data)
 				setCategories(response.data);
-				// console.log(response.data)
+				console.log(response.data)
 			} catch (err) {
 				console.error("Error fetching categories:", err);
 			}
@@ -49,57 +50,53 @@ const CreateContent = () => {
 		fetchCategories();
 	}, []);
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		if (name === "topics") {
-			const options = e.target.options;
-			const selectedTopics = [];
-			for (let i = 0, len = options.length; i < len; i++) {
-				if (options[i].selected) {
-					selectedTopics.push(options[i].value);
-				}
-			}
-			setFormData({ ...formData, topics: selectedTopics });
-		} else {
-			setFormData({ ...formData, [name]: value });
-		}
-	};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "topics") {
+      const options = e.target.options;
+      const selectedTopics = [];
+      for (let i = 0, len = options.length; i < len; i++) {
+        if (options[i].selected) {
+          selectedTopics.push(options[i].value);
+        }
+      }
+      setFormData({ ...formData, topics: selectedTopics });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
 
-	const handleSubmit = async (e) => {
-		console.log(formData);
-		e.preventDefault();
-		setError("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
-		try {
-			let fileUrl;
-			if (formData.type === "Video" || formData.type === "Audio") {
-				const fileType = formData.type.toLowerCase();
+    try {
+      let fileUrl;
+      if (formData.type === "Video" || formData.type === "Audio") {
+        const fileType = formData.type.toLowerCase();
 
-				if (
-					(uploadFile && uploadFile.type.startsWith("video/")) ||
-					uploadFile.type.startsWith("audio/")
-				) {
-					const fileUploadForm = new FormData();
-					fileUploadForm.append("file", uploadFile);
-					fileUploadForm.append("cloud_name", cloud_name);
-					fileUploadForm.append("upload_preset", upload_preset);
+        if (
+          (uploadFile && uploadFile.type.startsWith("video/")) ||
+          uploadFile.type.startsWith("audio/")
+        ) {
+          const fileUploadForm = new FormData();
+          fileUploadForm.append("file", uploadFile);
+          fileUploadForm.append("cloud_name", cloud_name);
+          fileUploadForm.append("upload_preset", upload_preset);
 
-					const uploadToCloudinaryUrl =
-						fileType === "video"
-							? `https://api.cloudinary.com/v1_1/${cloud_name}/${fileType}/upload`
-							: `https://api.cloudinary.com/v1_1/${cloud_name}/upload`;
+          const uploadToCloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloud_name}/${fileType}/upload`;
 
-					// Create XMLHttpRequest object
-					const xhr = new XMLHttpRequest();
-					xhr.open("POST", uploadToCloudinaryUrl);
+          // Create XMLHttpRequest object
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", uploadToCloudinaryUrl);
 
-					// Track upload progress
-					xhr.upload.onprogress = (event) => {
-						if (event.lengthComputable) {
-							const percentComplete = (event.loaded / event.total) * 100;
-							setUploadProgress(percentComplete);
-						}
-					};
+          // Track upload progress
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              const percentComplete = (event.loaded / event.total) * 100;
+              setUploadProgress(percentComplete);
+            }
+          };
 
 					xhr.onload = async () => {
 						if (xhr.status === 200) {
@@ -116,18 +113,22 @@ const CreateContent = () => {
 				}
 			}
 
+			const category = categories.find(el => el.type === formData.type)
+			console.log(category)
+
 			const response = await axios.post(`${URL}/content/create-content`, {
 				...formData,
 				fileUrl,
+				categoryId: category._id
 			});
 			console.log("Content created:", response.data);
 			// Reset form
 			setFormData({
 				title: "",
 				type: "",
+				categoryId: "",
 				description: "",
 				topics: [],
-				type: "",
 			});
 			navigate("/content-list");
 		} catch (error) {
@@ -216,24 +217,24 @@ const CreateContent = () => {
 							</select>
 						</div>
 						{(formData.type === "Video" || formData.type === "Audio") && (
-							<VideoUpload
+							<FileUpload
 								setUploadFile={setUploadFile}
 								uploadProgress={uploadProgress}
 								fileType={formData.type}
 							/>
 						)}
 
-						<button
-							type="submit"
-							className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-						>
-							Create Content
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	);
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+            >
+              Create Content
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CreateContent;
