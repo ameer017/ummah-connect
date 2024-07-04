@@ -21,6 +21,7 @@ const ContentCategories = () => {
       try {
         const response = await axios.get(`${URL}/content/categories`);
         setCategories(response.data);
+        console.log(response.data)
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
