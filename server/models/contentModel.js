@@ -20,7 +20,7 @@ const contentSchema = new Schema({
 			],
 		},
 	],
-	// category: { type: Schema.Types.ObjectId, ref: "Category" },
+	category: { type: Schema.Types.ObjectId, ref: "Category" },
 	status: {
 		type: String,
 		enum: ["pending", "approved", "rejected"],
