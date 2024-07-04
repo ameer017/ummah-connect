@@ -5,7 +5,6 @@ const contentSchema = new Schema({
 	title: { type: String, required: true },
 	type: { type: String, enum: ["article", "video", "audio"], required: true },
 	fileUrl: { type: String },
-	url: { type: String },
 	description: { type: String },
 	topics: [
 		{

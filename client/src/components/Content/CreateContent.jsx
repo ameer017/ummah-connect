@@ -10,13 +10,13 @@ const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
 const upload_preset = import.meta.env.VITE_APP_UPLOAD_PRESET;
 
 const topicsOptions = [
-	"",
-	"Quran and Tafsir",
-	"Fiqh (Islamic Jurisprudence)",
-	"Hadith",
-	"Aqeedah (Creed and Belief)",
-	"Seerah (Biography of the Prophet Muhammad)",
-	"Da'wah (Invitation to Islam)",
+  "",
+  "Quran and Tafsir",
+  "Fiqh (Islamic Jurisprudence)",
+  "Hadith",
+  "Aqeedah (Creed and Belief)",
+  "Seerah (Biography of the Prophet Muhammad)",
+  "Da'wah (Invitation to Islam)",
 ];
 
 const CreateContent = () => {
@@ -34,7 +34,7 @@ const CreateContent = () => {
 	const [error, setError] = useState("");
 	const [uploadProgress, setUploadProgress] = useState(0);
 
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchCategories = async () => {
@@ -50,57 +50,53 @@ const CreateContent = () => {
 		fetchCategories();
 	}, []);
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		if (name === "topics") {
-			const options = e.target.options;
-			const selectedTopics = [];
-			for (let i = 0, len = options.length; i < len; i++) {
-				if (options[i].selected) {
-					selectedTopics.push(options[i].value);
-				}
-			}
-			setFormData({ ...formData, topics: selectedTopics });
-		} else {
-			setFormData({ ...formData, [name]: value });
-		}
-	};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "topics") {
+      const options = e.target.options;
+      const selectedTopics = [];
+      for (let i = 0, len = options.length; i < len; i++) {
+        if (options[i].selected) {
+          selectedTopics.push(options[i].value);
+        }
+      }
+      setFormData({ ...formData, topics: selectedTopics });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
 
-	const handleSubmit = async (e) => {
-		console.log(formData);
-		e.preventDefault();
-		setError("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
-		try {
-			let fileUrl;
-			if (formData.type === "Video" || formData.type === "Audio") {
-				const fileType = formData.type.toLowerCase();
+    try {
+      let fileUrl;
+      if (formData.type === "Video" || formData.type === "Audio") {
+        const fileType = formData.type.toLowerCase();
 
-				if (
-					(uploadFile && uploadFile.type.startsWith("video/")) ||
-					uploadFile.type.startsWith("audio/")
-				) {
-					const fileUploadForm = new FormData();
-					fileUploadForm.append("file", uploadFile);
-					fileUploadForm.append("cloud_name", cloud_name);
-					fileUploadForm.append("upload_preset", upload_preset);
+        if (
+          (uploadFile && uploadFile.type.startsWith("video/")) ||
+          uploadFile.type.startsWith("audio/")
+        ) {
+          const fileUploadForm = new FormData();
+          fileUploadForm.append("file", uploadFile);
+          fileUploadForm.append("cloud_name", cloud_name);
+          fileUploadForm.append("upload_preset", upload_preset);
 
-					const uploadToCloudinaryUrl =
-						fileType === "video"
-							? `https://api.cloudinary.com/v1_1/${cloud_name}/${fileType}/upload`
-							: `https://api.cloudinary.com/v1_1/${cloud_name}/upload`;
+          const uploadToCloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloud_name}/${fileType}/upload`;
 
-					// Create XMLHttpRequest object
-					const xhr = new XMLHttpRequest();
-					xhr.open("POST", uploadToCloudinaryUrl);
+          // Create XMLHttpRequest object
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", uploadToCloudinaryUrl);
 
-					// Track upload progress
-					xhr.upload.onprogress = (event) => {
-						if (event.lengthComputable) {
-							const percentComplete = (event.loaded / event.total) * 100;
-							setUploadProgress(percentComplete);
-						}
-					};
+          // Track upload progress
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              const percentComplete = (event.loaded / event.total) * 100;
+              setUploadProgress(percentComplete);
+            }
+          };
 
 					xhr.onload = async () => {
 						if (xhr.status === 200) {
@@ -228,17 +224,17 @@ const CreateContent = () => {
 							/>
 						)}
 
-						<button
-							type="submit"
-							className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-						>
-							Create Content
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	);
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+            >
+              Create Content
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CreateContent;
