@@ -4,22 +4,27 @@ const Category = require("../models/categoryModel");
 
 // Create new content
 exports.createContent = async (req, res) => {
-	try {
-		const { title, type, description, topics, fileUrl, categoryId } = req.body;
-		const submittedBy = req.user._id;
+  try {
+    const { title, type, description, topics, fileUrl, categoryId } = req.body;
+    // console.log(categoryId)
+    const submittedBy = req.user._id;
 
-		const newContent = new Content({
-			title,
-			category: categoryId,
-			type: type.toLowerCase(),
-			fileUrl,
-			description,
-			topics,
-			submittedBy,
-		});
+    const newContent = new Content({
+      title,
+      category: categoryId,
+      type: type.toLowerCase(),
+      fileUrl,
+      description,
+      topics,
+      submittedBy,
+    });
 
     const savedContent = await newContent.save();
 
+    const category = await Category.findOne({ type });
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
     // Push content ID to category's contents array
     category.contents.push(newContent._id);
     await category.save();
@@ -145,12 +150,6 @@ exports.getContentByCategory = async (req, res) => {
     const contents = await Content.find({ category: categoryId })
       .populate("category")
       .populate("submittedBy");
-
-    if (!contents.length) {
-      return res
-        .status(404)
-        .json({ message: "No content found for this category" });
-    }
 
     res.status(200).json(contents);
   } catch (error) {
