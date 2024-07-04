@@ -6,6 +6,7 @@ const Category = require("../models/categoryModel");
 exports.createContent = async (req, res) => {
 	try {
 		const { title, type, description, topics, fileUrl, categoryId } = req.body;
+		// console.log(categoryId)
 		const submittedBy = req.user._id;
 
 		const newContent = new Content({
@@ -151,11 +152,12 @@ exports.getContentByCategory = async (req, res) => {
 			.populate("category")
 			.populate("submittedBy");
 
-		if (!contents.length) {
-			return res
-				.status(404)
-				.json({ message: "No content found for this category" });
-		}
+			// console.log(contents)
+		// if (!contents.length) {
+		// 	return res
+		// 		.status(404)
+		// 		.json({ message: "No content found for this category" });
+		// }
 
 		res.status(200).json(contents);
 	} catch (error) {
