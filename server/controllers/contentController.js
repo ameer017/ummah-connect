@@ -5,11 +5,12 @@ const Category = require("../models/categoryModel");
 // Create new content
 exports.createContent = async (req, res) => {
 	try {
-		const { title, type, description, topics, fileUrl } = req.body;
+		const { title, type, description, topics, fileUrl, categoryId } = req.body;
 		const submittedBy = req.user._id;
 
 		const newContent = new Content({
 			title,
+			category: categoryId,
 			type: type.toLowerCase(),
 			fileUrl,
 			description,

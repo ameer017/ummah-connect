@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { useNavigate } from "react-router-dom";
-import VideoUpload from "./VideoUpload";
+import FileUpload from "./FileUpload";
 import { toast } from "react-toastify";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
@@ -23,6 +23,7 @@ const CreateContent = () => {
 	useRedirectLoggedOutUser("/login");
 	const [formData, setFormData] = useState({
 		title: "",
+		categoryId: "",
 		url: "",
 		description: "",
 		topics: [],
@@ -41,7 +42,7 @@ const CreateContent = () => {
 				const response = await axios.get(`${URL}/content/categories`);
 				// console.log(response.data)
 				setCategories(response.data);
-				// console.log(response.data)
+				console.log(response.data)
 			} catch (err) {
 				console.error("Error fetching categories:", err);
 			}
@@ -116,18 +117,22 @@ const CreateContent = () => {
 				}
 			}
 
+			const category = categories.find(el => el.type === formData.type)
+			console.log(category)
+
 			const response = await axios.post(`${URL}/content/create-content`, {
 				...formData,
 				fileUrl,
+				categoryId: category._id
 			});
 			console.log("Content created:", response.data);
 			// Reset form
 			setFormData({
 				title: "",
 				type: "",
+				categoryId: "",
 				description: "",
 				topics: [],
-				type: "",
 			});
 			navigate("/content-list");
 		} catch (error) {
@@ -216,7 +221,7 @@ const CreateContent = () => {
 							</select>
 						</div>
 						{(formData.type === "Video" || formData.type === "Audio") && (
-							<VideoUpload
+							<FileUpload
 								setUploadFile={setUploadFile}
 								uploadProgress={uploadProgress}
 								fileType={formData.type}
