@@ -4,23 +4,19 @@ const Category = require("../models/categoryModel");
 
 // Create new content
 exports.createContent = async (req, res) => {
-  try {
-    const { title, type, description, topics, fileUrl } = req.body;
-    const submittedBy = req.user._id;
+	try {
+		const { title, type, description, topics, fileUrl, categoryId } = req.body;
+		const submittedBy = req.user._id;
 
-    const category = await Category.findOne({ type });
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-    const newContent = new Content({
-      title,
-      type: type.toLowerCase(),
-      fileUrl,
-      description,
-      topics,
-      submittedBy,
-      category: category._id,
-    });
+		const newContent = new Content({
+			title,
+			category: categoryId,
+			type: type.toLowerCase(),
+			fileUrl,
+			description,
+			topics,
+			submittedBy,
+		});
 
     const savedContent = await newContent.save();
 

@@ -18,7 +18,7 @@ import ForumList from "./components/Forum/ForumList";
 import CreateThread from "./components/Forum/CreateThread";
 import ReportThread from "./components/Forum/ReportThread";
 import ThreadDetail from "./components/Forum/ThreadDetail";
-import VideoUpload from "./components/Content/VideoUpload";
+import VideoUpload from "./components/Content/";
 import EventList from "./components/Event/EventList";
 import CourseList from "./components/Courses/CourseList";
 import EventDetails from "./components/Event/EventDetails";
@@ -32,14 +32,7 @@ const AppRoutes = () => (
     <Route path="/register" element={<Signup />} />
     <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
-    <Route
-      path="/create-video"
-      element={
-        <Layout>
-          <VideoUpload />
-        </Layout>
-      }
-    />
+   
     <Route
       path="/create-content"
       element={
@@ -151,6 +144,7 @@ const AppRoutes = () => (
       }
     />
     <Route
+
       path="/course-list"
       element={
         <Layout>
@@ -159,6 +153,7 @@ const AppRoutes = () => (
       }
     />
     <Route
+
       path="/event/:id"
       element={
         <Layout>
@@ -174,6 +169,7 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+
     <Route
       path="/mentors-overview"
       element={
@@ -190,6 +186,7 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+
   </Routes>
 );
 
