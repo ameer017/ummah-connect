@@ -8,6 +8,7 @@ const EventCreate = () => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
+  const [trending, setTrending] = useState(false);
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
@@ -22,7 +23,7 @@ const EventCreate = () => {
 
       const { data } = await axios.post(
         `${URL}/events`,
-        { title, description, date, location },
+        { title, description, date, location, trending },
         config
       );
 
@@ -79,6 +80,18 @@ const EventCreate = () => {
               onChange={(e) => setLocation(e.target.value)}
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
             />
+          </div>
+          <div className="mb-4 flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={trending}
+              onChange={(e) => setTrending(e.target.checked)}
+              className="focus:outline-none focus:ring focus:border-blue-300"
+            />
+
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Trending
+            </label>
           </div>
           <button
             type="submit"
