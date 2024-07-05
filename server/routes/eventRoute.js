@@ -7,10 +7,21 @@ const {
   updateEvent,
   deleteEvent,
   rsvpEvent,
+  validateCreateEvent,
+  upcomingEvents,
+  pastEvents,
+  trendingEvents,
 } = require("../controllers/eventController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-router.route("/").post(protect, adminOnly, createEvent).get(getEvents);
+router
+  .route("/")
+  .post(protect, adminOnly, validateCreateEvent, createEvent)
+  .get(getEvents);
+
+router.get("/upcoming", upcomingEvents);
+router.get("/past", pastEvents);
+router.get("/trending-events", trendingEvents);
 
 router
   .route("/:id")

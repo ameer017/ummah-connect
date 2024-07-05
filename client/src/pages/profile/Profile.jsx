@@ -6,8 +6,9 @@ import { getUser } from "../../redux/feature/auth/authSlice";
 import { GrOverview, GrNotes } from "react-icons/gr";
 import { IoBookOutline } from "react-icons/io5";
 import { MdOutlineEventAvailable, MdForum } from "react-icons/md";
-import { FaFacebookF, FaInstagram, FaLinkedin, FaPen } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedin, FaUsers } from "react-icons/fa";
 import { BiMessageSquareEdit } from "react-icons/bi";
+import { CiSettings } from "react-icons/ci";
 import { BsTwitterX } from "react-icons/bs";
 import EditProfileModal from "./EditProfileModal";
 import axios from "axios";
@@ -15,6 +16,9 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { MdEventNote } from "react-icons/md";
 import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
 import Notification from "../../components/Notification/Notification";
+import { AdminLink } from "../../components/Protect/HiddenLink";
+import Sidebar from "../../components/Sidebar/Sidebar";
+
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const Profile = ({ userId }) => {
@@ -24,11 +28,6 @@ const Profile = ({ userId }) => {
     (state) => state.auth
   );
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const location = useLocation();
-  const isActive = (path) =>
-    location.pathname === path
-      ? "text-neutral-900 bg-neutral-200 rounded-lg "
-      : "";
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -109,7 +108,7 @@ const Profile = ({ userId }) => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const response = await fetch(`${URL}/events`);
+      const response = await fetch(`${URL}/events/upcoming`);
       const data = await response.json();
       setEvents(data);
     };
@@ -119,77 +118,12 @@ const Profile = ({ userId }) => {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      {isSidebarOpen && (
-        <div className="fixed inset-0 md:relative md:w-1/4 bg-white p-4 flex flex-col space-y-2 z-20 border-r border-t">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-[20px] my-3">
-              <img
-                src={imagePreview === null ? user?.photo : imagePreview}
-                alt=""
-                style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-              />
-              <div>
-                <p className="text-[18px]">
-                  {profile.firstName} {profile.lastName}
-                </p>
-                <p className="text-[18px] text-neutral-400">
-                  {profile.profession}
-                </p>
-              </div>
-            </div>
-            <button
-              className="p-2 bg-white text-white border rounded-full"
-              onClick={toggleSidebar}
-            >
-              <IoIosArrowBack size={25} color="black" />
-            </button>
-          </div>
-
-          <Link
-            className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-              "/course-list"
-            )}`}
-            to="/course-list"
-          >
-            <GrOverview size={25} /> <p className="text-[17px]">Overview</p>
-          </Link>
-          <Link
-            className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-              "/my-courses"
-            )}`}
-            to="/my-courses"
-          >
-            <IoBookOutline size={25} />{" "}
-            <p className="text-[17px]">My Courses</p>
-          </Link>
-          <Link
-            className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-              "/my-events"
-            )}`}
-            to="/my-events"
-          >
-            <MdOutlineEventAvailable size={25} />{" "}
-            <p className="text-[17px]">My Events</p>
-          </Link>
-          <Link
-            className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-              "/forum"
-            )}`}
-            to="/forum"
-          >
-            <MdForum size={25} /> <p className="text-[17px]">Forum</p>
-          </Link>
-          <Link
-            className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-              "/content"
-            )}`}
-            to="/content"
-          >
-            <GrNotes size={25} /> <p className="text-[17px]">Content</p>
-          </Link>
-        </div>
-      )}
-
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        profile={profile}
+        user={user}
+      />
       {!isSidebarOpen && (
         <button
           className="p-2 bg-white fixed top-40 left-0 z-10 mt-2 mr-2 border rounded-full"
@@ -261,43 +195,48 @@ const Profile = ({ userId }) => {
             </div>
           </div>
           <div className="p-4">
-            <h1>Upcoming Events</h1>
-            <div className="border p-6 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="w-4/4 bg-white p-4 border rounded-lg cursor-pointer">
-                {events?.length > 0 ? (
-                  <ul>
-                    {events.map((event) => (
-                      <li key={event._id}>
-                        <p>
-                          <MdEventNote size={15} />
-                        </p>
-                        <p className="mt-4">{event.title}</p>
-                        <p className="text-gray-700">
-                          {event.description.length > 50
-                            ? `${event.description.substring(0, 50)}...`
-                            : event.description}
-                        </p>
-                        <div className="flex items-center gap-4 my-3 ">
-                          <p className="text-sm text-gray-500">
-                            {new Date(event.date).toLocaleDateString()}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Location: {event.location}
-                          </p>
-                        </div>
-                        <button
-                          className="mt-2 px-4 py-2 text-black border rounded hover:bg-blue-700 hover:text-white"
-                          onClick={() => handleRSVP(event._id)}
-                        >
-                          Manage RSVP
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No threads available.</p>
-                )}
-              </div>
+            <p>Upcoming Events</p>
+            <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+              {events?.length > 0 ? (
+                events.map((event) => (
+                  <div
+                    key={event._id}
+                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                  >
+                    <p>
+                      <MdEventNote size={15} />
+                    </p>
+                    <p className="mt-4">{event.title}</p>
+                    <p className="text-gray-700 border-b py-2">
+                      {event.description.length > 100
+                        ? `${event.description.substring(0, 100)}...`
+                        : event.description}
+                    </p>
+                    <div className="flex items-center justify-between my-3 border-b py-2">
+                      <p className="text-sm">
+                        {new Date(event.date).toLocaleDateString()}
+                      </p>
+                      <Link
+                        to={`/event/${event._id}`}
+                        className="text-sm underline"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+
+                    <div className="flex justify-between mt-2">
+                      <button
+                        className="px-4 py-2 text-black flex items-center border rounded-lg"
+                        onClick={() => handleRSVP(event._id)}
+                      >
+                        Manage RSVP
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No events available.</p>
+              )}
             </div>
           </div>
           <div className="p-4">
