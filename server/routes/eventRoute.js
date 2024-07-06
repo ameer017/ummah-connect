@@ -11,6 +11,9 @@ const {
   upcomingEvents,
   pastEvents,
   trendingEvents,
+  buyTicket,
+  getOrganizerById,
+  getTicketsSold,
 } = require("../controllers/eventController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
@@ -22,6 +25,10 @@ router
 router.get("/upcoming", upcomingEvents);
 router.get("/past", pastEvents);
 router.get("/trending-events", trendingEvents);
+
+router.post("/buy-ticket/:eventId", protect, buyTicket);
+router.get("/organizer/:id", getOrganizerById);
+router.get("/:eventId/tickets-sold", getTicketsSold);
 
 router
   .route("/:id")
