@@ -1,11 +1,17 @@
+const User = require("../models/authModel");
 const Event = require("../models/eventModel");
 const { check, validationResult } = require("express-validator");
+const nodemailer = require("nodemailer");
 
 const validateCreateEvent = [
   check("title").not().isEmpty().withMessage("Title is required"),
   check("description").not().isEmpty().withMessage("Description is required"),
   check("date").isISO8601().toDate().withMessage("Valid date is required"),
   check("location").not().isEmpty().withMessage("Location is required"),
+  check("limit")
+    .isInt({ min: 1 })
+    .withMessage("Limit must be a positive integer"),
+
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -17,16 +23,29 @@ const validateCreateEvent = [
 
 // Create an event
 const createEvent = async (req, res) => {
-  const { title, description, date, location, trending, photo } = req.body;
+  const {
+    title,
+    subTitle,
+    description,
+    date,
+    location,
+    trending,
+    photo,
+    limit,
+    tickets,
+  } = req.body;
   try {
     const event = new Event({
       title,
+      subTitle,
       description,
       date,
       location,
       organizer: req.user._id,
       trending: trending || false,
       photo,
+      limit,
+      tickets,
     });
     const createdEvent = await event.save();
     res.status(201).json(createdEvent);
@@ -65,11 +84,12 @@ const getEvent = async (req, res) => {
 
 // Update an event
 const updateEvent = async (req, res) => {
-  const { title, description, date, location } = req.body;
+  const { title, subTitle, description, date, location } = req.body;
   try {
     const event = await Event.findById(req.params.id);
     if (event) {
       event.title = title || event.title;
+      event.subTitle = subTitle || event.subTitle;
       event.description = description || event.description;
       event.date = date || event.date;
       event.location = location || event.location;
@@ -155,6 +175,112 @@ const trendingEvents = async (req, res) => {
   }
 };
 
+const buyTicket = async (req, res) => {
+  const { eventId } = req.params;
+  const { quantity } = req.body;
+  const userId = req.user._id;
+
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (event.tickets.quantity < quantity) {
+      return res.status(400).json({ message: "Not enough tickets available" });
+    }
+
+    event.decreaseTicketQuantity(quantity);
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Send confirmation email
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: 587,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.emailAddress,
+      subject: "Ticket Purchase Confirmation",
+      text: `As salam 'alaekum Dear ${user.firstName} 🤗,
+    
+    Thank you for purchasing ${quantity} ticket(s) for the event "${
+        event.title
+      }".
+    
+    Event Details:
+    ---------------
+    Title: ${event.title}
+    Description: ${event.description}
+    Date: ${new Date(event.date).toLocaleString()}
+    Location: ${event.location}
+    
+    Your Ticket Information:
+    -------------------------
+    Quantity: ${quantity}
+    
+    We appreciate your support and look forward to seeing you at the event.
+    
+    Ma' salam,
+    The UmmahConnect Event Team
+    `,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).json({ message: error.message });
+      }
+      res.status(200).json({ message: "Ticket purchased and email sent" });
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getOrganizerById = async (req, res) => {
+  try {
+    const organizer = await User.findById(req.params.id);
+    if (!organizer) {
+      return res.status(404).json({ message: "Organizer not found" });
+    }
+    res.status(200).json(organizer);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getTicketsSold = async (req, res) => {
+  const { eventId } = req.params;
+
+  try {
+    // Find the event by ID
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Get the number of sold tickets from the event's ticket schema
+    const ticketsSold = event.tickets.sold;
+
+    res.status(200).json({ ticketsSold });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   createEvent,
   getEvents,
@@ -165,5 +291,8 @@ module.exports = {
   upcomingEvents,
   pastEvents,
   trendingEvents,
+  buyTicket,
+  getOrganizerById,
+  getTicketsSold,
   validateCreateEvent,
 };

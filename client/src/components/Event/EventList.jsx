@@ -127,9 +127,7 @@ const EventList = ({ userId }) => {
                       key={event._id}
                       className="w-full bg-white p-4 border rounded-lg cursor-pointer"
                     >
-                      <p>
-                        <MdEventNote size={15} />
-                      </p>
+                      <img src={event.photo} alt={event.title} className="rounded-lg  " />
                       <p className="mt-4">{event.title}</p>
                       <p className="text-gray-700 border-b py-2">
                         {event.description.length > 100
