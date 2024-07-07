@@ -1,14 +1,10 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import { Link } from "react-router-dom";
+import { IoIosArrowForward } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
-import { GrOverview, GrNotes } from "react-icons/gr";
-import { IoBookOutline } from "react-icons/io5";
-import { MdOutlineEventAvailable, MdForum } from "react-icons/md";
 import { FaFacebookF, FaInstagram, FaLinkedin, FaUsers } from "react-icons/fa";
 import { BiMessageSquareEdit } from "react-icons/bi";
-import { CiSettings } from "react-icons/ci";
 import { BsTwitterX } from "react-icons/bs";
 import EditProfileModal from "./EditProfileModal";
 import axios from "axios";
@@ -24,9 +20,8 @@ const URL = import.meta.env.VITE_APP_BACKEND_URL;
 const Profile = ({ userId }) => {
   useRedirectLoggedOutUser("/login");
   const dispatch = useDispatch();
-  const { isLoading, isLoggedIn, isSuccess, message, user } = useSelector(
-    (state) => state.auth
-  );
+  const { user } = useSelector((state) => state.auth);
+  // console.log(userId)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -168,7 +163,7 @@ const Profile = ({ userId }) => {
                 </p>
               </div>
               <div
-                className="flex items-center justify-center gap-2 rounded-lg border bg-neutral-100 w-[100px] my-4 p-3 cursor-pointer"
+                className="flex items-center justify-center gap-2 rounded-lg border bg-neutral-100 w-[150px] my-4 p-3 cursor-pointer"
                 onClick={openModal}
               >
                 <BiMessageSquareEdit
@@ -224,14 +219,16 @@ const Profile = ({ userId }) => {
                       </Link>
                     </div>
 
-                    <div className="flex justify-between mt-2">
-                      <button
-                        className="px-4 py-2 text-black flex items-center border rounded-lg"
-                        onClick={() => handleRSVP(event._id)}
-                      >
-                        Manage RSVP
-                      </button>
-                    </div>
+                    <AdminLink>
+                      <div className="flex justify-between mt-2">
+                        <button
+                          className="px-4 py-2 text-black flex items-center border rounded-lg"
+                          onClick={() => handleRSVP(event._id)}
+                        >
+                          Manage RSVP
+                        </button>
+                      </div>
+                    </AdminLink>
                   </div>
                 ))
               ) : (

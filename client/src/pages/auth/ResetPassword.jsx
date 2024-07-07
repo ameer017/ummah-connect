@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { RESET, resetPassword } from "../../redux/feature/auth/authSlice";
+import PasswordInput from "../../components/PasswordInput/PasswordInput";
+const initialState = {
+  password: "",
+  password2: ""
+}
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState(initialState);
   const { password, password2 } = formData;
   const { resetToken } = useParams();
-  console.log(resetToken);
+  // console.log(resetToken);
 
   const { isLoading, isLoggedIn, isSuccess, message } = useSelector(
     (state) => state.auth

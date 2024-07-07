@@ -13,7 +13,6 @@ const initialState = {
   location: "",
   limit: "",
   ticketPrice: "",
-  ticketQuantity: "",
   photo: "",
   trending: false,
 };
@@ -21,6 +20,7 @@ const initialState = {
 const EventCreate = () => {
   const [formData, setFormData] = useState(initialState);
   const [eventImage, setEventImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -38,6 +38,7 @@ const EventCreate = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     let imageUrl;
     if (
@@ -57,7 +58,6 @@ const EventCreate = () => {
         { method: "post", body: image }
       );
       const imgData = await response.json();
-      console.log(imgData);
       imageUrl = imgData.url.toString();
     }
 
@@ -69,15 +69,21 @@ const EventCreate = () => {
         },
       };
 
-      const { data } = await axios.post(
-        `${URL}/events`,
-        { ...formData, photo: imageUrl },
-        config
-      );
+      const eventPayload = {
+        ...formData,
+        photo: imageUrl,
+        tickets: {
+          price: formData.ticketPrice,
+        },
+      };
+
+      const { data } = await axios.post(`${URL}/events`, eventPayload, config);
 
       navigate(`/event/${data._id}`);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -151,7 +157,7 @@ const EventCreate = () => {
                 Limit
               </label>
               <input
-                type="text"
+                type="number"
                 name="limit"
                 value={formData.limit}
                 onChange={handleInputChange}
@@ -160,32 +166,17 @@ const EventCreate = () => {
               />
             </div>
           </div>
-          <div className="flex justify-between">
-            <div className="mb-4 w-[48%]">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Ticket Price
-              </label>
-              <input
-                type="text"
-                name="ticketPrice"
-                value={formData.ticketPrice}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-              />
-            </div>
-            <div className="mb-4 w-[48%]">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Ticket Quantity
-              </label>
-              <input
-                type="text"
-                name="ticketQuantity"
-                value={formData.ticketQuantity}
-                onChange={handleInputChange}
-                min="1"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-              />
-            </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Ticket Price
+            </label>
+            <input
+              type="number"
+              name="ticketPrice"
+              value={formData.ticketPrice}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+            />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -213,8 +204,9 @@ const EventCreate = () => {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
+            disabled={loading}
           >
-            Create Event
+            {loading ? "Creating..." : "Create Event"}
           </button>
         </form>
       </div>

@@ -8,19 +8,14 @@ const Verify = () => {
   const navigate = useNavigate();
   const { verificationToken } = useParams();
 
-  const { isLoading, isSuccess } = useSelector((state) => state.auth);
 
   const verifyAccount = async (e) => {
     e.preventDefault();
     await dispatch(verifyUser(verificationToken));
-    await dispatch(RESET());
+    dispatch(RESET());
   };
 
-  useEffect(() => {
-    if (isSuccess) {
-      navigate("/profile");
-    }
-  }, [isSuccess, navigate]);
+
   return (
     <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">
       <div className="flex flex-col items-center justify-center light">
@@ -29,13 +24,12 @@ const Verify = () => {
             Account Verification
           </h2>
 
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={verifyAccount}>
             <p>To verify your account, click the button below...</p>
 
             <button
               type="submit"
               className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
-              onClick={verifyAccount}
             >
               Verify Account
             </button>

@@ -26,7 +26,11 @@ const eventSchema = new mongoose.Schema(
     photo: { type: String, default: "" },
     attendees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     trending: { type: Boolean, default: false },
-    tickets: ticketSchema,
+    tickets: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ticket",
+      required: true,
+    },
     limit: { type: Number, required: true },
   },
   { timestamps: true }
@@ -41,5 +45,5 @@ eventSchema.virtual("isPast").get(function () {
 });
 
 const Event = mongoose.model("Event", eventSchema);
-
-module.exports = Event;
+const Ticket = mongoose.model("Ticket", ticketSchema);
+module.exports = { Event, Ticket };

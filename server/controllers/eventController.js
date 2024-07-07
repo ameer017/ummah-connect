@@ -1,5 +1,5 @@
 const User = require("../models/authModel");
-const Event = require("../models/eventModel");
+const { Event, Ticket } = require("../models/eventModel");
 const { check, validationResult } = require("express-validator");
 const nodemailer = require("nodemailer");
 
@@ -35,6 +35,13 @@ const createEvent = async (req, res) => {
     tickets,
   } = req.body;
   try {
+    const ticket = new Ticket({
+      price: tickets.price,
+      quantity: limit,
+      sold: tickets.sold || 0,
+    });
+    const createdTicket = await ticket.save();
+
     const event = new Event({
       title,
       subTitle,
@@ -45,7 +52,7 @@ const createEvent = async (req, res) => {
       trending: trending || false,
       photo,
       limit,
-      tickets,
+      tickets: createdTicket._id,
     });
     const createdEvent = await event.save();
     res.status(201).json(createdEvent);
@@ -175,27 +182,62 @@ const trendingEvents = async (req, res) => {
   }
 };
 
+const getEventWithTicketById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findById(id).populate("tickets");
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const buyTicket = async (req, res) => {
   const { eventId } = req.params;
   const { quantity } = req.body;
   const userId = req.user._id;
 
   try {
-    const event = await Event.findById(eventId);
+    // Find the event by ID and populate ticket details
+    const event = await Event.findById(eventId).populate("tickets");
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    if (event.tickets.quantity < quantity) {
+    // Find the ticket associated with the event
+    const ticket = await Ticket.findById(event.tickets);
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    // Check if enough tickets are available
+    if (ticket.quantity < quantity) {
       return res.status(400).json({ message: "Not enough tickets available" });
     }
 
-    event.decreaseTicketQuantity(quantity);
+    // Decrease the ticket quantity
+    ticket.quantity -= quantity;
+    ticket.sold += quantity;
+    await ticket.save();
 
+    // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+    user.hasBooked = true;
+    user.bookedEvents.push(eventId)
+    await user.save();
+
+    event.attendees.push(userId);
+    await event.save();
 
     // Send confirmation email
     const transporter = nodemailer.createTransport({
@@ -280,7 +322,6 @@ const getTicketsSold = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createEvent,
   getEvents,
@@ -294,5 +335,6 @@ module.exports = {
   buyTicket,
   getOrganizerById,
   getTicketsSold,
+  getEventWithTicketById,
   validateCreateEvent,
 };
