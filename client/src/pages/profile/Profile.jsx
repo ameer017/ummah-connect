@@ -168,7 +168,7 @@ const Profile = ({ userId }) => {
                 </p>
               </div>
               <div
-                className="flex items-center justify-center gap-2 rounded-lg border bg-neutral-100 w-[100px] my-4 p-3 cursor-pointer"
+                className="flex items-center justify-center gap-2 rounded-lg border bg-neutral-100 w-[150px] my-4 p-3 cursor-pointer"
                 onClick={openModal}
               >
                 <BiMessageSquareEdit
