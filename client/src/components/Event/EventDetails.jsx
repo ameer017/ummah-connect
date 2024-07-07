@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { AdminLink } from "../Protect/HiddenLink";
+import { toast } from "react-toastify";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const EventDetails = ({ userId }) => {
+  useRedirectLoggedOutUser("/login");
   const { id } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState({});
@@ -13,13 +16,14 @@ const EventDetails = ({ userId }) => {
   const [error, setError] = useState("");
   const [hasBooked, setHasBooked] = useState(false);
   const [organizer, setOrganizer] = useState(null);
+  const [ticket, setTicket] = useState([]);
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const { data } = await axios.get(`${URL}/events/${id}`);
         setEvent(data);
-        console.log(data);
+        // console.log(data);
 
         if (data.organizer && data.organizer._id) {
           const organizerData = await axios.get(
@@ -29,13 +33,12 @@ const EventDetails = ({ userId }) => {
           console.log(organizerData.data);
         }
 
-      
+        const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
+        // console.log(fetchTicket.data.tickets.quantity);
+        setTicket(fetchTicket.data.tickets.quantity);
+
         // Check if the user has already booked a ticket
-        const userResponse = await axios.get(`${URL}/auth/get-user/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const userResponse = await axios.get(`${URL}/auth/get-user/${userId}`);
 
         const user = userResponse.data._id;
         // console.log(user)
@@ -48,7 +51,9 @@ const EventDetails = ({ userId }) => {
     };
 
     fetchEvent();
-  }, [id]);
+  }, [id, userId]);
+
+  console.log(userId);
 
   const buyTicketHandler = async () => {
     setLoading(true);
@@ -65,8 +70,9 @@ const EventDetails = ({ userId }) => {
       await axios.post(`${URL}/events/buy-ticket/${id}`, { quantity }, config);
 
       setLoading(false);
-      alert("Ticket purchased successfully!");
-      setHasBooked(true); // Update the state to reflect the booking
+      toast.success("Ticket purchased successfully!");
+      setHasBooked(true);
+      navigate("/event-list");
     } catch (error) {
       setLoading(false);
       setError(error.response?.data?.message || "An error occurred");
@@ -92,60 +98,64 @@ const EventDetails = ({ userId }) => {
           className="rounded-lg w-[100%] "
         />
 
-        <div className="my-4">
-          <p>
-            <strong>Date:</strong> {new Date(event.date).toLocaleString()}
-          </p>
-          <div>
-            <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
-            <p className="text-gray-700 mb-4">{event.subTitle}</p>
+        <div className="my-4 flex justify-between">
+          <div className="flex flex-col">
+            <p>
+              <strong>Date:</strong> {new Date(event.date).toLocaleString()}
+            </p>
+            <div>
+              <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
+              <p className="text-gray-700 mb-4">{event.subTitle}</p>
+            </div>
           </div>
+          {!organizer
+            ? ""
+            : !hasBooked &&
+              ticket > 0 && (
+                <div className="">
+                  <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      className="px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+                      min="1"
+                      max={ticket || 1}
+                    />
+                  </div>
 
-          {!hasBooked && event.tickets?.quantity > 0 && (
-            <>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  Quantity
-                </label>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                  className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                  min="1"
-                  max={event.tickets?.quantity || 1}
-                />
-              </div>
-
-              <button
-                onClick={buyTicketHandler}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
-                disabled={loading || event.tickets?.quantity <= 0}
-              >
-                {loading ? "Processing..." : "Buy Ticket"}
-              </button>
-            </>
-          )}
+                  <button
+                    onClick={buyTicketHandler}
+                    className="w-[100%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
+                    disabled={loading || ticket <= 0}
+                  >
+                    {loading ? "Processing..." : "Buy Ticket"}
+                  </button>
+                </div>
+              )}
 
           {hasBooked && (
             <button
-              className="w-full bg-gray-500 text-white py-2 px-4 rounded cursor-not-allowed"
+              className=" text-black py-2 px-4 rounded cursor-not-allowed"
               disabled
             >
               Booked
             </button>
           )}
 
-          {event.tickets?.quantity <= 0 && (
+          {ticket.quantity <= 0 && (
             <button
-              className="w-full bg-red-500 text-white py-2 px-4 rounded cursor-not-allowed"
+              className=" bg-red-500 text-white py-2 px-4 rounded cursor-not-allowed"
               disabled
             >
               Sold Out
             </button>
           )}
-          {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
 
         <div className="flex justify-between border rounded-lg items-center p-2">
           <div className="flex flex-col">

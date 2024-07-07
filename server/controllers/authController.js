@@ -209,7 +209,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   }).save();
 
   // Construct Reset URL
-  const resetUrl = `${process.env.FRONTEND_URL}/resetPassword/${resetToken}`;
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
   // Send Email
   const subject = "Password Reset Request - UmmahConnect";
@@ -217,7 +217,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const sent_from = process.env.EMAIL_USER;
   const reply_to = "noreply@ummahconnect.com";
   const template = "forgotPassword";
-  const name = user.name;
+  const name = user.firstName;
   const link = resetUrl;
 
   try {
