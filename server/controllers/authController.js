@@ -499,6 +499,7 @@ const getUser = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
+      hasBooked
     } = user;
 
     res.status(201).json({
@@ -516,6 +517,7 @@ const getUser = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
+      hasBooked
     });
   } else {
     res.status(400);
@@ -724,6 +726,24 @@ const sendAutomatedEmail = asyncHandler(async (req, res) => {
   }
 });
 
+const getUserBookedEvents = async (req, res) => {
+  try {
+    const userId = await User.findById(req.user._id);
+
+    // Find the user by ID and populate the bookedEvents field
+    const userEvent = await User.findById(userId).populate("bookedEvents");
+    console.log(userEvent)
+
+    if (!userEvent) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(userEvent.bookedEvents);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -741,4 +761,5 @@ module.exports = {
   changePassword,
   deleteUser,
   sendAutomatedEmail,
+  getUserBookedEvents,
 };

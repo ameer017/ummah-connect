@@ -115,25 +115,27 @@ const EditProfileModal = ({ isOpen, onClose }) => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
         <h2 className="text-2xl mb-4">Update Profile</h2>
         <form onSubmit={saveProfile}>
-          <div className="mb-4">
-            <label className="block text-gray-700">Profession</label>
-            <input
-              type="text"
-              className="mt-1 p-2 w-full border border-gray-300 rounded"
-              name="profession"
-              value={profile.profession}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Location</label>
-            <input
-              type="text"
-              className="mt-1 p-2 w-full border border-gray-300 rounded"
-              name="location"
-              value={profile.location}
-              onChange={handleInputChange}
-            />
+          <div className="flex justify-between">
+            <div className="mb-4">
+              <label className="block text-gray-700">Profession</label>
+              <input
+                type="text"
+                className="mt-1 p-2 w-full border border-gray-300 rounded"
+                name="profession"
+                value={profile.profession}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Location</label>
+              <input
+                type="text"
+                className="mt-1 p-2 w-full border border-gray-300 rounded"
+                name="location"
+                value={profile.location}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Interests</label>
@@ -145,49 +147,55 @@ const EditProfileModal = ({ isOpen, onClose }) => {
               onChange={handleInputChange}
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Facebook</label>
-            <input
-              type="text"
-              className="mt-1 p-2 w-full border border-gray-300 rounded"
-              name="facebook"
-              value={profile.socialMediaLinks.facebook}
-              onChange={handleSocialMediaChange}
-              placeholder="Facebook profile link"
-            />
+
+          <div className="flex justify-between">
+            <div className="mb-4">
+              <label className="block text-gray-700">Facebook</label>
+              <input
+                type="text"
+                className="mt-1 p-2 w-full border border-gray-300 rounded"
+                name="facebook"
+                value={profile.socialMediaLinks.facebook}
+                onChange={handleSocialMediaChange}
+                placeholder="Facebook profile link"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Instagram</label>
+              <input
+                type="text"
+                className="mt-1 p-2 w-full border border-gray-300 rounded"
+                name="instagram"
+                value={profile.socialMediaLinks.instagram}
+                onChange={handleSocialMediaChange}
+                placeholder="Instagram profile link"
+              />
+            </div>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Instagram</label>
-            <input
-              type="text"
-              className="mt-1 p-2 w-full border border-gray-300 rounded"
-              name="instagram"
-              value={profile.socialMediaLinks.instagram}
-              onChange={handleSocialMediaChange}
-              placeholder="Instagram profile link"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">LinkedIn</label>
-            <input
-              type="text"
-              className="mt-1 p-2 w-full border border-gray-300 rounded"
-              name="linkedin"
-              value={profile.socialMediaLinks.linkedin}
-              onChange={handleSocialMediaChange}
-              placeholder="LinkedIn profile link"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Twitter</label>
-            <input
-              type="text"
-              className="mt-1 p-2 w-full border border-gray-300 rounded"
-              name="twitter"
-              value={profile.socialMediaLinks.twitter}
-              onChange={handleSocialMediaChange}
-              placeholder="X (Formerly Twitter) profile link"
-            />
+
+          <div className="flex justify-between">
+            <div className="mb-4">
+              <label className="block text-gray-700">LinkedIn</label>
+              <input
+                type="text"
+                className="mt-1 p-2 w-full border border-gray-300 rounded"
+                name="linkedin"
+                value={profile.socialMediaLinks.linkedin}
+                onChange={handleSocialMediaChange}
+                placeholder="LinkedIn profile link"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Twitter</label>
+              <input
+                type="text"
+                className="mt-1 p-2 w-full border border-gray-300 rounded"
+                name="twitter"
+                value={profile.socialMediaLinks.twitter}
+                onChange={handleSocialMediaChange}
+                placeholder="X (Formerly Twitter) profile link"
+              />
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Profile Picture</label>

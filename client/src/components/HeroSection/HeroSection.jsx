@@ -5,6 +5,7 @@ import { PiBookOpenText, PiGraduationCapLight } from "react-icons/pi";
 import { DiHtml5Multimedia } from "react-icons/di";
 import { TbRocket } from "react-icons/tb";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 const companies = [
   {
@@ -66,9 +67,12 @@ const HeroSection = () => {
             <b>Ummah</b> and start your journey today.
           </p>
 
-          <button className="bg-blue-800 text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2 ">
+          <Link
+            to="/register"
+            className="bg-blue-800 text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2 "
+          >
             Get Started <TbRocket />
-          </button>
+          </Link>
         </div>
       </section>
 

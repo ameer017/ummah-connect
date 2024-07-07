@@ -4,19 +4,32 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AdminLink } from "../Protect/HiddenLink";
 import { toast } from "react-toastify";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../redux/feature/auth/authSlice";
+import { IoMdCheckmarkCircle } from "react-icons/io";
+
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const EventDetails = ({ userId }) => {
   useRedirectLoggedOutUser("/login");
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [event, setEvent] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [hasBooked, setHasBooked] = useState(false);
   const [organizer, setOrganizer] = useState(null);
   const [ticket, setTicket] = useState([]);
+  const [userID, setUserID] = useState("");
+  const [ticketSold, setTicketSold] = useState("");
+
+  const { user } = useSelector((state) => state.auth);
+  // console.log(user)
+  useEffect(() => {
+    dispatch(getUser(userId));
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -30,20 +43,18 @@ const EventDetails = ({ userId }) => {
             `${URL}/events/organizer/${data.organizer._id}`
           );
           setOrganizer(organizerData.data);
-          console.log(organizerData.data);
+          // console.log(organizerData.data);
         }
 
         const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
-        // console.log(fetchTicket.data.tickets.quantity);
+        // console.log(fetchTicket.data.tickets);
         setTicket(fetchTicket.data.tickets.quantity);
+        setTicketSold(fetchTicket.data.tickets.sold);
 
         // Check if the user has already booked a ticket
-        const userResponse = await axios.get(`${URL}/auth/get-user/${userId}`);
-
-        const user = userResponse.data._id;
-        // console.log(user)
-        const hasBookedTicket = data.attendees.includes(user);
-        setHasBooked(hasBookedTicket);
+        // console.log(user);
+        userId = user._id;
+        setUserID(userId);
       } catch (error) {
         console.error(error);
         setError("Failed to fetch event details");
@@ -51,27 +62,19 @@ const EventDetails = ({ userId }) => {
     };
 
     fetchEvent();
-  }, [id, userId]);
+  }, [id]);
 
-  console.log(userId);
+  const isOrganizer = organizer && userID === organizer._id;
 
   const buyTicketHandler = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      };
-
-      await axios.post(`${URL}/events/buy-ticket/${id}`, { quantity }, config);
+      await axios.post(`${URL}/events/buy-ticket/${id}`, { quantity });
 
       setLoading(false);
       toast.success("Ticket purchased successfully!");
-      setHasBooked(true);
       navigate("/event-list");
     } catch (error) {
       setLoading(false);
@@ -98,51 +101,48 @@ const EventDetails = ({ userId }) => {
           className="rounded-lg w-[100%] "
         />
 
-        <div className="my-4 flex justify-between">
+        <div className="my-4 flex justify-between items-center">
           <div className="flex flex-col">
             <p>
               <strong>Date:</strong> {new Date(event.date).toLocaleString()}
             </p>
             <div>
               <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
-              <p className="text-gray-700 mb-4">{event.subTitle}</p>
+              <p className="text-gray-700 mb-4 w-[90%] ">{event.subTitle}</p>
             </div>
           </div>
-          {!organizer
-            ? ""
-            : !hasBooked &&
-              ticket > 0 && (
-                <div className="">
-                  <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
-                      Quantity
-                    </label>
-                    <input
-                      type="number"
-                      value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-                      min="1"
-                      max={ticket || 1}
-                    />
-                  </div>
+          {!user.hasBooked && ticket > 0 && !isOrganizer && (
+            <div className="px-2">
+              <div className="mb-4  ">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Quantity
+                </label>
+                <input
+                  type="text"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                  className="w-[100%] px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+                  min="1"
+                  max={ticket || 1}
+                />
+              </div>
 
-                  <button
-                    onClick={buyTicketHandler}
-                    className="w-[100%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
-                    disabled={loading || ticket <= 0}
-                  >
-                    {loading ? "Processing..." : "Buy Ticket"}
-                  </button>
-                </div>
-              )}
+              <button
+                onClick={buyTicketHandler}
+                className="w-[100%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
+                disabled={loading || ticket <= 0}
+              >
+                {loading ? "Processing..." : "Buy Ticket"}
+              </button>
+            </div>
+          )}
 
-          {hasBooked && (
+          {user.hasBooked && (
             <button
-              className=" text-black py-2 px-4 rounded cursor-not-allowed"
+              className=" text-black px-4 py-2 rounded cursor-not-allowed bg-green-100 flex items-center gap-2 "
               disabled
             >
-              Booked
+              Booked <IoMdCheckmarkCircle color="white" />
             </button>
           )}
 
@@ -157,7 +157,7 @@ const EventDetails = ({ userId }) => {
         </div>
         {error && <p className="text-red-500 mt-2">{error}</p>}
 
-        <div className="flex justify-between border rounded-lg items-center p-2">
+        <div className="flex justify-between border rounded-lg items-center px-2 py-6">
           <div className="flex flex-col">
             <p className=" mb-2 font-bold">Date and Time:</p>
             {new Date(event.date).toLocaleString()}
@@ -172,14 +172,19 @@ const EventDetails = ({ userId }) => {
           <h1 className="font-bold my-4">About this event</h1>
 
           <p>{event.description}</p>
+
+          <p className="mt-6 font-bold"> Available Seat: {ticket}/{event.limit} </p>
         </div>
-        {/* <AdminLink>
+        <AdminLink>
           <div className="border my-4 rounded-lg p-4">
             <h1 className="font-bold my-4">Tickets Metrics</h1>
 
-            <p>{event.description}</p>
+            <div className="flex justify-between p-2">
+              <p>Ticket Sold: {ticketSold}</p>
+              <p>Ticket Remaining: {ticket} </p>
+            </div>
           </div>
-        </AdminLink> */}
+        </AdminLink>
 
         <div className="border my-4 rounded-lg p-4">
           <h1 className="font-bold my-4">Organized By:</h1>
