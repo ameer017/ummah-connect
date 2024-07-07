@@ -15,6 +15,7 @@ const {
   upgradeUser,
   logoutUser,
   sendAutomatedEmail,
+  getUserBookedEvents,
 } = require("../controllers/authController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 const route = express.Router();
@@ -36,6 +37,7 @@ route.get("/login-status", loginStatus);
 route.patch("/update-user", protect, updateUser);
 route.patch("/reset-password/:resetToken", resetPassword);
 route.patch("/verify-user/:verificationToken", verifyUser);
+route.get("/:userId/booked-events", protect, getUserBookedEvents);
 
 route.delete("/:id", protect, deleteUser);
 

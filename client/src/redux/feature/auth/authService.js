@@ -112,6 +112,17 @@ const loginWithGoogle = async (userToken) => {
   return response.data;
 };
 
+// export const getUserBookedEvents = async (userId) => {
+//   try {
+//     const response = await axios.get(`${API_URL}${userId}/booked-events`);
+//     console.log(response.data)
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching user's booked events:", error);
+//     throw error;
+//   }
+// };
+
 const authService = {
   register,
   login,
@@ -127,7 +138,7 @@ const authService = {
   getUsers,
   deleteUser,
   upgradeUser,
-  loginWithGoogle,
+  loginWithGoogle
 };
 
 export default authService;
