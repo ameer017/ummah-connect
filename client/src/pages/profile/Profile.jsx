@@ -190,6 +190,11 @@ const Profile = ({ userId }) => {
             </div>
           </div>
           <div className="p-4">
+            <p>Enrolled Courses</p>
+
+            <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border"></div>
+          </div>
+          <div className="p-4">
             <p>Upcoming Events</p>
             <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
               {events?.length > 0 ? (
@@ -238,34 +243,33 @@ const Profile = ({ userId }) => {
           </div>
           <div className="p-4">
             <h1>Recent Forum Activity</h1>
-            <div className="border p-6 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="w-4/4 bg-white p-4 border rounded-lg cursor-pointer">
-                {threads?.length > 0 ? (
-                  <ul>
-                    {threads?.map((thread) => (
-                      <li key={thread._id} className="mb-4">
-                        <p className="mt-4">{thread.title}</p>
-                        <p className="text-gray-700">
-                          {thread.content.length > 50
-                            ? `${thread.content.substring(0, 50)}...`
-                            : thread.content}
-                        </p>
-                        <Link
-                          to={`/threads/${thread._id}`}
-                          className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4"
-                        >
-                          <IoIosArrowRoundForward size={14} /> View Thread
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No threads available.</p>
-                )}
-              </div>
+
+            <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+              {threads?.length > 0 ? (
+                threads.map((thread) => (
+                  <div
+                    key={thread._id}
+                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                  >
+                    <p className="mt-4">{thread.title}</p>
+                    <p className="text-gray-700 border-b py-2">
+                      {thread.content.length > 50
+                        ? `${thread.content.substring(0, 50)}...`
+                        : thread.content}
+                    </p>
+                    <Link
+                      to={`/threads/${thread._id}`}
+                      className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4"
+                    >
+                      <IoIosArrowRoundForward size={14} /> View Thread
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <p>No events available.</p>
+              )}
             </div>
           </div>
-          <div className="border p-4">mmm</div>
         </div>
       </div>
 
