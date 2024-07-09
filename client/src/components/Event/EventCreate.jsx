@@ -15,6 +15,7 @@ const initialState = {
   ticketPrice: "",
   photo: "",
   trending: false,
+  paymentLink: "",
 };
 
 const EventCreate = () => {
@@ -74,6 +75,7 @@ const EventCreate = () => {
         photo: imageUrl,
         tickets: {
           price: formData.ticketPrice,
+          paymentLink: formData.paymentLink,
         },
       };
 
@@ -166,17 +168,31 @@ const EventCreate = () => {
               />
             </div>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Ticket Price
-            </label>
-            <input
-              type="number"
-              name="ticketPrice"
-              value={formData.ticketPrice}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-            />
+          <div className="flex justify-between">
+            <div className="mb-4 w-[48%]">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Ticket Price
+              </label>
+              <input
+                type="number"
+                name="ticketPrice"
+                value={formData.ticketPrice}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+            <div className="mb-4 w-[48%]">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Ticket Payment Link
+              </label>
+              <input
+                type="text"
+                name="paymentLink"
+                value={formData.paymentLink}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">

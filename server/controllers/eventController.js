@@ -39,6 +39,7 @@ const createEvent = async (req, res) => {
       price: tickets.price,
       quantity: limit,
       sold: tickets.sold || 0,
+      paymentLink: tickets.paymentLink,
     });
     const createdTicket = await ticket.save();
 
@@ -163,6 +164,13 @@ const upcomingEvents = async (req, res) => {
 const pastEvents = async (req, res) => {
   try {
     const pastEvents = await Event.find().where("date").lte(Date.now()).exec();
+
+    for (let event of pastEvents) {
+      if (event.trending) {
+        event.trending = false;
+        await event.save();
+      }
+    }
     res.status(200).json(pastEvents);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -232,8 +240,8 @@ const buyTicket = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.hasBooked = true;
-    user.bookedEvents.push(eventId)
+    event.hasBooked = true;
+    user.bookedEvents.push(eventId);
     await user.save();
 
     event.attendees.push(userId);
@@ -272,6 +280,7 @@ const buyTicket = async (req, res) => {
     Your Ticket Information:
     -------------------------
     Quantity: ${quantity}
+    Price: ${price}
     
     We appreciate your support and look forward to seeing you at the event.
     

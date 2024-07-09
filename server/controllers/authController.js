@@ -499,7 +499,6 @@ const getUser = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
-      hasBooked
     } = user;
 
     res.status(201).json({
@@ -517,7 +516,6 @@ const getUser = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
-      hasBooked
     });
   } else {
     res.status(400);
@@ -732,7 +730,7 @@ const getUserBookedEvents = async (req, res) => {
 
     // Find the user by ID and populate the bookedEvents field
     const userEvent = await User.findById(userId).populate("bookedEvents");
-    console.log(userEvent)
+    console.log(userEvent);
 
     if (!userEvent) {
       return res.status(404).json({ message: "User not found" });
