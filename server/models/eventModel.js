@@ -6,6 +6,7 @@ const ticketSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },
     sold: { type: Number, default: 0 },
+    paymentLink: { type: String, default: "" },
   },
   { timestamps: true }
 );
@@ -32,6 +33,10 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
     limit: { type: Number, required: true },
+    hasBooked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

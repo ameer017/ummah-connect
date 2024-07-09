@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdEventNote, MdOutlineCreateNewFolder } from "react-icons/md";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { FaAd } from "react-icons/fa";
+import { AdminLink } from "../Protect/HiddenLink";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const EventList = ({ userId }) => {
@@ -113,9 +114,11 @@ const EventList = ({ userId }) => {
           <div className="p-4">
             <div className="flex items-center justify-between">
               <h1 className="font-bold text-3xl">Events</h1>
-              <Link to="/create-event">
-                <MdOutlineCreateNewFolder size={20} />
-              </Link>
+              <AdminLink>
+                <Link to="/create-event">
+                  <MdOutlineCreateNewFolder size={20} />
+                </Link>
+              </AdminLink>
             </div>
 
             <div className="p-4">
@@ -127,7 +130,11 @@ const EventList = ({ userId }) => {
                       key={event._id}
                       className="w-full bg-white p-4 border rounded-lg cursor-pointer"
                     >
-                      <img src={event.photo} alt={event.title} className="rounded-lg  " />
+                      <img
+                        src={event.photo}
+                        alt={event.title}
+                        className="rounded-lg  "
+                      />
                       <p className="mt-4">{event.title}</p>
                       <p className="text-gray-700 border-b py-2">
                         {event.description.length > 100
