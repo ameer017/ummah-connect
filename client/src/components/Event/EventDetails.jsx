@@ -25,7 +25,7 @@ const EventDetails = ({ userId }) => {
   const [ticketDetails, setTicketDetails] = useState([]);
   const [userID, setUserID] = useState("");
   const [ticketSold, setTicketSold] = useState("");
-  const[price, setPrice] = useState([])
+  const [price, setPrice] = useState([]);
 
   const { user } = useSelector((state) => state.auth);
   // console.log(user)
@@ -54,7 +54,7 @@ const EventDetails = ({ userId }) => {
         setTicket(fetchTicket.data.tickets.quantity);
         setTicketSold(fetchTicket.data.tickets.sold);
         setPrice(fetchTicket.data.tickets.price);
-        console.log(price)
+        // console.log(price);
 
         // Check if the user has already booked a ticket
         // console.log(user);
@@ -84,14 +84,14 @@ const EventDetails = ({ userId }) => {
       // Assuming data contains the payment link
       const paymentLink = ticketDetails.paymentLink;
       if (paymentLink) {
-        window.location.href = paymentLink; 
+        window.location.href = paymentLink;
       } else {
         throw new Error("Payment link not available");
       }
 
       setLoading(false);
-      toast.success("Ticket purchased successfully!");
-      navigate("/event-list");
+      // navigate("/event-list");
+      // toast.success("Ticket purchased successfully!");
     } catch (error) {
       setLoading(false);
       setError(
@@ -111,10 +111,7 @@ const EventDetails = ({ userId }) => {
 
       <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[10rem] ">
         <img
-          src={
-            event.photo ||
-            "https://images.pexels.com/photos/2291592/pexels-photo-2291592.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          }
+          src={event.photo}
           alt={event.title}
           className="rounded-lg w-[100%] "
         />

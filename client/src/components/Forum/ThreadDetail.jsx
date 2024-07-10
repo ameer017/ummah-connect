@@ -15,6 +15,7 @@ const ThreadDetail = () => {
   const [replyContent, setReplyContent] = useState("");
   const [message, setMessage] = useState("");
   const [replies, setReplies] = useState([]);
+  
   const [editingReplyId, setEditingReplyId] = useState(null);
   const [editingReplyContent, setEditingReplyContent] = useState("");
   const [reportReason, setReportReason] = useState('');
@@ -36,6 +37,8 @@ const ThreadDetail = () => {
 
     fetchThread();
   }, [id]);
+
+  
 
   const handleEdit = async () => {
     try {
