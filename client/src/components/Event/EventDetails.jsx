@@ -22,8 +22,10 @@ const EventDetails = ({ userId }) => {
   const [error, setError] = useState("");
   const [organizer, setOrganizer] = useState(null);
   const [ticket, setTicket] = useState([]);
+  const [ticketDetails, setTicketDetails] = useState([]);
   const [userID, setUserID] = useState("");
   const [ticketSold, setTicketSold] = useState("");
+  const [price, setPrice] = useState([]);
 
   const { user } = useSelector((state) => state.auth);
   // console.log(user)
@@ -48,8 +50,11 @@ const EventDetails = ({ userId }) => {
 
         const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
         // console.log(fetchTicket.data.tickets);
+        setTicketDetails(fetchTicket.data.tickets);
         setTicket(fetchTicket.data.tickets.quantity);
         setTicketSold(fetchTicket.data.tickets.sold);
+        setPrice(fetchTicket.data.tickets.price);
+        // console.log(price);
 
         // Check if the user has already booked a ticket
         // console.log(user);
@@ -64,6 +69,7 @@ const EventDetails = ({ userId }) => {
     fetchEvent();
   }, [id]);
 
+  // console.log(ticketDetails);
   const isOrganizer = organizer && userID === organizer._id;
 
   const buyTicketHandler = async () => {
@@ -71,14 +77,26 @@ const EventDetails = ({ userId }) => {
     setError("");
 
     try {
-      await axios.post(`${URL}/events/buy-ticket/${id}`, { quantity });
+      const { data } = await axios.post(`${URL}/events/buy-ticket/${id}`, {
+        quantity,
+      });
+
+      // Assuming data contains the payment link
+      const paymentLink = ticketDetails.paymentLink;
+      if (paymentLink) {
+        window.location.href = paymentLink;
+      } else {
+        throw new Error("Payment link not available");
+      }
 
       setLoading(false);
-      toast.success("Ticket purchased successfully!");
-      navigate("/event-list");
+      // navigate("/event-list");
+      // toast.success("Ticket purchased successfully!");
     } catch (error) {
       setLoading(false);
-      setError(error.response?.data?.message || "An error occurred");
+      setError(
+        error.response?.data?.message || error.message || "An error occurred"
+      );
     }
   };
 
@@ -93,10 +111,7 @@ const EventDetails = ({ userId }) => {
 
       <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[10rem] ">
         <img
-          src={
-            event.photo ||
-            "https://images.pexels.com/photos/2291592/pexels-photo-2291592.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          }
+          src={event.photo}
           alt={event.title}
           className="rounded-lg w-[100%] "
         />
@@ -111,7 +126,7 @@ const EventDetails = ({ userId }) => {
               <p className="text-gray-700 mb-4 w-[90%] ">{event.subTitle}</p>
             </div>
           </div>
-          {!user.hasBooked && ticket > 0 && !isOrganizer && (
+          {!event.hasBooked && ticket > 0 && !isOrganizer && (
             <div className="px-2">
               <div className="mb-4  ">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -132,12 +147,12 @@ const EventDetails = ({ userId }) => {
                 className="w-[100%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
                 disabled={loading || ticket <= 0}
               >
-                {loading ? "Processing..." : "Buy Ticket"}
+                {loading ? "Processing..." : `Buy Ticket : # ${price}`}
               </button>
             </div>
           )}
 
-          {user.hasBooked && (
+          {event.hasBooked && (
             <button
               className=" text-black px-4 py-2 rounded cursor-not-allowed bg-green-100 flex items-center gap-2 "
               disabled
@@ -173,7 +188,10 @@ const EventDetails = ({ userId }) => {
 
           <p>{event.description}</p>
 
-          <p className="mt-6 font-bold"> Available Seat: {ticket}/{event.limit} </p>
+          <p className="mt-6 font-bold">
+            {" "}
+            Available Seat: {ticket}/{event.limit}{" "}
+          </p>
         </div>
         <AdminLink>
           <div className="border my-4 rounded-lg p-4">

@@ -57,10 +57,7 @@ const authSchema = new Schema(
       instagram: { type: String, default: "" },
       linkedin: { type: String, default: "" },
     },
-    hasBooked: {
-      type: Boolean,
-      default: false,
-    },
+    
     bookedEvents: [
       {
         type: mongoose.Schema.Types.ObjectId,
