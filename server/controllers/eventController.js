@@ -266,26 +266,26 @@ const buyTicket = async (req, res) => {
       subject: "Ticket Purchase Confirmation",
       text: `As salam 'alaekum Dear ${user.firstName} 🤗,
     
-    Thank you for purchasing ${quantity} ticket(s) for the event "${
+      Thank you for purchasing ${quantity} ticket(s) for the event "${
         event.title
       }".
     
-    Event Details:
-    ---------------
-    Title: ${event.title}
-    Description: ${event.description}
-    Date: ${new Date(event.date).toLocaleString()}
-    Location: ${event.location}
+      Event Details:
+      ---------------
+      Title: ${event.title}
+      Description: ${event.description}
+      Date: ${new Date(event.date).toLocaleString()}
+      Location: ${event.location}
     
-    Your Ticket Information:
-    -------------------------
-    Quantity: ${quantity}
-    Price: ${price}
+      Your Ticket Information:
+      -------------------------
+      Quantity: ${quantity}
+      Price: ${ticket.price}
     
-    We appreciate your support and look forward to seeing you at the event.
+      We appreciate your support and look forward to seeing you at the event.
     
-    Ma' salam,
-    The UmmahConnect Event Team
+      Ma' salam,
+      The UmmahConnect Event Team
     `,
     };
 
@@ -331,6 +331,8 @@ const getTicketsSold = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   createEvent,
   getEvents,
@@ -345,5 +347,6 @@ module.exports = {
   getOrganizerById,
   getTicketsSold,
   getEventWithTicketById,
+
   validateCreateEvent,
 };

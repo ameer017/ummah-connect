@@ -11,6 +11,7 @@ router.get("/all-threads", protect, discussionController.getAllThreads);
 router.get("/threads/:id", protect, discussionController.getThreadById);
 
 // Reply routes
+router.get("/threads/replies", discussionController.getReplies);
 router.post(
   "/threads/:threadId/replies",
   protect,

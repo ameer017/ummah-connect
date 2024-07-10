@@ -36,12 +36,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
                 </p>
               </div>
             </div>
-            <button
-              className="p-2 bg-white text-white border rounded-full"
-              onClick={toggleSidebar}
-            >
-              <IoIosArrowBack size={25} color="black" />
-            </button>
+            <div className="-mr-[40px] ">
+              <button
+                className="p-2 bg-white text-white border rounded-full"
+                onClick={toggleSidebar}
+              >
+                <IoIosArrowBack size={25} color="black" />
+              </button>
+            </div>
           </div>
 
           <Link
@@ -108,12 +110,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
       )}
 
       {!isSidebarOpen && (
-        <button
-          className="p-2 bg-white fixed top-40 left-0 z-10 mt-2 mr-2 border rounded-full"
-          onClick={toggleSidebar}
-        >
-          <IoIosArrowForward size={25} color="black" />
-        </button>
+        <div className="">
+          <button
+            className="p-2 bg-white fixed top-40 left-0 z-10 mt-2 mr-2 border rounded-full"
+            onClick={toggleSidebar}
+          >
+            <IoIosArrowForward size={25} color="black" />
+          </button>
+        </div>
       )}
     </>
   );
