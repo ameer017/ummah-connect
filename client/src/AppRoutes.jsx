@@ -24,6 +24,7 @@ import EventDetails from "./components/Event/EventDetails";
 import EventCreate from "./components/Event/EventCreate";
 import MentorshipForm from "./components/Courses/MentorshipForm";
 import MentorshipList from "./components/Courses/MentorshipList";
+import Settings from "./pages/settings/Settings";
 
 const AppRoutes = () => (
   <Routes>
@@ -87,6 +88,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <Contact />
+        </Layout>
+      }
+    />
+    <Route
+      path="/settings"
+      element={
+        <Layout>
+          <Settings />
         </Layout>
       }
     />

@@ -1,24 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import ChangeRole from "../../components/ChangeRole/ChangeRole";
 import PageMenu from "../../components/PageMenu/PageMenu";
 import Search from "../../components/Search/SearchUsers";
-import { deleteUser, getUsers } from "../../redux/feature/auth/authSlice";
+import { deleteUser, getUser, getUsers } from "../../redux/feature/auth/authSlice";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { FILTER_USERS, selectUsers } from "../../redux/feature/filterSlice";
 import ReactPaginate from "react-paginate";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import Sidebar from "../Sidebar/Sidebar";
 
-const UserList = () => {
+
+const UserList = ({userId}) => {
+  useRedirectLoggedOutUser("/user");
   const dispatch = useDispatch();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [search, setSearch] = useState("");
 
-  const { users, isLoading, isLoggedIn, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
+  const { users, isLoading, user } = useSelector((state) => state.auth);
   const filteredUsers = useSelector(selectUsers);
+  const initialState = {
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    photo: user?.photo || "",
+    role: user?.role || "",
+  };
+
+  const [profile, setProfile] = useState(initialState);
+
+  useEffect(() => {
+    dispatch(getUser(userId));
+  }, [dispatch, userId]);
+
+  useLayoutEffect(() => {
+    if (user) {
+      setProfile({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        photo: user.photo,
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
     dispatch(getUsers());
@@ -63,14 +89,23 @@ const UserList = () => {
     setItemOffset(newOffset);
   };
 
-  // End Pagination
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
-    <section className="py-6">
-      <div className="container mx-auto px-4">
-        <PageMenu />
+    <section className="flex flex-col md:flex-row min-h-screen">
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        profile={profile}
+        user={user}
+      />
 
-        <div className="mt-6">
+      <div className={`w-full bg-white p-4 flex justify-center ${
+          isSidebarOpen ? "md:ml-1/4" : ""
+        }`}>
+        <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-4">
             {/* <h3 className="text-lg font-medium">All Users</h3> */}
             <Search

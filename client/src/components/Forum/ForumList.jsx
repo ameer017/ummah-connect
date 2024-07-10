@@ -15,6 +15,8 @@ const ForumList = ({ userId }) => {
 
   const [threads, setThreads] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
   const dispatch = useDispatch();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -52,8 +54,11 @@ const ForumList = ({ userId }) => {
       try {
         const response = await axios.get(`${URL}/discussion/all-threads`);
         setThreads(response.data);
+        // console.log(response.data.createdBy)
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching threads:", error);
+        setLoading(false);
       }
     };
 
@@ -63,6 +68,21 @@ const ForumList = ({ userId }) => {
   const filteredData = threads.filter((thread) =>
     thread.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) return <p>Loading...</p>;
+  if (!threads) return <p>Threads not found</p>;
+
+  const formatDate = (dateString) => {
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
+
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -110,13 +130,20 @@ const ForumList = ({ userId }) => {
                     to={`/threads/${thread._id}`}
                     className="w-full bg-white p-4 border rounded-lg cursor-pointer"
                   >
-                    <p className="mt-4">{thread.title}</p>
+                    <p className="mt-4 text-2xl font-bold">{thread.title}</p>
                     <p className="mt-4">
                       {thread.content.length > 150
                         ? `${thread.content.substring(0, 150)}...`
                         : thread.content}
                     </p>
-                    {/* <p className="border-y py-2 mt-2">Latest Activity:</p> */}
+                    <div className="border-y mt-2 flex items-center justify-between">
+                      <p className=" py-2 mt-2">
+                        Author: {thread.createdBy.username}{" "}
+                      </p>
+                      <p className=" py-2 mt-2">
+                        Last Activity: {formatDate(thread.createdBy.updatedAt)}{" "}
+                      </p>
+                    </div>
                   </Link>
                 ))
               ) : (
