@@ -82,9 +82,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
           </Link>
           <Link
             className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-              "/content"
+              "/content-categories"
             )}`}
-            to="/content"
+            to="/content-categories"
           >
             <GrNotes size={25} /> <p className="text-[17px]">Content</p>
           </Link>

@@ -71,10 +71,10 @@ const Header = ({ userId }) => {
   return (
     <div>
       <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] bg-[#fff]  ">
-        <nav className="flex justify-between">
+        <nav className="flex justify-between items-center">
           <Link
             to="/"
-            className="block mr-2 w-30 text-2xl font-serif font-bold text-[#000]"
+            className="block  w-30 text-2xl font-serif font-bold text-[#000]"
           >
             Ummah Connect
           </Link>
