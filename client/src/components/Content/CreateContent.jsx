@@ -130,7 +130,7 @@ const CreateContent = () => {
 				description: "",
 				topics: [],
 			});
-			navigate("/content-list");
+			navigate("/content-categories");
 		} catch (error) {
 			console.error("Error creating content:", error.response.data);
 			setError(error.response.data.message || "An error occurred");

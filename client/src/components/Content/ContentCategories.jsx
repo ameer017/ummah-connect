@@ -124,7 +124,7 @@ const ContentCategories = ({ userId }) => {
         <div className="flex flex-col items-left  w-full md:w-5/6 p-4">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-3xl font-bold mb-6">Explore Islamic Content</h1>
-            <AdminLink>
+            {/* <AdminLink>
               <button
                 className="bg-blue-800 rounded-full py-2 px-4 text-white "
                 onClick={() => setIsFormVisible(!isFormVisible)}
@@ -135,7 +135,7 @@ const ContentCategories = ({ userId }) => {
                   <MdAdd color="white" size={20} />
                 )}
               </button>
-            </AdminLink>
+            </AdminLink> */}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -145,8 +145,8 @@ const ContentCategories = ({ userId }) => {
                 className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100 flex  flex-col justify-center"
                 onClick={() => handleCategoryClick(category)}
               >
-                <h1 className="font-bold">{category.type}</h1>
-                <p>{category.type}</p>
+                <h1 className="text-2xl font-bold">{category.type}</h1>
+                <p>{category.description}</p>
 
                 <Link
                   to={`/content/${category._id}`}
