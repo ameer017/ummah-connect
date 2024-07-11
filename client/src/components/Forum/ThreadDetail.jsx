@@ -150,7 +150,7 @@ const ThreadDetail = ({ userId }) => {
   if (!thread) return <p>Thread not found</p>;
 
   const isCreator = creator && userID === creator._id;
-  const isReplyer = replyerID && userID === replyerID._id
+  const isReplyer = replyerID && userID === replyerID._id;
 
   return (
     <div className="min-h-screen border flex items-center justify-center bg-white relative">
@@ -284,24 +284,23 @@ const ThreadDetail = ({ userId }) => {
                         </div>
 
                         {isReplyer && (
-
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => {
-                              setEditingReplyId(reply._id);
-                              setEditingReplyContent(reply.content);
-                            }}
-                            className=" text-white font-bold py-1 px-2 rounded"
-                          >
-                            <FaPenFancy color="blue" size={20} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteReply(reply._id)}
-                            className=" text-white font-bold py-1 px-2 rounded"
-                          >
-                            <FaTrash color="red" size={20} />
-                          </button>
-                        </div>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                setEditingReplyId(reply._id);
+                                setEditingReplyContent(reply.content);
+                              }}
+                              className=" text-white font-bold py-1 px-2 rounded"
+                            >
+                              <FaPenFancy color="blue" size={20} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteReply(reply._id)}
+                              className=" text-white font-bold py-1 px-2 rounded"
+                            >
+                              <FaTrash color="red" size={20} />
+                            </button>
+                          </div>
                         )}
                       </div>
                     </>
