@@ -14,7 +14,6 @@ const Article = ({ userId }) => {
   useRedirectLoggedOutUser("/login");
   const { id } = useParams();
 
-  
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [content, setContent] = useState([]);
@@ -107,6 +106,23 @@ const Article = ({ userId }) => {
       >
         <div className="flex flex-col items-left w-full md:w-5/6 p-4">
           <div className="p-4">
+            <div className="border my-6 h-[30vh] overflow-hidden rounded-lg">
+              <img
+                src={
+                  type === "article"
+                    ? "https://images.pexels.com/photos/4792085/pexels-photo-4792085.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                    : type === "audio"
+                    ? "https://images.pexels.com/photos/257904/pexels-photo-257904.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                    : type === "video"
+                    ? "https://images.pexels.com/photos/5662857/pexels-photo-5662857.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                    : ""
+                }
+                alt={type}
+                className="w-full h-full object-cover"
+                srcSet=""
+              />
+            </div>
+
             <div className="flex items-center justify-between flex-col ">
               <h1 className="font-bold text-3xl uppercase text-left w-[100%]">
                 {type}s

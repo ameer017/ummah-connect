@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://console.cloudinary.com"],
     credentials: true,
     optionSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
