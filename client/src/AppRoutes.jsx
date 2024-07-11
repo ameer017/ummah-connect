@@ -9,7 +9,6 @@ import ChangePassword from "./pages/auth/ChangePassword";
 import Profile from "./pages/profile/Profile";
 import CreateContent from "./components/Content/CreateContent";
 import EditContent from "./components/Content/EditContent";
-import ContentListPage from "./components/Content/ContentListPage";
 import ContentCategories from "./components/Content/ContentCategories";
 import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
@@ -24,6 +23,9 @@ import EventDetails from "./components/Event/EventDetails";
 import EventCreate from "./components/Event/EventCreate";
 import MentorshipForm from "./components/Courses/MentorshipForm";
 import MentorshipList from "./components/Courses/MentorshipList";
+import Settings from "./pages/settings/Settings";
+import Article from "./components/Content/Article";
+import ContentDetail from "./components/Content/ContentDetail";
 
 const AppRoutes = () => (
   <Routes>
@@ -31,7 +33,7 @@ const AppRoutes = () => (
     <Route path="/register" element={<Signup />} />
     <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
-   
+
     <Route
       path="/create-content"
       element={
@@ -49,10 +51,10 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/content-list"
+      path="/content/:id"
       element={
         <Layout>
-          <ContentListPage />
+          <Article />
         </Layout>
       }
     />
@@ -64,7 +66,16 @@ const AppRoutes = () => (
         </Layout>
       }
     />
-  
+
+    <Route
+      path="/content/single/:id"
+      element={
+        <Layout>
+          <ContentDetail />
+        </Layout>
+      }
+    />
+
     <Route path="/verify/:verificationToken" element={<Verify />} />
     <Route
       path="/profile"
@@ -87,6 +98,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <Contact />
+        </Layout>
+      }
+    />
+    <Route
+      path="/settings"
+      element={
+        <Layout>
+          <Settings />
         </Layout>
       }
     />
@@ -143,7 +162,6 @@ const AppRoutes = () => (
       }
     />
     <Route
-
       path="/course-list"
       element={
         <Layout>
@@ -152,7 +170,6 @@ const AppRoutes = () => (
       }
     />
     <Route
-
       path="/event/:id"
       element={
         <Layout>
@@ -185,7 +202,6 @@ const AppRoutes = () => (
         </Layout>
       }
     />
-
   </Routes>
 );
 
