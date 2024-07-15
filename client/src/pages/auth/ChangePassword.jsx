@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -9,6 +9,9 @@ import {
   RESET,
 } from "../../redux/feature/auth/authSlice";
 import { sendAutomatedEmail } from "../../redux/feature/email/emailSlice";
+import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
+import Sidebar from "../Sidebar/Sidebar";
+
 
 const initialState = {
   oldPassword: "",
@@ -17,10 +20,11 @@ const initialState = {
 };
 
 const ChangePassword = () => {
+  useRedirectLoggedOutUser("/login")
   const [formData, setFormData] = useState(initialState);
   const { oldPassword, password, password2 } = formData;
 
-  const { isLoading, user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
