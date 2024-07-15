@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,8 +10,6 @@ import {
 } from "../../redux/feature/auth/authSlice";
 import { sendAutomatedEmail } from "../../redux/feature/email/emailSlice";
 import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
-import Sidebar from "../Sidebar/Sidebar";
-
 
 const initialState = {
   oldPassword: "",
@@ -20,7 +18,7 @@ const initialState = {
 };
 
 const ChangePassword = () => {
-  useRedirectLoggedOutUser("/login")
+  useRedirectLoggedOutUser("/login");
   const [formData, setFormData] = useState(initialState);
   const { oldPassword, password, password2 } = formData;
 
@@ -53,7 +51,7 @@ const ChangePassword = () => {
     const emailData = {
       subject: "Password Changed - UmmahConnect",
       send_to: user.emailAddress,
-      reply_to: "noreply@zino",
+      reply_to: "noreply@ummahconnect",
       template: "changePassword",
       url: "/forgot",
     };
@@ -65,8 +63,16 @@ const ChangePassword = () => {
     navigate("/login");
   };
 
+  const prev = async () => {
+    navigate(-1);
+  };
   return (
     <div className="h-[100vh] border  flex items-center justify-center">
+      <div className="border p-2 absolute top-0 left-0">
+        <button className="underline" onClick={prev}>
+          BACK
+        </button>
+      </div>
       <div className="flex flex-col items-center justify-center light">
         <div className="w-[300px] md:w-[500px] bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -74,8 +80,6 @@ const ChangePassword = () => {
           </h2>
 
           <form className="flex flex-col" onSubmit={updatePassword}>
-           
-
             <PasswordInput
               placeholder="current password"
               name="oldPassword"
