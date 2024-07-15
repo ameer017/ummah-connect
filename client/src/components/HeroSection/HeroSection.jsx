@@ -23,7 +23,7 @@ const companies = [
     logo: "",
     description: "This is a brief description of Company Three.",
   },
-  // Add more companies as needed
+  
 ];
 
 const spotlight = [

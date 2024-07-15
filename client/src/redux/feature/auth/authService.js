@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BACKEND_URL = "http://localhost:5000";
+const BACKEND_URL = "https://ummah-connect-server-side.vercel.app";
 export const API_URL = `${BACKEND_URL}/auth/`;
 
 export const validateEmail = (email) => {

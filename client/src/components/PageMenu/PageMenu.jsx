@@ -27,17 +27,17 @@ const PageMenu = () => {
         </div>
       ) : (
         <div>
-          <nav className="w-[100%] bg-blue-600 rounded-lg  mb-4">
+          <nav className="w-[100%]  rounded-lg  mb-4">
             <ul className="flex gap-[20px] justify-center p-2  items-center ">
               <li className="text-[#fff] ">
-                <NavLink to="/profile">Profile</NavLink>
+                {/* <NavLink to="/profile">Profile</NavLink> */}
               </li>
-              <li className="text-[#fff] ">
-                <NavLink to="/change-password">Change Password</NavLink>
+              <li className="text-[#000] font-bold text-xl ">
+                <NavLink to="/change-password">Change Password.</NavLink>
               </li>
               <AdminLink>
                 <li className="text-[#fff] ">
-                  <NavLink to="/users">Users</NavLink>
+                  {/* <NavLink to="/users">Users</NavLink> */}
                 </li>
               </AdminLink>
             </ul>
