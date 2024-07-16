@@ -125,7 +125,7 @@ const EventList = ({ userId }) => {
                   events.map((event) => (
                     <div
                       key={event._id}
-                      className="w-full bg-white p-4 border rounded-lg cursor-pointer"
+                      className="w-full bg-green-100 p-4 border rounded-lg cursor-pointer"
                     >
                       <img
                         src={event.photo}
@@ -179,7 +179,7 @@ const EventList = ({ userId }) => {
                   trending.map((event) => (
                     <div
                       key={event._id}
-                      className="w-full bg-white p-4 border rounded-lg cursor-pointer"
+                      className="w-full bg-green-100 p-4 border rounded-lg cursor-pointer"
                     >
                       <p>
                         <MdEventNote size={15} />
@@ -225,7 +225,7 @@ const EventList = ({ userId }) => {
                   past.map((event) => (
                     <div
                       key={event._id}
-                      className="w-full bg-white p-4 border rounded-lg cursor-pointer"
+                      className="w-full bg-red-100 p-4 border rounded-lg cursor-pointer"
                     >
                       <p>
                         <MdEventNote size={15} />

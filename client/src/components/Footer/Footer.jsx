@@ -9,9 +9,22 @@ const Footer = () => {
     <>
       <footer className="bg-[#0A66C2] text-white pt-12 pb-8 px-4">
         <div className="container overflow-hidden flex flex-col md:flex-row justify-between mx-auto px-4">
-          <h2 className=" mr-2 w-30 text-2xl font-serif font-bold">
-            Ummah Connect
-          </h2>
+          <div className="flex flex-col gap-2">
+            <h2 className=" mr-2 w-30 text-2xl font-serif font-bold">
+              Ummah Connect
+            </h2>
+            <p>Get Weekly News On Ummah Connect</p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="your email address"
+                className="bg-transparent border rounded-full p-2 w-[215px] outline-none "
+              />
+              <button className="rounded-full bg-white text-[#0A66C2] p-2 ">
+                Subscribe
+              </button>
+            </div>
+          </div>
 
           <div className=" border-t sm:flex text-sm mt-6 lg:mt-0">
             <ul className="text-white list-none p-0 font-thin flex flex-col text-left w-full">
