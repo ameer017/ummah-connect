@@ -266,7 +266,7 @@ const Profile = ({ userId }) => {
                   </div>
                 ))
               ) : (
-                <p>No events available.</p>
+                <p>No recent forum activity.</p>
               )}
             </div>
           </div>
