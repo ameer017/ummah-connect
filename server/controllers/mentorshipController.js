@@ -22,31 +22,32 @@ const createMentor = async (req, res) => {
 
 const findMentors = async (req, res) => {
   try {
-    const interests = req.params.interests.split(",");
-    console.log('Finding mentors with interests:', interests);
-    const mentors = await User.find({
-      tag: "mentor",
-      expertise: { $in: interests },
-    });
+    const interests = req.params.interests
+      ? req.params.interests.split(",")
+      : [];
+    const query = { tag: "mentor" };
+    if (interests.length > 0) {
+      query.expertise = { $in: interests };
+    }
+    const mentors = await User.find(query);
     res.status(200).send(mentors);
   } catch (error) {
-    console.error(error);
     res.status(400).send(error);
   }
 };
 
-// Function to find mentees based on expertise
 const findMentees = async (req, res) => {
   try {
-    const expertise = req.params.expertise.split(",");
-    console.log('Finding mentees with expertise:', expertise);
-    const mentees = await User.find({
-      tag: "mentee",
-      interests: { $in: expertise },
-    });
+    const expertise = req.params.expertise
+      ? req.params.expertise.split(",")
+      : [];
+    const query = { tag: "mentee" };
+    if (expertise.length > 0) {
+      query.interests = { $in: expertise };
+    }
+    const mentees = await User.find(query);
     res.status(200).send(mentees);
   } catch (error) {
-    console.error(error);
     res.status(400).send(error);
   }
 };
