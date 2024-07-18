@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import ChangeRole from "../../components/ChangeRole/ChangeRole";
-import PageMenu from "../../components/PageMenu/PageMenu";
 import Search from "../../components/Search/SearchUsers";
 import { deleteUser, getUser, getUsers } from "../../redux/feature/auth/authSlice";
 import { confirmAlert } from "react-confirm-alert";

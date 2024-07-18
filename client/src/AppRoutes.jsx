@@ -26,6 +26,7 @@ import MentorshipList from "./components/Courses/MentorshipList";
 import Settings from "./pages/settings/Settings";
 import Article from "./components/Content/Article";
 import ContentDetail from "./components/Content/ContentDetail";
+import SuscriptionList from "./components/Lists/SuscriptionList";
 
 const AppRoutes = () => (
   <Routes>
@@ -116,6 +117,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <UserList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/subscribers"
+      element={
+        <Layout>
+          <SuscriptionList />
         </Layout>
       }
     />
