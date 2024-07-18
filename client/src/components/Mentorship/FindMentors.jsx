@@ -4,7 +4,7 @@ import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const FindMentorMentee = ({ tag }) => {
-    useRedirectLoggedOutUser("/login")
+  useRedirectLoggedOutUser("/login");
   const [list, setList] = useState([]);
 
   useEffect(() => {
@@ -18,13 +18,25 @@ const FindMentorMentee = ({ tag }) => {
   }, [tag]);
 
   return (
-    <div>
-      <h1>Available {tag === "mentor" ? "Mentees" : "Mentors"}</h1>
-      <ul>
+    <div className="container mx-auto p-4 mt-6 ">
+      <h1 className="text-2xl font-bold text-center mb-4">
+        Available {tag === "mentor" ? "Mentees" : "Mentors"}
+      </h1>
+      {list.length === 0 ? (
+        <p>No data found!</p>
+      ) : (
+
+      <ul className="bg-white shadow-md rounded-lg p-4">
         {list.map((item) => (
-          <li key={item._id}>{item.name}</li>
+          <li
+            key={item._id}
+            className="border-b last:border-none p-2 hover:bg-gray-100"
+          >
+            {item.name}
+          </li>
         ))}
       </ul>
+      )}
     </div>
   );
 };

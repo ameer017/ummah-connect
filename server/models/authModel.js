@@ -15,10 +15,7 @@ const authSchema = new Schema(
     username: { type: String, required: true },
     location: { type: String, default: "Nigeria" },
     profession: { type: String, default: "Student" },
-    interests: {
-      type: String,
-      default: "Quran recitation",
-    },
+    interests: [String],
 
     emailAddress: {
       type: String,

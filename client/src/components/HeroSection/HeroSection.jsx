@@ -159,7 +159,7 @@ const HeroSection = () => {
                 Sign Up for Mentorship
                 </p>
 
-                <button className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4">Get Mentorship</button>
+                <Link to="/mentors-overview" className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4">Get Mentorship</Link>
             </div>
 
       </section>

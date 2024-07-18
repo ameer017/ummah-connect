@@ -21,13 +21,13 @@ import EventList from "./components/Event/EventList";
 import CourseList from "./components/Courses/CourseList";
 import EventDetails from "./components/Event/EventDetails";
 import EventCreate from "./components/Event/EventCreate";
-import MentorshipForm from "./components/Courses/MentorshipForm";
-import MentorshipList from "./components/Courses/MentorshipList";
 import Settings from "./pages/settings/Settings";
 import Article from "./components/Content/Article";
 import ContentDetail from "./components/Content/ContentDetail";
 import SuscriptionList from "./components/Lists/SuscriptionList";
 import Unsubscribe from "./components/Footer/Unsubscribe";
+import MentorshipSignUp from "./components/Mentorship/Mentorship";
+import FindMentorMentee from "./components/Mentorship/FindMentors";
 
 const AppRoutes = () => (
   <Routes>
@@ -208,7 +208,7 @@ const AppRoutes = () => (
       path="/mentors-overview"
       element={
         <Layout>
-          <MentorshipList />
+          <FindMentorMentee />
         </Layout>
       }
     />
@@ -216,7 +216,7 @@ const AppRoutes = () => (
       path="/create-mentorship"
       element={
         <Layout>
-          <MentorshipForm />
+          <MentorshipSignUp />
         </Layout>
       }
     />
