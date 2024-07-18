@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const MentorshipSignUp = () => {
@@ -11,6 +12,7 @@ const MentorshipSignUp = () => {
   const [interests, setInterests] = useState("");
   const [availableTimes, setAvailableTimes] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
@@ -22,6 +24,7 @@ const MentorshipSignUp = () => {
         availableTimes: availableTimes.split(","),
       });
       toast.success(`${tag} Signed up successfully`);
+      navigate("/mentors-overview");
     } catch (error) {
       setLoading(false);
       toast.error("Error signing up");
