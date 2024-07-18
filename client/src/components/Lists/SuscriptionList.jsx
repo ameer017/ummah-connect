@@ -73,6 +73,21 @@ const SuscriptionList = ({ userId }) => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  if (error) return <p>failed to fetch!</p>;
+  // if (loading) return <p>loading...</p>;
+
+  const formatDate = (dateString) => {
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
+
   return (
     <section className="flex flex-col md:flex-row min-h-screen">
       <Sidebar
@@ -87,7 +102,7 @@ const SuscriptionList = ({ userId }) => {
           isSidebarOpen ? "md:ml-1/4" : ""
         }`}
       >
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto p-6 ">
           {!loading && subscriber.length === 0 ? (
             <p>No Subscriber yet</p>
           ) : (
@@ -102,12 +117,15 @@ const SuscriptionList = ({ userId }) => {
                     <th className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
                       Email
                     </th>
+                    <th className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
                   </tr>
                 </thead>
 
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentItems.map((user, index) => {
-                    const { _id, email } = user;
+                  {currentItems.map((subscribe, index) => {
+                    const { _id, email, dateSubscribed } = subscribe;
 
                     return (
                       <tr key={_id} className="hover:bg-gray-100">
@@ -116,6 +134,9 @@ const SuscriptionList = ({ userId }) => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatDate(dateSubscribed)}
                         </td>
                       </tr>
                     );

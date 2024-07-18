@@ -1,89 +1,65 @@
+const User = require("../models/authModel");
 const Mentorship = require("../models/mentorship");
 
-// Create a mentorship connection
-const createMentorship = async (req, res) => {
-  const { mentor, mentee, notes } = req.body;
+const createMentor = async (req, res) => {
   try {
-    const mentorship = new Mentorship({
-      mentor,
-      mentee,
-      notes,
+    const { userId, tag, expertise, interests, availableTimes } = req.body;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        tag,
+        expertise,
+        interests,
+        availableTimes,
+      },
+      { new: true }
+    );
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+const findMentors = async (req, res) => {
+  try {
+    const interests = req.params.interests.split(",");
+    const mentors = await User.find({
+      role: "mentor",
+      expertise: { $in: interests },
     });
-    const createdMentorship = await mentorship.save();
-    res.status(201).json(createdMentorship);
+    res.status(200).send(mentors);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).send(error);
   }
 };
 
-// Get all mentorship connections
-const getMentorships = async (req, res) => {
+const findMentees = async (req, res) => {
   try {
-    const mentorships = await Mentorship.find()
-      .populate("mentor", "name")
-      .populate("mentee", "name");
-    res.json(mentorships);
+    const expertise = req.params.expertise.split(",");
+    const mentees = await User.find({
+      role: "mentee",
+      interests: { $in: expertise },
+    });
+    res.status(200).send(mentees);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).send(error);
   }
 };
 
-// Get a single mentorship connection
-const getMentorship = async (req, res) => {
+const scheduleSession = async (req, res) => {
   try {
-    const mentorship = await Mentorship.findById(req.params.id)
-      .populate("mentor", "name")
-      .populate("mentee", "name");
-    if (mentorship) {
-      res.json(mentorship);
-    } else {
-      res.status(404).json({ message: "Mentorship not found" });
-    }
+    const { mentorId, menteeId, sessionDate, topics } = req.body;
+    const session = new Mentorship({ mentorId, menteeId, sessionDate, topics });
+    await session.save();
+    res.status(201).send(session);
   } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Update a mentorship connection
-const updateMentorship = async (req, res) => {
-  const { status, startDate, endDate, notes } = req.body;
-  try {
-    const mentorship = await Mentorship.findById(req.params.id);
-    if (mentorship) {
-      mentorship.status = status || mentorship.status;
-      mentorship.startDate = startDate || mentorship.startDate;
-      mentorship.endDate = endDate || mentorship.endDate;
-      mentorship.notes = notes || mentorship.notes;
-
-      const updatedMentorship = await mentorship.save();
-      res.json(updatedMentorship);
-    } else {
-      res.status(404).json({ message: "Mentorship not found" });
-    }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Delete a mentorship connection
-const deleteMentorship = async (req, res) => {
-  try {
-    const mentorship = await Mentorship.findById(req.params.id);
-    if (mentorship) {
-      await mentorship.remove();
-      res.json({ message: "Mentorship removed" });
-    } else {
-      res.status(404).json({ message: "Mentorship not found" });
-    }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).send(error);
   }
 };
 
 module.exports = {
-  createMentorship,
-  getMentorships,
-  getMentorship,
-  updateMentorship,
-  deleteMentorship,
+  createMentor,
+  findMentors,
+  findMentees,
+  scheduleSession,
 };
