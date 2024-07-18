@@ -22,7 +22,7 @@ const Footer = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const createSubscription = async (e) => {
     e.preventDefault();
     if (!email) {
@@ -34,7 +34,8 @@ const Footer = () => {
       const response = await axios.post(`${URL}/subscribe/subscribe`, userData);
       setSuccess(response.data);
       setFormData("");
-      navigate("/")
+      toast.success("Subscribed ✅");
+      navigate("/");
     } catch (error) {
       setLoading(false);
       setError("error subscribing", error);

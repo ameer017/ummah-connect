@@ -57,13 +57,21 @@ const authSchema = new Schema(
       instagram: { type: String, default: "" },
       linkedin: { type: String, default: "" },
     },
-    
+
     bookedEvents: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Event",
       },
     ],
+
+    tag: {
+      type: String,
+      enum: ["mentor", "mentee", "none"],
+      default: "none",
+    },
+    expertise: [String],
+    availableTimes: [String],
   },
   {
     timestamps: true,

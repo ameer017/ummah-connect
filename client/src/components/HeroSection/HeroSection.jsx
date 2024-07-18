@@ -152,6 +152,18 @@ const HeroSection = () => {
         </div>
       </section>
 
+      <section className="py-10 bg-[#0a66c2] ">
+            <div className="flex items-center text-white p-2 justify-center  flex-col">
+                <p className="text-center text-[20px] w-2/4 ">
+                Discover our Mentorship Program offering guidance in career, personal development, and spiritual growth. Our mentors are here to support your journey.
+                Sign Up for Mentorship
+                </p>
+
+                <button className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4">Get Mentorship</button>
+            </div>
+
+      </section>
+
       <section className="py-10">
         <div className="container mx-auto p-4">
           <div className="flex items-center justify-between p-2">

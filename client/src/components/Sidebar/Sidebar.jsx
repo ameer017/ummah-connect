@@ -3,7 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { GrOverview, GrNotes } from "react-icons/gr";
 import { IoBookOutline } from "react-icons/io5";
-import { MdOutlineEventAvailable, MdForum, MdOutlinePassword, MdOutlineUnsubscribe } from "react-icons/md";
+import {
+  MdOutlineEventAvailable,
+  MdForum,
+  MdOutlinePassword,
+  MdOutlineUnsubscribe,
+} from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import { CiSettings } from "react-icons/ci";
 import { AdminLink } from "../../components/Protect/HiddenLink";
@@ -60,8 +65,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
             )}`}
             to="/my-courses"
           >
-            <IoBookOutline size={25} />{" "}
-            <p className="text-[17px]">My Courses</p>
+            <IoBookOutline size={25} /> <p className="text-[17px]">Courses</p>
           </Link>
           <Link
             className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
@@ -103,7 +107,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
               )}`}
               to="/subscribers"
             >
-              <MdOutlineUnsubscribe size={25} /> <p className="text-[17px]">Subscribers</p>
+              <MdOutlineUnsubscribe size={25} />{" "}
+              <p className="text-[17px]">Subscribers</p>
             </Link>
           </AdminLink>
           <Link
@@ -112,7 +117,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
             )}`}
             to="/change-password"
           >
-            <MdOutlinePassword size={25} color="red" /> <p className="text-[17px]">Change Password</p>
+            <MdOutlinePassword size={25} color="red" />{" "}
+            <p className="text-[17px]">Change Password</p>
           </Link>
         </div>
       )}

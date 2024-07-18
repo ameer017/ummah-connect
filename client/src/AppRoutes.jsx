@@ -27,6 +27,7 @@ import Settings from "./pages/settings/Settings";
 import Article from "./components/Content/Article";
 import ContentDetail from "./components/Content/ContentDetail";
 import SuscriptionList from "./components/Lists/SuscriptionList";
+import Unsubscribe from "./components/Footer/Unsubscribe";
 
 const AppRoutes = () => (
   <Routes>
@@ -125,6 +126,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <SuscriptionList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/unsubscribe"
+      element={
+        <Layout>
+          <Unsubscribe />
         </Layout>
       }
     />
