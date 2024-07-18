@@ -28,6 +28,7 @@ import SuscriptionList from "./components/Lists/SuscriptionList";
 import Unsubscribe from "./components/Footer/Unsubscribe";
 import MentorshipSignUp from "./components/Mentorship/Mentorship";
 import FindMentorMentee from "./components/Mentorship/FindMentors";
+import ScheduleSession from "./components/Mentorship/ScheduleSession";
 
 const AppRoutes = () => (
   <Routes>
@@ -217,6 +218,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <MentorshipSignUp />
+        </Layout>
+      }
+    />
+    <Route
+      path="/schedule-session/:id"
+      element={
+        <Layout>
+          <ScheduleSession />
         </Layout>
       }
     />

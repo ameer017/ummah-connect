@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import { useNavigate } from "react-router-dom";
+
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const FindMentorMentee = ({ tag }) => {
   useRedirectLoggedOutUser("/login");
   const [list, setList] = useState([]);
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchList = async () => {
@@ -17,6 +20,7 @@ const FindMentorMentee = ({ tag }) => {
           }`
         );
         setList(response.data);
+        // console.log(list);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -38,17 +42,15 @@ const FindMentorMentee = ({ tag }) => {
     }
   };
 
+  const handleItemClick = (item) => {
+    navigate(`/schedule-session/${item._id}`);
+  };
+
   return (
     <div className="container mx-auto p-4 mt-6">
       <h1 className="text-2xl font-bold text-center mb-4">
         Available {tag === "mentor" ? "Mentees" : "Mentors"}
       </h1>
-      <button
-        onClick={handleSearch}
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Search
-      </button>
       {list.length === 0 ? (
         <p>No data found!</p>
       ) : (
@@ -56,9 +58,25 @@ const FindMentorMentee = ({ tag }) => {
           {list.map((item) => (
             <li
               key={item._id}
-              className="border-b last:border-none p-2 hover:bg-gray-100"
+              className="border-b last:border-none p-4 hover:bg-gray-100 cursor-pointer"
+              onClick={handleItemClick}
             >
-              {item.firstName} {item.lastName}
+              <p className="font-bold text-lg">
+              <span className="font-semibold">Name:</span>{" "}
+                {item.firstName} {item.lastName}
+              </p>
+              <p>
+                <span className="font-semibold">Expertise:</span>{" "}
+                {item.expertise.join(", ")}
+              </p>
+              <p>
+                <span className="font-semibold">Interests:</span>{" "}
+                {item.interests.join(", ")}
+              </p>
+              <p>
+                <span className="font-semibold">Available Times:</span>{" "}
+                {item.availableTimes.join(", ")}
+              </p>
             </li>
           ))}
         </ul>
