@@ -9,19 +9,19 @@ const FindMentorMentee = ({ tag }) => {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (query) {
-      const fetchList = async () => {
-        try {
-          const response = await axios.get(
-            `${URL}/mentorship/find-${tag === "mentor" ? `mentees/${query}` : `mentors/${query}`}`
-          );
-          setList(response.data);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-      fetchList();
-    }
+    const fetchList = async () => {
+      try {
+        const response = await axios.get(
+          `${URL}/mentorship/find-${tag === "mentor" ? `mentees` : `mentors`}${
+            query ? `/${query}` : ""
+          }`
+        );
+        setList(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchList();
   }, [tag, query]);
 
   const handleSearch = () => {
