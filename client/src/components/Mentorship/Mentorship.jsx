@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getLoginStatus,
+  getUser,
+  selectIsLoggedIn,
+  selectUser,
+} from "../../redux/feature/auth/authSlice";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const MentorshipSignUp = () => {
@@ -13,17 +20,35 @@ const MentorshipSignUp = () => {
   const [availableTimes, setAvailableTimes] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const user = useSelector(selectUser);
+
+  useEffect(() => {
+    dispatch(getLoginStatus());
+    if (isLoggedIn && user === null) {
+      dispatch(getUser());
+    }
+  }, [dispatch, isLoggedIn, user]);
 
   const handleSubmit = async () => {
+    if (!user) {
+      toast.error("User not found");
+      return;
+    }
     try {
       setLoading(true);
       await axios.post(`${URL}/mentorship/signup-mentorship`, {
+        userId: user._id,
         tag,
         expertise: expertise.split(","),
         interests: interests.split(","),
         availableTimes: availableTimes.split(","),
       });
-      toast.success(`${tag} Signed up successfully`);
+      toast.success(
+        `${tag.charAt(0).toUpperCase() + tag.slice(1)} signed up successfully`
+      );
       navigate("/mentors-overview");
     } catch (error) {
       setLoading(false);
@@ -36,11 +61,10 @@ const MentorshipSignUp = () => {
       <h1 className="text-2xl font-bold text-center mb-6">
         Mentorship Sign-Up
       </h1>
-
-      <div className="w-[360px] md:w-[600px] p-2 ">
+      <div className="w-[360px] md:w-[600px] p-2">
         <div className="mb-4">
           <label className="block text-gray-700">
-            How Should We Identify you?
+            How Should We Identify You?
           </label>
           <select
             value={tag}
@@ -88,7 +112,7 @@ const MentorshipSignUp = () => {
           onClick={handleSubmit}
           className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          {loading ? "Signing you up..." : "Sign Up"}{" "}
+          {loading ? "Signing you up..." : "Sign Up"}
         </button>
       </div>
     </div>
