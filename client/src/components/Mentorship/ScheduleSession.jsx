@@ -56,7 +56,8 @@ const ScheduleSession = () => {
               {person.firstName} {person.lastName}
             </h2>
             <p className="text-gray-700">
-              {user.tag === "mentee" ? "Expertise" : "Interests"}: {person.expertise.join(", ")}
+              {user.tag === "mentee" ? "Expertise" : "Interests"}:{" "}
+              {person.expertise.join(", ")}
             </p>
             <p className="text-gray-700">Available Times:</p>
             <input
