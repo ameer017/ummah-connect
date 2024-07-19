@@ -103,6 +103,11 @@ const acceptSession = async (req, res) => {
     if (!session) return res.status(404).send("Session not found");
 
     session.status = status;
+
+    if (status === "accepted") {
+      await User.findByIdAndUpdate(session.mentorId, { available: false });
+      await User.findByIdAndUpdate(session.menteeId, { available: false });
+    }
     await session.save();
 
     // Fetch mentor and mentee details

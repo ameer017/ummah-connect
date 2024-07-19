@@ -20,6 +20,11 @@ const ScheduleSession = () => {
     const fetchPersonDetails = async () => {
       try {
         const response = await axios.get(`${URL}/auth/get-user/${id}`);
+        if (!response.data.available) {
+          toast.error("This user is not available for scheduling.");
+          navigate(-1); 
+          return;
+        }
         setPerson(response.data);
         setAvailableTimes(response.data.availableTimes || []);
       } catch (error) {
