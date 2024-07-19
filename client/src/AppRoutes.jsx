@@ -29,6 +29,7 @@ import Unsubscribe from "./components/Footer/Unsubscribe";
 import MentorshipSignUp from "./components/Mentorship/Mentorship";
 import FindMentorMentee from "./components/Mentorship/FindMentors";
 import ScheduleSession from "./components/Mentorship/ScheduleSession";
+import AcceptSession from "./components/Mentorship/AcceptSession";
 
 const AppRoutes = () => (
   <Routes>
@@ -218,6 +219,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <FindMentorMentee tag="mentee" />
+        </Layout>
+      }
+    />
+    <Route
+      path="/accept-session/:sessionId"
+      element={
+        <Layout>
+          <AcceptSession />
         </Layout>
       }
     />

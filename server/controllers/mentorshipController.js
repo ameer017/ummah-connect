@@ -140,10 +140,28 @@ const acceptSession = async (req, res) => {
   }
 };
 
+const getSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const session = await Mentorship.findById(sessionId)
+      .populate("mentorId", "firstName lastName email")
+      .populate("menteeId", "firstName lastName email");
+    
+    if (!session) {
+      return res.status(404).send("Session not found");
+    }
+
+    res.status(200).send(session);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+
 module.exports = {
   createMentor,
   findMentors,
   findMentees,
   scheduleSession,
   acceptSession,
-};
+getSession};
