@@ -5,9 +5,14 @@ import Home from "./pages/home/Home";
 import AppRoutes from "./AppRoutes";
 import Layout from "./components/Layout/Layout";
 import { useDispatch, useSelector } from "react-redux";
-import { getLoginStatus, getUser, selectIsLoggedIn, selectUser } from "./redux/feature/auth/authSlice";
+import {
+  getLoginStatus,
+  getUser,
+  selectIsLoggedIn,
+  selectUser,
+} from "./redux/feature/auth/authSlice";
 import axios from "axios";
-
+import ScrollToTop from "./components/ScrollToTop";
 
 axios.defaults.withCredentials = true;
 
@@ -38,21 +43,24 @@ function App({ userId }) {
   }, [location.pathname]);
 
   return (
-    <Routes>
-      {location.pathname === "/" && isLoading ? (
-        <Route path="/" element={<Loader />} />
-      ) : (
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <Home />
-            </Layout>
-          }
-        />
-      )}
-      <Route path="/*" element={<AppRoutes />} />
-    </Routes>
+    <div>
+      <ScrollToTop />
+      <Routes>
+        {location.pathname === "/" && isLoading ? (
+          <Route path="/" element={<Loader />} />
+        ) : (
+          <Route
+            path="/"
+            element={
+              <Layout>
+                <Home />
+              </Layout>
+            }
+          />
+        )}
+        <Route path="/*" element={<AppRoutes />} />
+      </Routes>
+    </div>
   );
 }
 

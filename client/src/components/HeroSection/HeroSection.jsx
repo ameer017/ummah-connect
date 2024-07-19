@@ -153,15 +153,20 @@ const HeroSection = () => {
       </section>
 
       <section className="py-10 bg-[#0a66c2] ">
-            <div className="flex items-center text-white p-2 justify-center  flex-col">
-                <p className="text-center text-[20px] w-2/4 ">
-                Discover our Mentorship Program offering guidance in career, personal development, and spiritual growth. Our mentors are here to support your journey.
-                Sign Up for Mentorship
-                </p>
+        <div className="flex items-center text-white p-2 justify-center  flex-col">
+          <p className="text-center text-[20px] w-2/4 ">
+            Discover our Mentorship Program offering guidance in career,
+            personal development, and spiritual growth. Our mentors are here to
+            support your journey. Sign Up for Mentorship
+          </p>
 
-                <Link to="/mentors-overview" className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4">Get Mentorship</Link>
-            </div>
-
+          <Link
+            to="/create-mentorship"
+            className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4"
+          >
+            Get Mentorship
+          </Link>
+        </div>
       </section>
 
       <section className="py-10">
@@ -178,30 +183,30 @@ const HeroSection = () => {
           </div>
 
           <div className=" py-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
-              {threads?.length > 0 ? (
-                threads.map((thread) => (
-                  <div
-                    key={thread._id}
-                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+            {threads?.length > 0 ? (
+              threads.map((thread) => (
+                <div
+                  key={thread._id}
+                  className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                >
+                  <p className="mt-4 font-bold">{thread.title}</p>
+                  <p className="text-gray-700 border-b py-2">
+                    {thread.content.length > 50
+                      ? `${thread.content.substring(0, 50)}...`
+                      : thread.content}
+                  </p>
+                  <Link
+                    to={`/threads/${thread._id}`}
+                    className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4 flex justify-between"
                   >
-                    <p className="mt-4 font-bold">{thread.title}</p>
-                    <p className="text-gray-700 border-b py-2">
-                      {thread.content.length > 50
-                        ? `${thread.content.substring(0, 50)}...`
-                        : thread.content}
-                    </p>
-                    <Link
-                      to={`/threads/${thread._id}`}
-                      className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4 flex justify-between"
-                    >
-                     View Thread <IoIosArrowRoundForward size={20} /> 
-                    </Link>
-                  </div>
-                ))
-              ) : (
-                <p>No recent forum activity.</p>
-              )}
-            </div>
+                    View Thread <IoIosArrowRoundForward size={20} />
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p>No recent forum activity.</p>
+            )}
+          </div>
         </div>
       </section>
     </main>

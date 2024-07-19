@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getLoginStatus,
@@ -115,6 +115,10 @@ const MentorshipSignUp = () => {
           {loading ? "Signing you up..." : "Sign Up"}
         </button>
       </div>
+
+      <p className="text-[15px] ">
+        Already signed up?... Go to <Link to="/mentors-overview" className="text-blue-600 font-bold underline " >Overview</Link>
+      </p>
     </div>
   );
 };
