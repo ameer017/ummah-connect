@@ -27,7 +27,7 @@ const ContentDetail = ({ userId }) => {
         const response = await axios.get(`${URL}/content/content/${id}`);
         setContent(response.data);
         setSubmitted(response.data.submittedBy);
-
+        // console.log(content)
         // console.log(response.data.submittedBy);
         // console.log(response.data);
       } catch (error) {
@@ -82,7 +82,7 @@ const ContentDetail = ({ userId }) => {
               Written By: {submitted.firstName} {submitted.lastName}
             </p>{" "}
             <p className="text-gray-400">
-              {submitted.profession} || {submitted.interests}
+              {submitted.profession} || {submitted.interests[0]}
             </p>
             <div className="text-black-400 flex gap-4 items-center my-2">
               <a
