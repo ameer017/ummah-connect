@@ -116,7 +116,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         <h2 className="text-2xl mb-4">Update Profile</h2>
         <form onSubmit={saveProfile}>
           <div className="flex justify-between">
-            <div className="mb-4">
+            <div className="mb-4 w-[48%]">
               <label className="block text-gray-700">Profession</label>
               <input
                 type="text"
@@ -126,7 +126,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-4 w-[48%]">
               <label className="block text-gray-700">Location</label>
               <input
                 type="text"
@@ -149,7 +149,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex justify-between">
-            <div className="mb-4">
+            <div className="mb-4 w-[48%] ">
               <label className="block text-gray-700">Facebook</label>
               <input
                 type="text"
@@ -160,7 +160,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 placeholder="Facebook profile link"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-4 w-[48%]">
               <label className="block text-gray-700">Instagram</label>
               <input
                 type="text"
@@ -174,7 +174,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex justify-between">
-            <div className="mb-4">
+            <div className="mb-4 w-[48%]">
               <label className="block text-gray-700">LinkedIn</label>
               <input
                 type="text"
@@ -185,7 +185,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 placeholder="LinkedIn profile link"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-4 w-[48%]">
               <label className="block text-gray-700">Twitter</label>
               <input
                 type="text"

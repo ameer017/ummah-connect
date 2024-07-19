@@ -15,10 +15,7 @@ const authSchema = new Schema(
     username: { type: String, required: true },
     location: { type: String, default: "Nigeria" },
     profession: { type: String, default: "Student" },
-    interests: {
-      type: String,
-      default: "Quran recitation",
-    },
+    interests: [String],
 
     emailAddress: {
       type: String,
@@ -57,13 +54,21 @@ const authSchema = new Schema(
       instagram: { type: String, default: "" },
       linkedin: { type: String, default: "" },
     },
-    
+
     bookedEvents: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Event",
       },
     ],
+
+    tag: {
+      type: String,
+      enum: ["mentor", "mentee", "none"],
+      default: "none",
+    },
+    expertise: [String],
+    availableTimes: [String],
   },
   {
     timestamps: true,

@@ -499,6 +499,9 @@ const getUser = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
+      tag,
+      expertise,
+      availableTimes,
     } = user;
 
     res.status(201).json({
@@ -516,6 +519,9 @@ const getUser = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
+      tag,
+      expertise,
+      availableTimes,
     });
   } else {
     res.status(400);

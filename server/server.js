@@ -38,7 +38,8 @@ app.use("/auth", require("./routes/authRoute"));
 app.use("/content", require("./routes/contentRoute"));
 app.use("/discussion", require("./routes/forumRoute"));
 app.use("/events", require("./routes/eventRoute"));
-app.use("/mentorships", require("./routes/mentorship"));
+app.use("/mentorship", require("./routes/mentorship"));
+app.use("/subscribe", require("./routes/subscriptionRoute"));
 
 const PORT = process.env.PORT || 5000;
 

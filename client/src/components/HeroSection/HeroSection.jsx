@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import heroBackground from "../../assets/hero-background.jpg";
 import { FaBookQuran } from "react-icons/fa6";
 import { PiBookOpenText, PiGraduationCapLight } from "react-icons/pi";
@@ -6,6 +6,8 @@ import { DiHtml5Multimedia } from "react-icons/di";
 import { TbRocket } from "react-icons/tb";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
+import axios from "axios";
+const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const companies = [
   {
@@ -23,7 +25,6 @@ const companies = [
     logo: "",
     description: "This is a brief description of Company Three.",
   },
-  
 ];
 
 const spotlight = [
@@ -51,6 +52,22 @@ const spotlight = [
 ];
 
 const HeroSection = () => {
+  const [threads, setThreads] = useState([]);
+
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        const response = await axios.get(`${URL}/discussion/all-threads`);
+        setThreads(response.data);
+        // console.log(response.data)
+      } catch (error) {
+        console.error("Error fetching threads:", error);
+      }
+    };
+
+    fetchThreads();
+  }, []);
+
   return (
     <main className="bg-[#fff]">
       {/* HERO SECTION */}
@@ -135,54 +152,63 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* WHAT WE OFFER SECTION */}
-      {/* <section className="grid place-items-center text-center py-10">
-        <div className="w-[90%]">
-          <h2 className="capitalize font-semibold text-[2rem] text-gray-900 underline underline-offset-4">
-            What we offer
-          </h2>
-          <p className="py-4">
-            <strong className="text-gray-900">Ummah Connect</strong> is your
-            one-stop platform for exploring a comprehensive library of Islamic
-            knowledge. We cater to Muslims of all backgrounds and knowledge
-            levels, offering a diverse range of resources to enrich your
-            understanding and strengthen your faith.
+      <section className="py-10 bg-[#0a66c2] ">
+        <div className="flex items-center text-white p-2 justify-center  flex-col">
+          <p className="text-center text-[20px] w-2/4 ">
+            Discover our Mentorship Program offering guidance in career,
+            personal development, and spiritual growth. Our mentors are here to
+            support your journey. Sign Up for Mentorship
           </p>
 
-          <div className="grid grid-cols-3 gap-4 *:grid *:grid-rows-3 *:justify-center *:place-items-center *:p-4">
-            <div className="bg-[#D1D5DB] [&>h2]:font-semibold">
-              <FaBookQuran size={100} />
-              <h2>Guidance from the Qur'an & Hadith</h2>
-              <p>
-                Delve into the foundational texts of Islam with in-depth tafsir
-                (interpretation) of the Quran and comprehensive explanations of
-                authentic Hadiths.
-              </p>
-            </div>
+          <Link
+            to="/create-mentorship"
+            className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4"
+          >
+            Get Mentorship
+          </Link>
+        </div>
+      </section>
 
-            <div className="bg-gray-900 text-[#fff] [&>h2]:font-semibold">
-              <PiGraduationCapLight size={100} />
-              <h2>Scholarly Lectures & Courses</h2>
-              <p>
-                Gain insights from renowned Islamic scholars through recorded
-                lectures and structured courses on various topics, from Islamic
-                jurisprudence to Islamic history and personal development.
-              </p>
-            </div>
+      <section className="py-10">
+        <div className="container mx-auto p-4">
+          <div className="flex items-center justify-between p-2">
+            <h1 className="text-3xl font-bold w-[10%] ">
+              Join The Conversation
+            </h1>
 
-            <div className="bg-[#D1D5DB] [&>h2]:font-semibold">
-              <DiHtml5Multimedia size={100} />
-              <h2>Enriching Multimedia Resources</h2>
-              <p>
-                Discover a treasure trove of Islamic knowledge presented in
-                various engaging formats. Explore documentaries, podcasts, and
-                interactive quizzes to deepen your understanding in a
-                stimulating way.
-              </p>
-            </div>
+            <Link to="/forum" className="flex items-center gap-2">
+              <IoIosArrowRoundForward size={20} />
+              Visit the Forum
+            </Link>
+          </div>
+
+          <div className=" py-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+            {threads?.length > 0 ? (
+              threads.map((thread) => (
+                <div
+                  key={thread._id}
+                  className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                >
+                  <p className="mt-4 font-bold">{thread.title}</p>
+                  <p className="text-gray-700 border-b py-2">
+                    {thread.content.length > 50
+                      ? `${thread.content.substring(0, 50)}...`
+                      : thread.content}
+                  </p>
+                  <Link
+                    to={`/threads/${thread._id}`}
+                    className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4 flex justify-between"
+                  >
+                    View Thread <IoIosArrowRoundForward size={20} />
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p>No recent forum activity.</p>
+            )}
           </div>
         </div>
-      </section> */}
+      </section>
     </main>
   );
 };
