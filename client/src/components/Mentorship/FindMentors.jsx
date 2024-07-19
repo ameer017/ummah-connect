@@ -22,8 +22,7 @@ const FindMentorMentee = () => {
             user.tag === "mentor" ? "mentees" : "mentors"
           }`
         );
-        setList(response.data);
-      } catch (error) {
+        setList(response.data.filter(item => item.available));       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
