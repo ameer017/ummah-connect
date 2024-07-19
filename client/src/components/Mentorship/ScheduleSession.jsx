@@ -2,37 +2,38 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../redux/feature/auth/authSlice";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const ScheduleSession = () => {
   const { id } = useParams();
-  const [mentor, setMentor] = useState(null);
+  const user = useSelector(selectUser);
+  const [person, setPerson] = useState(null);
   const [sessionDate, setSessionDate] = useState("");
   const [topics, setTopics] = useState("");
   const [availableTimes, setAvailableTimes] = useState([]);
-  const [selectedTime, setSelectedTime] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMentorDetails = async () => {
+    const fetchPersonDetails = async () => {
       try {
         const response = await axios.get(`${URL}/auth/get-user/${id}`);
-        setMentor(response.data);
-        console.log(response.data)
+        setPerson(response.data);
         setAvailableTimes(response.data.availableTimes || []);
       } catch (error) {
-        toast.error("Error fetching mentor details");
+        toast.error("Error fetching details");
       }
     };
-    fetchMentorDetails();
+    fetchPersonDetails();
   }, [id]);
 
   const handleSubmit = async () => {
     try {
       await axios.post(`${URL}/mentorship/schedule-session`, {
-        mentorId: id,
-        menteeId: "some_mentee_id",
+        mentorId: user.tag === "mentee" ? id : user._id,
+        menteeId: user.tag === "mentee" ? user._id : id,
         sessionDate,
         topics: topics.split(","),
       });
@@ -48,13 +49,15 @@ const ScheduleSession = () => {
       <h1 className="text-2xl font-bold text-center mb-6">
         Schedule a Session
       </h1>
-      {mentor ? (
+      {person ? (
         <div className="w-[360px] md:w-[600px] p-4 mx-auto bg-white shadow-md rounded-lg">
           <div className="mb-4">
             <h2 className="text-xl font-semibold">
-              {mentor.firstName} {mentor.lastName}
+              {person.firstName} {person.lastName}
             </h2>
-            <p className="text-gray-700">Expertise: {mentor.expertise}</p>
+            <p className="text-gray-700">
+              {user.tag === "mentee" ? "Expertise" : "Interests"}: {person.expertise.join(", ")}
+            </p>
             <p className="text-gray-700">Available Times:</p>
             <input
               type="text"
@@ -92,7 +95,7 @@ const ScheduleSession = () => {
           </button>
         </div>
       ) : (
-        <p>Loading mentor details...</p>
+        <p>Loading details...</p>
       )}
     </div>
   );

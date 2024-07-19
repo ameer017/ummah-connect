@@ -209,7 +209,15 @@ const AppRoutes = () => (
       path="/mentors-overview"
       element={
         <Layout>
-          <FindMentorMentee />
+          <FindMentorMentee tag="mentor" />
+        </Layout>
+      }
+    />
+    <Route
+      path="/mentors-overview"
+      element={
+        <Layout>
+          <FindMentorMentee tag="mentee" />
         </Layout>
       }
     />

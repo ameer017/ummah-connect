@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { useNavigate } from "react-router-dom";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../redux/feature/auth/authSlice";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
-const FindMentorMentee = ({ tag }) => {
+const FindMentorMentee = () => {
   useRedirectLoggedOutUser("/login");
+  const user = useSelector(selectUser);
   const [list, setList] = useState([]);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
@@ -15,21 +18,20 @@ const FindMentorMentee = ({ tag }) => {
     const fetchList = async () => {
       try {
         const response = await axios.get(
-          `${URL}/mentorship/find-${tag === "mentor" ? `mentees` : `mentors`}${
-            query ? `/${query}` : ""
+          `${URL}/mentorship/find-${
+            user.tag === "mentor" ? "mentees" : "mentors"
           }`
         );
         setList(response.data);
-        // console.log(list);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchList();
-  }, [tag, query]);
+  }, [user.tag]);
 
   const handleSearch = () => {
-    if (tag === "mentor") {
+    if (user.tag === "mentor") {
       const expertise = prompt("Enter mentee expertise (comma separated):");
       if (expertise) {
         setQuery(expertise);
@@ -42,6 +44,24 @@ const FindMentorMentee = ({ tag }) => {
     }
   };
 
+  useEffect(() => {
+    if (query) {
+      const fetchList = async () => {
+        try {
+          const response = await axios.get(
+            `${URL}/mentorship/find-${
+              user.tag === "mentor" ? `mentees/${query}` : `mentors/${query}`
+            }`
+          );
+          setList(response.data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      fetchList();
+    }
+  }, [query, user.tag]);
+
   const handleItemClick = (item) => {
     navigate(`/schedule-session/${item._id}`);
   };
@@ -49,8 +69,14 @@ const FindMentorMentee = ({ tag }) => {
   return (
     <div className="container mx-auto p-4 mt-6">
       <h1 className="text-2xl font-bold text-center mb-4">
-        Available {tag === "mentor" ? "Mentees" : "Mentors"}
+        Available {user.tag === "mentor" ? "Mentees" : "Mentors"}
       </h1>
+      <button
+        onClick={handleSearch}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Search
+      </button>
       {list.length === 0 ? (
         <p>No data found!</p>
       ) : (
@@ -58,24 +84,19 @@ const FindMentorMentee = ({ tag }) => {
           {list.map((item) => (
             <li
               key={item._id}
-              className="border-b last:border-none p-4 hover:bg-gray-100 cursor-pointer"
-              onClick={handleItemClick}
+              className="border-b last:border-none p-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => handleItemClick(item)}
             >
-              <p className="font-bold text-lg">
-              <span className="font-semibold">Name:</span>{" "}
-                {item.firstName} {item.lastName}
+              {item.firstName} {item.lastName}
+              <p>
+                Expertise: &nbsp;
+                <span className="text-xl">{item.expertise.join(", ")}</span>
               </p>
               <p>
-                <span className="font-semibold">Expertise:</span>{" "}
-                {item.expertise.join(", ")}
-              </p>
-              <p>
-                <span className="font-semibold">Interests:</span>{" "}
-                {item.interests.join(", ")}
-              </p>
-              <p>
-                <span className="font-semibold">Available Times:</span>{" "}
-                {item.availableTimes.join(", ")}
+                Available Time: &nbsp;
+                <span className="text-xl">
+                  {item.availableTimes.join(", ")}
+                </span>
               </p>
             </li>
           ))}
