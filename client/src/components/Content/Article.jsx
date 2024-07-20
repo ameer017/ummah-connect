@@ -60,6 +60,8 @@ const Article = ({ userId }) => {
         const response = await axios.get(`${URL}/content/category/${id}`);
         setType(response.data[0].type);
         setContent(response.data);
+  // console.log(response.data[0].fileUrl)
+
         setSubmitted(response.data[0].submittedBy);
         setLoading(false);
       } catch (error) {
@@ -143,23 +145,60 @@ const Article = ({ userId }) => {
               <div className="p-6 rounded-lg space-y-4">
                 {filteredData.length > 0 ? (
                   filteredData.map((item) => (
-                    <div className="border-b pb-4 mb-4">
-                      <Link to={`/content/single/${item._id}`} key={item.id}>
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={submitted.photo}
-                            alt={submitted.username}
-                            className="w-[25px] rounded-full"
-                          />
-                          <p className="text-[15px]">
-                            {submitted.firstName} {submitted.lastName}
-                          </p>
-                        </div>
-                        <div className="p-2">
-                          <p className="text-[20px]">{item.title}</p>
-                          <p className="text-[15px]">{item.description}</p>
-                          <div className="mt-4">
-                            <p>{formatDate(item.createdAt)}</p>
+                    <div className="border-b pb-4 mb-4" key={item._id}>
+                      <Link to={`/content/single/${item._id}`}>
+                        <div className="flex items-center justify-between flex-col md:flex-row">
+                          <div className="w-4/4 ">
+                            <div className="flex items-center gap-2">
+                              <img
+                                src={submitted.photo}
+                                alt={submitted.username}
+                                className="w-[25px] rounded-full"
+                              />
+                              <p className="text-[15px]">
+                                {submitted.firstName} {submitted.lastName}
+                              </p>
+                            </div>
+                            <div className="p-2">
+                              <p className="text-[20px]">{item.title}</p>
+                              <p className="text-[15px]">{item.description}</p>
+                              <div className="mt-4">
+                                <p>{formatDate(item.createdAt)}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            {item.fileUrl && (
+                              <>
+                                {item.type === "article" && (
+                                  <img
+                                    src={item.fileUrl}
+                                    alt="Article preview"
+                                    className="w-[2000px]  object-cover rounded-lg"
+                                  />
+                                )}
+                                {item.type === "audio" && (
+                                  <audio
+                                    controls
+                                    className="w-[400px]"
+                                    autoPlay
+                                  >
+                                    <source src={item.fileUrl} type="audio/mpeg"  />
+                                    Your browser does not support the audio element.
+                                  </audio>
+                                )}
+                                {item.type === "video" && (
+                                  <video
+                                    controls
+                                    autoPlay
+                                    className="w-[2000px]  object-cover rounded-lg"
+                                  >
+                                    <source src={item.fileUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                )}
+                              </>
+                            )}
                           </div>
                         </div>
                       </Link>

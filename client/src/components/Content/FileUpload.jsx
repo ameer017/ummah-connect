@@ -3,26 +3,14 @@ import React, { useState } from "react";
 const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
   const [filePreview, setFilePreview] = useState(null);
 
-  let fileAccept = "";
-
-  switch (fileType) {
-    case "Audio":
-      fileAccept = "audio/*";
-      break;
-    case "Video":
-      fileAccept = "video/*";
-      break;
-    case "Article":
-      fileAccept = "image/*";
-      break;
-    default:
-      fileAccept = "*/*";
-      break;
-  }
+  const fileAccept = {
+    Audio: "audio/*",
+    Video: "video/*",
+    Article: "image/*",
+  }[fileType] || "*/*";
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    // console.log(file)
     setUploadFile(file);
     setFilePreview(URL.createObjectURL(file));
   };

@@ -7,6 +7,8 @@ import { TbRocket } from "react-icons/tb";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const companies = [
@@ -27,29 +29,7 @@ const companies = [
   },
 ];
 
-const spotlight = [
-  {
-    id: 1,
-    image: "https://via.placeholder.com/150",
-    title: "Understanding Quran",
-    description: "An insightful article about understanding the Quran.",
-    link: "#",
-  },
-  {
-    id: 2,
-    image: "https://via.placeholder.com/150",
-    title: "Basics of Fiqh",
-    description: "Learn the basics of Islamic Jurisprudence.",
-    link: "#",
-  },
-  {
-    id: 3,
-    image: "https://via.placeholder.com/150",
-    title: "Hadith Compilation",
-    description: "A comprehensive guide on Hadith compilation.",
-    link: "#",
-  },
-];
+
 
 const HeroSection = () => {
   const [threads, setThreads] = useState([]);
@@ -68,17 +48,60 @@ const HeroSection = () => {
     fetchThreads();
   }, []);
 
+  const [spotlight, setSpotlight] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchContents = async () => {
+      try {
+        const response = await axios.get(`${URL}/content/contents`);
+        const filteredContent = response.data.filter(
+          (content) => content.type !== "audio"
+        );
+        setSpotlight(filteredContent);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch content:", error);
+        setError("Failed to fetch content");
+        setLoading(false);
+      }
+    };
+
+    fetchContents();
+  }, []);
+
+  // if (loading) return <p>Loading...</p>;
+  // if (error) return <p>{error}</p>;
+
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+      slidesToSlide: 1,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+      slidesToSlide: 1,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+      slidesToSlide: 1,
+    },
+  };
   return (
     <main className="bg-[#fff]">
       {/* HERO SECTION */}
       {/* bg-gradient-to-b from-[#E5E7EB] to-[#9CA3AF] */}
       <section className="bg-[#fff] pt-10 h-[84vh] flex justify-center items-center">
-        <div className="text-center w-[50%] flex flex-col items-center justify-center">
-          <h1 className="text-[2.5rem] font-bold capitalize w-[70%] ">
+        <div className="text-center w-full md:w-[70%] flex flex-col items-center justify-center">
+          <h1 className="text-[30px] md:text-[50px] font-bold capitalize w-full font-Guminert font-[700] ">
             Your gateway to the Muslim Community
           </h1>
 
-          <p className="mt-10 font-medium">
+          <p className="mt-10 font-medium text-[15px] px-4 ">
             Join a community of learners. Explore courses, engage in
             discussions, and join inspiring events. Connect with the{" "}
             <b>Ummah</b> and start your journey today.
@@ -86,7 +109,7 @@ const HeroSection = () => {
 
           <Link
             to="/register"
-            className="bg-blue-800 text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2 "
+            className="bg-[#0a66c2] text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2 "
           >
             Get Started <TbRocket />
           </Link>
@@ -97,7 +120,7 @@ const HeroSection = () => {
 
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 overflow-hidden">
-          <p className="text-[15px] text-center mb-8">
+          <p className="text-[23px] text-center mb-8">
             We collaborate with over <span className="text-blue-800">325 </span>{" "}
             leading universities and companies.{" "}
           </p>
@@ -121,6 +144,70 @@ const HeroSection = () => {
         <div className="container mx-auto p-4">
           <h2 className="text-3xl font-bold mb-8 text-center">
             In the Spotlight
+          </h2>
+          <p className="text-[15px] text-center my-6">
+            Stay Informed and Engaged with Highlighted Articles and Videos
+          </p>
+
+          <Carousel
+            responsive={responsive}
+            infinite={true}
+            autoPlay={false}
+            keyBoardControl={true}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+          >
+            {spotlight.map((card) => (
+              <div
+                key={card._id}
+                className="bg-white shadow-md rounded-lg overflow-hidden mx-2"
+              >
+                {card.type === "article" && (
+                  <img
+                    src={card.fileUrl}
+                    alt={card.title}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+                {card.type === "audio" && (
+                  <audio controls className="w-full">
+                    <source src={card.fileUrl} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                )}
+                {card.type === "video" && (
+                  <video controls className="w-full h-48 object-cover">
+                    <source src={card.fileUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+                <div className="p-4 text-left">
+                  <h3 className="text-xl font-bold mb-2">{card.title}</h3>
+                  <p className="text-gray-700 mb-4">
+                    {card.description.length > 50
+                      ? `${card.description.substring(0, 50)}...`
+                      : card.description}
+                  </p>
+                  <a
+                    href={`/content/single/${card._id}`}
+                    className="text-black underline flex gap-1 items-center"
+                  >
+                    <IoIosArrowRoundForward /> Read more
+                  </a>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+      </section>
+
+      {/* Community Highlights */}
+      {/* <section className="flex text-center py-10">
+        <div className="container mx-auto p-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">
+            Community Highlights
           </h2>
           <p className="text-[15px] text-center my-6">
             Stay Informed and Engaged with Highlighted Articles and Videos
@@ -150,11 +237,11 @@ const HeroSection = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="py-10 bg-[#0a66c2] ">
         <div className="flex items-center text-white p-2 justify-center  flex-col">
-          <p className="text-center text-[20px] w-2/4 ">
+          <p className="text-center text-[20px] w-full md:w-3/4  ">
             Discover our Mentorship Program offering guidance in career,
             personal development, and spiritual growth. Our mentors are here to
             support your journey. Sign Up for Mentorship
@@ -162,9 +249,9 @@ const HeroSection = () => {
 
           <Link
             to="/create-mentorship"
-            className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4"
+            className="rounded-full px-4 py-2 bg-white text-[#000] my-4"
           >
-            Get Mentorship
+            Sign Up For Mentorship
           </Link>
         </div>
       </section>

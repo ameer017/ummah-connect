@@ -41,7 +41,6 @@ const CreateContent = () => {
       try {
         const response = await axios.get(`${URL}/content/categories`);
         setCategories(response.data);
-        console.log(response.data);
       } catch (err) {
         console.error("Error fetching categories:", err);
       }
@@ -50,15 +49,11 @@ const CreateContent = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, options } = e.target;
     if (name === "topics") {
-      const options = e.target.options;
-      const selectedTopics = [];
-      for (let i = 0, len = options.length; i < len; i++) {
-        if (options[i].selected) {
-          selectedTopics.push(options[i].value);
-        }
-      }
+      const selectedTopics = Array.from(options)
+        .filter((option) => option.selected)
+        .map((option) => option.value);
       setFormData({ ...formData, topics: selectedTopics });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -70,54 +65,48 @@ const CreateContent = () => {
     setError("");
 
     try {
-      let fileUrl;
+      let fileUrl = "";
+
       if (uploadFile) {
         const fileType = formData.type.toLowerCase();
-
-        if (
+        const isValidFile =
           (fileType === "video" && uploadFile.type.startsWith("video/")) ||
           (fileType === "audio" && uploadFile.type.startsWith("audio/")) ||
-          (fileType === "image" && uploadFile.type.startsWith("image/*"))
-        ) {
+          (fileType === "article" && uploadFile.type.startsWith("image/"));
+
+        if (isValidFile) {
           const fileUploadForm = new FormData();
           fileUploadForm.append("file", uploadFile);
           fileUploadForm.append("upload_preset", upload_preset);
 
-          const uploadToCloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloud_name}/${fileType}/upload`;
+          const uploadToCloudinaryUrl = "/cloudinary";
 
-          const xhr = new XMLHttpRequest();
-          xhr.open("POST", uploadToCloudinaryUrl);
-
-          xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-              const percentComplete = (event.loaded / event.total) * 100;
-              setUploadProgress(percentComplete);
+          const response = await axios.post(
+            uploadToCloudinaryUrl,
+            fileUploadForm,
+            {
+              onUploadProgress: (progressEvent) => {
+                const percentComplete =
+                  (progressEvent.loaded / progressEvent.total) * 100;
+                setUploadProgress(percentComplete);
+              },
             }
-          };
+          );
 
-          xhr.onload = async () => {
-            if (xhr.status === 200) {
-              const fileData = JSON.parse(xhr.responseText);
-              fileUrl = fileData.url.toString();
-            } else {
-              throw new Error("Upload failed");
-            }
-          };
-
-          xhr.send(fileUploadForm);
+          fileUrl = response.data.secure_url;
         } else {
           toast.error("Please select a valid file");
+          return;
         }
       }
 
       const category = categories.find((el) => el.type === formData.type);
 
-      const response = await axios.post(`${URL}/content/create-content`, {
+      await axios.post(`${URL}/content/create-content`, {
         ...formData,
         fileUrl,
-        categoryId: category._id,
+        categoryId: category?._id,
       });
-      console.log("Content created:", response.data);
 
       setFormData({
         title: "",
@@ -126,6 +115,8 @@ const CreateContent = () => {
         description: "",
         topics: [],
       });
+      setUploadFile(null);
+      setUploadProgress(0);
       navigate("/content-categories");
     } catch (error) {
       console.error("Error creating content:", error.response.data);
@@ -164,11 +155,13 @@ const CreateContent = () => {
                 required
               />
             </div>
+
             <div className="flex gap-2">
               <div className="mb-4">
                 <label className="block text-gray-700">Topics</label>
                 <select
                   name="topics"
+                  
                   value={formData.topics}
                   onChange={handleChange}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
@@ -199,6 +192,7 @@ const CreateContent = () => {
                 </select>
               </div>
             </div>
+
             {["Video", "Audio", "Article"].includes(formData.type) && (
               <FileUpload
                 setUploadFile={setUploadFile}
