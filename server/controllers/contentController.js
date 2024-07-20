@@ -6,27 +6,27 @@ const Category = require("../models/categoryModel");
 exports.createContent = async (req, res) => {
   try {
     const { title, type, description, topics, fileUrl, categoryId } = req.body;
-    // console.log(categoryId)
     const submittedBy = req.user._id;
 
     const newContent = new Content({
       title,
-      category: categoryId,
       type: type.toLowerCase(),
       fileUrl,
       description,
       topics,
+      category: categoryId,
       submittedBy,
     });
 
     const savedContent = await newContent.save();
 
-    const category = await Category.findOne({ type });
+    const category = await Category.findById(categoryId);
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
+
     // Push content ID to category's contents array
-    category.contents.push(newContent._id);
+    category.contents.push(savedContent._id);
     await category.save();
 
     res.status(201).json(savedContent);
@@ -133,11 +133,37 @@ exports.getContentById = async (req, res) => {
       .populate("category")
       .populate("submittedBy");
 
-    if (!content) {
-      return res.status(404).json({ message: "Content not found" });
-    }
+    if (content) {
+      const {
+        _id,
+        title,
+        type,
+        description,
+        topics,
+        fileUrl,
+        category,
+        status,
+        submittedBy,
+        createdAt,
+        updatedAt,
+      } = content;
 
-    res.status(200).json(content);
+      res.status(200).json({
+        _id,
+        title,
+        type,
+        description,
+        topics,
+        fileUrl,
+        category,
+        status,
+        submittedBy,
+        createdAt,
+        updatedAt,
+      });
+    } else {
+      res.status(404).json({ message: "Content not found" });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

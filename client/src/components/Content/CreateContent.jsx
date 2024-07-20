@@ -40,7 +40,6 @@ const CreateContent = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${URL}/content/categories`);
-        // console.log(response.data)
         setCategories(response.data);
         console.log(response.data);
       } catch (err) {
@@ -72,28 +71,23 @@ const CreateContent = () => {
 
     try {
       let fileUrl;
-      if (
-        formData.type === "Video" ||
-        formData.type === "Audio" 
-      ) {
+      if (uploadFile) {
         const fileType = formData.type.toLowerCase();
 
         if (
-          (uploadFile && uploadFile.type.startsWith("video/")) ||
-          uploadFile.type.startsWith("audio/")
+          (fileType === "video" && uploadFile.type.startsWith("video/")) ||
+          (fileType === "audio" && uploadFile.type.startsWith("audio/")) ||
+          (fileType === "image" && uploadFile.type.startsWith("image/"))
         ) {
           const fileUploadForm = new FormData();
           fileUploadForm.append("file", uploadFile);
-          fileUploadForm.append("cloud_name", cloud_name);
           fileUploadForm.append("upload_preset", upload_preset);
 
           const uploadToCloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloud_name}/${fileType}/upload`;
 
-          // Create XMLHttpRequest object
           const xhr = new XMLHttpRequest();
           xhr.open("POST", uploadToCloudinaryUrl);
 
-          // Track upload progress
           xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
               const percentComplete = (event.loaded / event.total) * 100;
@@ -109,15 +103,14 @@ const CreateContent = () => {
               throw new Error("Upload failed");
             }
           };
-          // Send the request
+
           xhr.send(fileUploadForm);
         } else {
-          toast.error("Please select a valid video file");
+          toast.error("Please select a valid file");
         }
       }
 
       const category = categories.find((el) => el.type === formData.type);
-    //   console.log(category);
 
       const response = await axios.post(`${URL}/content/create-content`, {
         ...formData,
@@ -125,7 +118,7 @@ const CreateContent = () => {
         categoryId: category._id,
       });
       console.log("Content created:", response.data);
-      // Reset form
+
       setFormData({
         title: "",
         type: "",
@@ -144,9 +137,7 @@ const CreateContent = () => {
     <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="w-[300px] md:w-[500px] bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            Create Content
-          </h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">Create Content</h2>
           {error && <p className="text-red-500 mb-4">{error}</p>}
           <form className="flex flex-col" onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -204,7 +195,7 @@ const CreateContent = () => {
                 ))}
               </select>
             </div>
-            {(formData.type === "Video" || formData.type === "Audio" ) && (
+            {["Video", "Audio", "Image"].includes(formData.type) && (
               <FileUpload
                 setUploadFile={setUploadFile}
                 uploadProgress={uploadProgress}
