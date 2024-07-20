@@ -12,10 +12,15 @@ const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
     case "Video":
       fileAccept = "video/*";
       break;
-    
+    case "Image":
+      fileAccept = "image/*";
+      break;
+    default:
+      fileAccept = "*/*";
+      break;
   }
 
-  const handleVideoChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     setUploadFile(file);
     setFilePreview(URL.createObjectURL(file));
@@ -24,15 +29,21 @@ const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
   return (
     <>
       <div className="mb-4">
-        <label className="block text-gray-700">Video</label>
+        <label className="block text-gray-700">{fileType}</label>
         <input
           type="file"
           accept={fileAccept}
-          onChange={handleVideoChange}
+          onChange={handleFileChange}
           required
         />
-        {filePreview && (
+        {filePreview && fileType === "Video" && (
           <video src={filePreview} className="mt-4 w-full" controls />
+        )}
+        {filePreview && fileType === "Audio" && (
+          <audio src={filePreview} className="mt-4 w-full" controls />
+        )}
+        {filePreview && fileType === "Image" && (
+          <img src={filePreview} className="mt-4 w-full" alt="Preview" />
         )}
         {uploadProgress > 0 && uploadProgress < 100 && (
           <div className="mt-4">
