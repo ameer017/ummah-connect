@@ -77,7 +77,7 @@ const CreateContent = () => {
         if (
           (fileType === "video" && uploadFile.type.startsWith("video/")) ||
           (fileType === "audio" && uploadFile.type.startsWith("audio/")) ||
-          (fileType === "image" && uploadFile.type.startsWith("image/"))
+          (fileType === "article" && uploadFile.type.startsWith("image/"))
         ) {
           const fileUploadForm = new FormData();
           fileUploadForm.append("file", uploadFile);
@@ -195,7 +195,7 @@ const CreateContent = () => {
                 ))}
               </select>
             </div>
-            {["Video", "Audio", "Image"].includes(formData.type) && (
+            {["Video", "Audio", "Article"].includes(formData.type) && (
               <FileUpload
                 setUploadFile={setUploadFile}
                 uploadProgress={uploadProgress}
