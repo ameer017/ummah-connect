@@ -22,6 +22,7 @@ const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    // console.log(file)
     setUploadFile(file);
     setFilePreview(URL.createObjectURL(file));
   };
@@ -42,7 +43,7 @@ const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
         {filePreview && fileType === "Audio" && (
           <audio src={filePreview} className="mt-4 w-full" controls />
         )}
-        {filePreview && fileType === "Image" && (
+        {filePreview && fileType === "Article" && (
           <img src={filePreview} className="mt-4 w-full" alt="Preview" />
         )}
         {uploadProgress > 0 && uploadProgress < 100 && (

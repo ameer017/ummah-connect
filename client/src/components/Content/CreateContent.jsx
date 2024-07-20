@@ -77,7 +77,7 @@ const CreateContent = () => {
         if (
           (fileType === "video" && uploadFile.type.startsWith("video/")) ||
           (fileType === "audio" && uploadFile.type.startsWith("audio/")) ||
-          (fileType === "article" && uploadFile.type.startsWith("image/"))
+          (fileType === "image" && uploadFile.type.startsWith("image/*"))
         ) {
           const fileUploadForm = new FormData();
           fileUploadForm.append("file", uploadFile);
@@ -135,9 +135,11 @@ const CreateContent = () => {
 
   return (
     <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col items-center justify-center ">
         <div className="w-[300px] md:w-[500px] bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold mb-4 text-center">Create Content</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Create Content
+          </h2>
           {error && <p className="text-red-500 mb-4">{error}</p>}
           <form className="flex flex-col" onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -162,38 +164,40 @@ const CreateContent = () => {
                 required
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Topics</label>
-              <select
-                name="topics"
-                value={formData.topics}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                required
-              >
-                {topicsOptions.map((topic) => (
-                  <option key={topic} value={topic}>
-                    {topic}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Type</label>
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                required
-              >
-                <option value="">Select Type</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category.type}>
-                    {category.type}
-                  </option>
-                ))}
-              </select>
+            <div className="flex gap-2">
+              <div className="mb-4">
+                <label className="block text-gray-700">Topics</label>
+                <select
+                  name="topics"
+                  value={formData.topics}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                  required
+                >
+                  {topicsOptions.map((topic) => (
+                    <option key={topic} value={topic}>
+                      {topic}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Type</label>
+                <select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+                  required
+                >
+                  <option value="">Select Type</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category.type}>
+                      {category.type}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             {["Video", "Audio", "Article"].includes(formData.type) && (
               <FileUpload

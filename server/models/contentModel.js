@@ -7,7 +7,6 @@ const contentSchema = new Schema(
     type: { type: String, enum: ["article", "video", "audio"], required: true },
     fileUrl: {
       type: String,
-      required: true,
     },
     description: { type: String },
     topics: [
