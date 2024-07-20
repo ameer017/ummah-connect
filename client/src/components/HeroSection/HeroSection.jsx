@@ -74,11 +74,11 @@ const HeroSection = () => {
       {/* bg-gradient-to-b from-[#E5E7EB] to-[#9CA3AF] */}
       <section className="bg-[#fff] pt-10 h-[84vh] flex justify-center items-center">
         <div className="text-center w-[50%] flex flex-col items-center justify-center">
-          <h1 className="text-[2.5rem] font-bold capitalize w-[70%] ">
+          <h1 className="text-[50px] font-bold capitalize w-[70%] font-Guminert font-[700] ">
             Your gateway to the Muslim Community
           </h1>
 
-          <p className="mt-10 font-medium">
+          <p className="mt-10 font-medium text-[15px] ">
             Join a community of learners. Explore courses, engage in
             discussions, and join inspiring events. Connect with the{" "}
             <b>Ummah</b> and start your journey today.
@@ -86,7 +86,7 @@ const HeroSection = () => {
 
           <Link
             to="/register"
-            className="bg-blue-800 text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2 "
+            className="bg-[#0a66c2] text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2 "
           >
             Get Started <TbRocket />
           </Link>
@@ -97,7 +97,7 @@ const HeroSection = () => {
 
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 overflow-hidden">
-          <p className="text-[15px] text-center mb-8">
+          <p className="text-[23px] text-center mb-8">
             We collaborate with over <span className="text-blue-800">325 </span>{" "}
             leading universities and companies.{" "}
           </p>
@@ -162,9 +162,9 @@ const HeroSection = () => {
 
           <Link
             to="/create-mentorship"
-            className="rounded-full px-4 py-2 bg-white text-[#0a66c2] my-4"
+            className="rounded-full px-4 py-2 bg-white text-[#000] my-4"
           >
-            Get Mentorship
+            Sign Up For Mentorship
           </Link>
         </div>
       </section>

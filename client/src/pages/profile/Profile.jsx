@@ -136,14 +136,14 @@ const Profile = ({ userId }) => {
         <div className="flex flex-col items-left justify-center w-full md:w-5/6 p-4">
           {!profile.isVerified && <Notification />}
           <div className="p-4">
-            <h1 className="font-normal text-3xl">General Overview</h1>
-            <p className="text-neutral-400">
+            <h1 className="font-normal text-[45px] ">General Overview</h1>
+            <p className="text-neutral-400 text-[18px] ">
               General Overview: A Snapshot of Your Information, Activities, and
               Achievements
             </p>
           </div>
           <div className="p-4">
-            <p>Profile Overview</p>
+            <p className="text-[24px] font-[500] ">Profile Overview</p>
             <div className="border p-6 rounded-lg">
               <img
                 src={imagePreview === null ? user?.photo : imagePreview}
@@ -151,14 +151,14 @@ const Profile = ({ userId }) => {
                 style={{ width: "50px", height: "50px", borderRadius: "50%" }}
               />
               <div>
-                <p>Name and Basic Info</p>
-                <p className="text-[15px] text-neutral-400 mt-2">
+                <p className="text-[16px] ">Name and Basic Info</p>
+                <p className="text-[14px] text-neutral-400 mt-2">
                   Name: {profile.firstName} {profile.lastName}
                 </p>
-                <p className="text-[15px] text-neutral-400">
+                <p className="text-[14px] text-neutral-400">
                   Email: {profile.emailAddress}
                 </p>
-                <p className="text-[15px] text-neutral-400">
+                <p className="text-[14px] text-neutral-400">
                   Interest: {profile.interests}
                 </p>
               </div>
@@ -190,12 +190,12 @@ const Profile = ({ userId }) => {
             </div>
           </div>
           <div className="p-4">
-            <p>Enrolled Courses</p>
+            <p className="text-[24px] font-[500] ">Enrolled Courses</p>
 
             <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border"></div>
           </div>
           <div className="p-4">
-            <p>Upcoming Events</p>
+            <p className="text-[24px] font-[500] ">Upcoming Events</p>
             <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
               {events?.length > 0 ? (
                 events.map((event) => (
@@ -242,7 +242,7 @@ const Profile = ({ userId }) => {
             </div>
           </div>
           <div className="p-4">
-            <h1>Recent Forum Activity</h1>
+            <h1 className="text-[24px] font-[500] ">Recent Forum Activity</h1>
 
             <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
               {threads?.length > 0 ? (
@@ -251,8 +251,8 @@ const Profile = ({ userId }) => {
                     key={thread._id}
                     className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
                   >
-                    <p className="mt-4">{thread.title}</p>
-                    <p className="text-gray-700 border-b py-2">
+                    <p className="mt-4 text-[16px] ">{thread.title}</p>
+                    <p className="text-[#656565] border-b py-2 text-[12px] ">
                       {thread.content.length > 50
                         ? `${thread.content.substring(0, 50)}...`
                         : thread.content}

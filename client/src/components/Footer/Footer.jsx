@@ -65,7 +65,7 @@ const Footer = () => {
             <h2 className=" mr-2 w-30 text-2xl font-serif font-bold">
               Ummah Connect
             </h2>
-            <p>Get Weekly News On Ummah Connect</p>
+            <p className="text[23px] ">Get Weekly News On Ummah Connect</p>
             <form className="flex gap-2">
               <input
                 type="email"
@@ -85,7 +85,7 @@ const Footer = () => {
           </div>
 
           <div className=" border-t sm:flex text-sm mt-6 lg:mt-0">
-            <ul className="text-white list-none p-0 font-thin flex flex-col text-left w-full">
+            <ul className="text-white list-none p-0 font-thin flex flex-col text-left w-full text-[15px] ">
               <li>
                 <Link
                   to="/forum"
@@ -129,9 +129,9 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="pt-4 mt-4 pt-6 border-t border-white-500 flex justify-between px-6 flex-col gap-2 md:flex-row justify-center items-center">
+        <div className="pt-4 mt-4 pt-6 border-t border-white-500 flex justify-between px-6 flex-col gap-2 md:flex-row justify-center items-center text-[13px]">
           <div>
-            <p className="text-center ">
+            <p className="text-center  ">
               Copyright &copy; {currentTime}, Ummah Connect.&nbsp;All rights
               reserved.
             </p>
