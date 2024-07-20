@@ -20,7 +20,7 @@ const PasswordInput = ({ placeholder, value, onChange, name, onPaste }) => {
         className="flex py-[8px] px-[12px] items-center  mt-[10px] text-[12px] h-[37px] w-[100%] border rounded-md p-2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
       />
       <div
-        className="absolute top-[1.2rem] right-[0.5rem] cursor-pointer "
+        className="absolute top-[1.5rem] right-[0.5rem] cursor-pointer "
         onClick={togglePassword}
       >
         {showPassword ? (

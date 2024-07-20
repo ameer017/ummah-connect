@@ -3,19 +3,13 @@ import React, { useState } from "react";
 const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
   const [filePreview, setFilePreview] = useState(null);
 
-  let fileAccept = "";
+  const fileAccept = {
+    Audio: "audio/*",
+    Video: "video/*",
+    Article: "image/*",
+  }[fileType] || "*/*";
 
-  switch (fileType) {
-    case "Audio":
-      fileAccept = "audio/*";
-      break;
-    case "Video":
-      fileAccept = "video/*";
-      break;
-    
-  }
-
-  const handleVideoChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     setUploadFile(file);
     setFilePreview(URL.createObjectURL(file));
@@ -24,15 +18,21 @@ const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
   return (
     <>
       <div className="mb-4">
-        <label className="block text-gray-700">Video</label>
+        <label className="block text-gray-700">{fileType}</label>
         <input
           type="file"
           accept={fileAccept}
-          onChange={handleVideoChange}
+          onChange={handleFileChange}
           required
         />
-        {filePreview && (
+        {filePreview && fileType === "Video" && (
           <video src={filePreview} className="mt-4 w-full" controls />
+        )}
+        {filePreview && fileType === "Audio" && (
+          <audio src={filePreview} className="mt-4 w-full" controls />
+        )}
+        {filePreview && fileType === "Article" && (
+          <img src={filePreview} className="mt-4 w-full" alt="Preview" />
         )}
         {uploadProgress > 0 && uploadProgress < 100 && (
           <div className="mt-4">

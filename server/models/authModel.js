@@ -69,6 +69,10 @@ const authSchema = new Schema(
     },
     expertise: [String],
     availableTimes: [String],
+    available: {
+    type: Boolean,
+    default: true,
+  },
   },
   {
     timestamps: true,

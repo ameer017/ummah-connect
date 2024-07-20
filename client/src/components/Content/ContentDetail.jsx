@@ -27,7 +27,7 @@ const ContentDetail = ({ userId }) => {
         const response = await axios.get(`${URL}/content/content/${id}`);
         setContent(response.data);
         setSubmitted(response.data.submittedBy);
-
+        // console.log(content)
         // console.log(response.data.submittedBy);
         // console.log(response.data);
       } catch (error) {
@@ -48,7 +48,7 @@ const ContentDetail = ({ userId }) => {
     return new Date(dateString).toLocaleString(undefined, options);
   };
   return (
-    <div className="min-h-screen border flex  justify-center bg-white relative">
+    <div className="min-h-screen  flex  justify-center bg-white relative">
       <button
         className="absolute top-4 left-4 underline text-black px-4 py-2 rounded"
         onClick={() => navigate(-1)}
@@ -56,8 +56,8 @@ const ContentDetail = ({ userId }) => {
         BACK
       </button>
 
-      <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[10rem] ">
-        <div className="border p-2">
+      <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[2rem] ">
+        <div className=" p-2">
           <h1 className="text-2xl font-bold my-4">{content.title}</h1>
 
           <div className="flex items-center justify-between px-4 mb-[4rem] ">
@@ -75,16 +75,38 @@ const ContentDetail = ({ userId }) => {
             <p>{formatDate(content.createdAt)}</p>
           </div>
 
-          <p className="font-normal text-[15px] ">{content.description}</p>
+          {content.type === "article" && (
+            <img
+              src={content.fileUrl}
+              alt="Article Preview"
+              className="rounded-lg"
+            />
+          )}
 
-          <div className="bg-gray-200 p-2 mt-[4rem] ">
+          {content.type === "audio" && (
+            <audio controls src={content.fileUrl}>
+              Your browser does not support the audio element.
+            </audio>
+          )}
+
+          {content.type === "video" && (
+            <video controls width="100%" src={content.fileUrl}>
+              Your browser does not support the video element.
+            </video>
+          )}
+
+          <p className="font-normal text-[20px] mt-6  ">
+            {content.description}
+          </p>
+          <hr className="mt-[4rem] mb-[2rem] " />
+          <div className="bg-[#e7f0f9] p-2 mt-2 ">
             <p className="font-bold">
               Written By: {submitted.firstName} {submitted.lastName}
             </p>{" "}
-            <p className="text-gray-400">
-              {submitted.profession} || {submitted.interests}
+            <p className="text-[#626262]">
+              {submitted.profession} || {submitted.interests[0]}
             </p>
-            <div className="text-black-400 flex gap-4 items-center my-2">
+            <div className="text-[#626262] flex gap-2 items-center my-2">
               <a
                 href={submitted.socialMediaLinks.twitter}
                 className="hover:underline"

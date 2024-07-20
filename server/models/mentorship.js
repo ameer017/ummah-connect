@@ -16,6 +16,11 @@ const mentorshipSchema = new mongoose.Schema({
     required: true,
   },
   topics: [String],
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "declined"],
+    default: "pending",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

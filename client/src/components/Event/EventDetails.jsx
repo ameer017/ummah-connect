@@ -49,9 +49,9 @@ const EventDetails = ({ userId }) => {
         }
 
         const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
-        // console.log(fetchTicket.data.tickets);
+        // console.log(fetchTicket.data);
         setTicketDetails(fetchTicket.data.tickets);
-        setTicket(fetchTicket.data.tickets.quantity);
+        setTicket(fetchTicket.data.tickets.quantity || "");
         setTicketSold(fetchTicket.data.tickets.sold);
         setPrice(fetchTicket.data.tickets.price);
         // console.log(price);
@@ -109,7 +109,7 @@ const EventDetails = ({ userId }) => {
         BACK
       </button>
 
-      <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[10rem] ">
+      <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[2rem] ">
         <img
           src={event.photo}
           alt={event.title}
