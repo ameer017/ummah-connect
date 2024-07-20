@@ -12,7 +12,7 @@ const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
     case "Video":
       fileAccept = "video/*";
       break;
-    case "Image":
+    case "Article":
       fileAccept = "image/*";
       break;
     default:
