@@ -88,6 +88,14 @@ const Footer = () => {
             <ul className="text-white list-none p-0 font-thin flex flex-col text-left w-full text-[15px] ">
               <li>
                 <Link
+                  to="/about"
+                  className="inline-block py-2 pl-3 pr-5  hover:text-white no-underline"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/forum"
                   className="inline-block py-2 pl-3 pr-5  hover:text-white no-underline"
                 >
