@@ -66,6 +66,7 @@ const ContentDetail = ({ userId }) => {
                 src={submitted.photo}
                 alt={submitted.username}
                 className="w-[25px] rounded-full"
+                loading="lazy"
               />
               <p className="text-[15px]">
                 {submitted.firstName} {submitted.lastName}
@@ -80,6 +81,7 @@ const ContentDetail = ({ userId }) => {
               src={content.fileUrl}
               alt="Article Preview"
               className="rounded-lg"
+              loading="lazy"
             />
           )}
 

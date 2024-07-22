@@ -73,10 +73,10 @@ const Footer = () => {
                 onChange={handleInputChange}
                 placeholder="your email address"
                 name="email"
-                className="bg-transparent border rounded-full p-2 w-[215px] outline-none"
+                className="bg-transparent border rounded-lg p-2 w-[215px] outline-none"
               />
               <button
-                className="rounded-full bg-white text-[#0A66C2] py-2 px-4"
+                className="rounded-lg bg-white text-[#0A66C2] py-2 px-4"
                 onClick={createSubscription}
               >
                 {buttonText}

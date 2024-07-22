@@ -149,6 +149,7 @@ const Profile = ({ userId }) => {
                 src={imagePreview === null ? user?.photo : imagePreview}
                 alt=""
                 style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                loading="lazy"
               />
               <div>
                 <p className="text-[16px] ">Name and Basic Info</p>
