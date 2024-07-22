@@ -309,6 +309,20 @@ exports.getAllCourseProgress = async (req, res) => {
   }
 };
 
+exports.updateProgress = async (req, res) => {
+  try {
+    const progress = await Progress.findOneAndUpdate(
+      { userId: req.params.userId, courseId: req.params.courseId },
+      { progress: req.body.progress, completed: req.body.completed },
+      { new: true }
+    );
+    if (!progress) return res.status(404).json({ message: 'Progress not found' });
+    res.json(progress);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.getAllWebinar = async (req, res) => {
   try {
     const webinars = await Webinar.find();
