@@ -2,7 +2,6 @@ const Course = require("../models/courseModel");
 const Enrollment = require("../models/enrollmentModel");
 const Progress = require("../models/progressModel");
 const Webinar = require("../models/webinarModel");
-const upload = require("../middleware/multerConfig");
 
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");

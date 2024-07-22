@@ -3,6 +3,7 @@ import axios from "axios";
 import ChapterModal from "./ChapterModal";
 import { IoMdClose } from "react-icons/io";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
@@ -46,6 +47,7 @@ const CreateCourseForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentChapter, setCurrentChapter] = useState(null);
 
+  const navigate = useNavigate()
   const handleChapterSave = (chapter) => {
     if (currentChapter === null) {
       setChapters([...chapters, chapter]);
@@ -118,6 +120,7 @@ const CreateCourseForm = () => {
       );
       console.log("Course created:", response.data);
       toast.success("Created")
+      navigate("/")
     } catch (error) {
       console.error("Error creating course:", error);
     }
