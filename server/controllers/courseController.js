@@ -4,6 +4,34 @@ const Progress = require("../models/progressModel");
 const Webinar = require("../models/webinarModel");
 const upload = require("../middleware/multerConfig");
 
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+exports.uploadFilesToCloudinary = async (files) => {
+  const uploadedFiles = {};
+
+  for (const [key, fileArray] of Object.entries(files)) {
+    uploadedFiles[key] = [];
+    for (const file of fileArray) {
+      const result = await cloudinary.uploader.upload_stream(
+        { resource_type: "auto" },
+        (error, result) => {
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            return;
+          }
+          uploadedFiles[key].push(result.secure_url);
+        }
+      );
+      file.stream.pipe(result);
+    }
+  }
+  return uploadedFiles;
+};
+
 exports.getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find();
@@ -24,39 +52,22 @@ exports.getCourseById = async (req, res) => {
 };
 
 exports.createCourse = async (req, res) => {
-  const {
-    title,
-    description,
-    instructor,
-    duration,
-    chapters,
-    articles,
-    videos,
-    audios,
-    coverImage,
-  } = req.body;
+  const { title, description, instructor, duration, chapters } = req.body;
 
-  const articlesFiles = req.files.articles
-    ? req.files.articles.map((file) => file.path)
-    : [];
-  const videosFiles = req.files.videos
-    ? req.files.videos.map((file) => file.path)
-    : [];
-  const audiosFiles = req.files.audios
-    ? req.files.audios.map((file) => file.path)
-    : [];
+  const files = req.files;
+  const uploadedFiles = await exports.uploadFilesToCloudinary(files);
 
   const course = new Course({
     title,
     description,
     instructor,
     duration,
-    coverImage,
+    coverImage: uploadedFiles.coverImage || [],
     content: {
       chapters: JSON.parse(chapters),
-      articles: articlesFiles,
-      videos: videosFiles,
-      audios: audiosFiles,
+      articles: uploadedFiles.articles || [],
+      videos: uploadedFiles.videos || [],
+      audios: uploadedFiles.audios || [],
     },
   });
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { getUser, updateUser } from "../../redux/feature/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify"; // Assuming you have toast notifications set up
+import { toast } from "react-toastify"; 
 
 const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
 const upload_preset = import.meta.env.VITE_APP_UPLOAD_PRESET;
