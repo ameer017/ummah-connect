@@ -27,9 +27,9 @@ const CourseList = () => {
 
   return (
     <div className="w-full p-4 md:px-[5em]  rounded-lg  ">
-      <div className="flex flex-col md:flex-row items-center justify-between mb-4 border p-4">
+      <div className="flex flex-col md:flex-row items-center justify-between mb-4 p-4">
         <h1 className="font-bold text-2xl md:text-3xl mb-2 md:mb-0">
-          Courses Overview
+          Courses Overview.
         </h1>
 
         <Link to="/create-course">

@@ -46,8 +46,10 @@ const CreateCourseForm = () => {
   const [audios, setAudios] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentChapter, setCurrentChapter] = useState(null);
+  const [coverImage, setCoverImage] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   const handleChapterSave = (chapter) => {
     if (currentChapter === null) {
       setChapters([...chapters, chapter]);
@@ -75,6 +77,7 @@ const CreateCourseForm = () => {
   };
 
   const handleFileChange = (event) => {
+    setCoverImage(event.target.files[0]);
     const { name, files } = event.target;
     switch (name) {
       case "articles":
@@ -108,6 +111,24 @@ const CreateCourseForm = () => {
     formData.append("videos", JSON.stringify(videoUrls));
     formData.append("audios", JSON.stringify(audioUrls));
 
+    if (coverImage && ["image/jpeg", "image/jpg", "image/png"].includes(coverImage.type)) {
+      const imageFormData = new FormData();
+      imageFormData.append("file", coverImage);
+      imageFormData.append("cloud_name", cloud_name);
+      imageFormData.append("upload_preset", upload_preset);
+
+      try {
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+          { method: "post", body: imageFormData }
+        );
+        const imgData = await response.json();
+        formData.append("coverImage", imgData.url.toString());
+      } catch (error) {
+        console.error("Error uploading cover image:", error);
+      }
+    }
+
     try {
       const response = await axios.post(
         `${URL}/courses/create-course`,
@@ -119,164 +140,173 @@ const CreateCourseForm = () => {
         }
       );
       console.log("Course created:", response.data);
-      toast.success("Created")
-      navigate("/")
+      toast.success("Course created successfully");
+      navigate("/course-list");
     } catch (error) {
       console.error("Error creating course:", error);
+      toast.error("Error creating course");
     }
   };
 
   return (
-    <>
-      <div className="h-screen flex items-center justify-center bg-white">
-        <form onSubmit={handleSubmit} className=" w-[350px] md:w-[650px] p-4 ">
-          <div className="flex gap-4">
-            <div className="flex flex-col w-[49%] ">
-              <label htmlFor="title" className="font-semibold">
-                Course Title
-              </label>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="border p-2 rounded"
-                required
-              />
-            </div>
-
-            <div className="flex flex-col w-[49%] ">
-              <label htmlFor="instructor" className="font-semibold">
-                Instructor
-              </label>
-              <input
-                type="text"
-                id="instructor"
-                value={instructor}
-                onChange={(e) => setInstructor(e.target.value)}
-                className="border p-2 rounded"
-                required
-              />
-            </div>
-          </div>
-          <div className="flex flex-col mt-2">
-            <label htmlFor="description" className="font-semibold">
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="border p-2 rounded"
-              rows="4"
-              required
-            />
-          </div>
-          <div className="flex flex-col mt-2">
-            <label htmlFor="duration" className="font-semibold">
-              Duration (hours)
+    <div className="h-screen flex items-center justify-center bg-white">
+      <form onSubmit={handleSubmit} className="w-[350px] md:w-[650px] p-4">
+        <div className="flex gap-4">
+          <div className="flex flex-col w-[49%]">
+            <label htmlFor="title" className="font-semibold">
+              Course Title
             </label>
             <input
-              type="number"
-              id="duration"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="border p-2 rounded font-bold"
+              required
+            />
+          </div>
+          <div className="flex flex-col w-[49%]">
+            <label htmlFor="instructor" className="font-semibold">
+              Instructor
+            </label>
+            <input
+              type="text"
+              id="instructor"
+              value={instructor}
+              onChange={(e) => setInstructor(e.target.value)}
               className="border p-2 rounded"
               required
             />
           </div>
-          <div className="flex flex-col mt-4">
-            <label htmlFor="chapters" className="font-semibold">
-              Chapters
-            </label>
-            {chapters.map((chapter, index) => (
-              <div
-                key={index}
-                className="border p-4 mb-4 rounded flex items-center justify-between"
-              >
-                <h3 className="font-semibold text-lg">{chapter.title}</h3>
-                {/* <p>{chapter.content}</p> */}
-
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleEditChapter(index)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                  >
-                    Edit Chapter
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteChapter(index)}
-                    className=" text-red-800 font-bold px-4 py-2 rounded"
-                  >
-                    <IoMdClose size={20} />
-                  </button>
-                </div>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={handleAddChapter}
-              className="bg-blue-500 text-white px-4 py-2 rounded my-4"
+        </div>
+        <div className="flex flex-col mt-2">
+          <label htmlFor="description" className="font-semibold">
+            Description (100 Characters)
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="border p-2 rounded"
+            rows="2"
+            maxLength="100"
+            required
+          />
+        </div>
+        <div className="flex flex-col mt-2">
+          <label htmlFor="duration" className="font-semibold">
+            Duration (hours)
+          </label>
+          <input
+            type="number"
+            id="duration"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="border p-2 rounded"
+            required
+          />
+        </div>
+        <div className="flex flex-col mt-4">
+          <label htmlFor="chapters" className="font-semibold">
+            Chapters
+          </label>
+          {chapters.map((chapter, index) => (
+            <div
+              key={index}
+              className="border p-4 mb-4 rounded flex items-center justify-between"
             >
-              Add Chapter
-            </button>
-          </div>
-          <div className="flex flex-col mt-4">
-            <label htmlFor="articles" className="font-semibold">
-              Upload Articles
-            </label>
-            <input
-              type="file"
-              id="articles"
-              name="articles"
-              multiple
-              onChange={handleFileChange}
-              className="border p-2 rounded"
-            />
-          </div>
-          <div className="flex flex-col mt-4">
-            <label htmlFor="videos" className="font-semibold">
-              Upload Videos
-            </label>
-            <input
-              type="file"
-              id="videos"
-              name="videos"
-              multiple
-              onChange={handleFileChange}
-              className="border p-2 rounded"
-            />
-          </div>
-          <div className="flex flex-col mt-4">
-            <label htmlFor="audios" className="font-semibold">
-              Upload Audios
-            </label>
-            <input
-              type="file"
-              id="audios"
-              name="audios"
-              multiple
-              onChange={handleFileChange}
-              className="border p-2 rounded"
-            />
-          </div>
+              <h3 className="font-semibold text-lg">{chapter.title}</h3>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleEditChapter(index)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Edit Chapter
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteChapter(index)}
+                  className="text-red-800 font-bold px-4 py-2 rounded"
+                >
+                  <IoMdClose size={20} />
+                </button>
+              </div>
+            </div>
+          ))}
           <button
-            type="submit"
-            className="bg-green-500 text-white px-4 py-2 rounded mt-4"
+            type="button"
+            onClick={handleAddChapter}
+            className="bg-blue-500 text-white px-4 py-2 rounded my-4"
           >
-            Create Course
+            Add Chapter
           </button>
-        </form>
-        <ChapterModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleChapterSave}
-          chapter={currentChapter !== null ? chapters[currentChapter] : null}
-        />
-      </div>
-    </>
+        </div>
+        <div className="flex flex-col mt-4">
+          <label htmlFor="articles" className="font-semibold">
+            Upload Articles
+          </label>
+          <input
+            type="file"
+            id="articles"
+            name="articles"
+            multiple
+            onChange={handleFileChange}
+            className="border p-2 rounded"
+          />
+        </div>
+        <div className="flex flex-col mt-4">
+          <label htmlFor="videos" className="font-semibold">
+            Upload Videos
+          </label>
+          <input
+            type="file"
+            id="videos"
+            name="videos"
+            multiple
+            onChange={handleFileChange}
+            className="border p-2 rounded"
+          />
+        </div>
+        <div className="flex flex-col mt-4">
+          <label htmlFor="audios" className="font-semibold">
+            Upload Audios
+          </label>
+          <input
+            type="file"
+            id="audios"
+            name="audios"
+            multiple
+            onChange={handleFileChange}
+            className="border p-2 rounded"
+          />
+        </div>
+        <div className="flex flex-col mt-4">
+          <label htmlFor="coverImage" className="font-semibold">
+            Cover Image
+          </label>
+          <input
+            type="file"
+            id="coverImage"
+            accept="image/jpeg, image/png"
+            onChange={handleFileChange}
+            className="border p-2 rounded"
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded mt-4"
+        >
+          Create Course
+        </button>
+      </form>
+      <ChapterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleChapterSave}
+        chapter={currentChapter !== null ? chapters[currentChapter] : null}
+      />
+    </div>
   );
 };
 
