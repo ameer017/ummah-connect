@@ -1,198 +1,279 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
+import ChapterModal from "./ChapterModal";
+import { IoMdClose } from "react-icons/io";
+import { toast } from "react-toastify";
+
+const URL = import.meta.env.VITE_APP_BACKEND_URL;
+const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
+const upload_preset = import.meta.env.VITE_APP_UPLOAD_PRESET;
+
+const handleFileUpload = async (files, folder) => {
+  const uploadedFiles = [];
+  const uploadPromises = Array.from(files).map(async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", upload_preset);
+    formData.append("folder", folder);
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      uploadedFiles.push(response.data.secure_url);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  });
+
+  await Promise.all(uploadPromises);
+  return uploadedFiles;
+};
 
 const CreateCourseForm = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [content, setContent] = useState('');
-  const [instructor, setInstructor] = useState('');
-  const [duration, setDuration] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [instructor, setInstructor] = useState("");
+  const [duration, setDuration] = useState("");
+  const [chapters, setChapters] = useState([]);
   const [articles, setArticles] = useState([]);
   const [videos, setVideos] = useState([]);
   const [audios, setAudios] = useState([]);
-  const [chapters, setChapters] = useState([{ title: '', content: '' }]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentChapter, setCurrentChapter] = useState(null);
 
-  const handleFileChange = (e, setFiles) => {
-    setFiles([...e.target.files]);
+  const handleChapterSave = (chapter) => {
+    if (currentChapter === null) {
+      setChapters([...chapters, chapter]);
+    } else {
+      const updatedChapters = chapters.map((ch, index) =>
+        index === currentChapter ? chapter : ch
+      );
+      setChapters(updatedChapters);
+    }
+    setCurrentChapter(null);
   };
 
-  const handleChapterChange = (index, field, value) => {
-    const newChapters = [...chapters];
-    newChapters[index][field] = value;
-    setChapters(newChapters);
+  const handleAddChapter = () => {
+    setCurrentChapter(null);
+    setIsModalOpen(true);
   };
 
-  const addChapter = () => {
-    setChapters([...chapters, { title: '', content: '' }]);
+  const handleEditChapter = (index) => {
+    setCurrentChapter(index);
+    setIsModalOpen(true);
   };
 
-  const removeChapter = (index) => {
-    setChapters(chapters.filter((_, i) => i !== index));
+  const handleDeleteChapter = (index) => {
+    setChapters(chapters.filter((_, idx) => idx !== index));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFileChange = (event) => {
+    const { name, files } = event.target;
+    switch (name) {
+      case "articles":
+        setArticles(files);
+        break;
+      case "videos":
+        setVideos(files);
+        break;
+      case "audios":
+        setAudios(files);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const articleUrls = await handleFileUpload(articles, "articles");
+    const videoUrls = await handleFileUpload(videos, "videos");
+    const audioUrls = await handleFileUpload(audios, "audios");
 
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('content', content);
-    formData.append('instructor', instructor);
-    formData.append('duration', duration);
-
-    articles.forEach((file) => formData.append('articles', file));
-    videos.forEach((file) => formData.append('videos', file));
-    audios.forEach((file) => formData.append('audios', file));
-
-    chapters.forEach((chapter, index) => {
-      formData.append(`chapters[${index}].title`, chapter.title);
-      formData.append(`chapters[${index}].content`, chapter.content);
-    });
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("instructor", instructor);
+    formData.append("duration", duration);
+    formData.append("chapters", JSON.stringify(chapters));
+    formData.append("articles", JSON.stringify(articleUrls));
+    formData.append("videos", JSON.stringify(videoUrls));
+    formData.append("audios", JSON.stringify(audioUrls));
 
     try {
-      const response = await axios.post('/api/courses', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const response = await axios.post(
+        `${URL}/courses/create-course`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
-      console.log('Course created:', response.data);
+      );
+      console.log("Course created:", response.data);
+      toast.success("Created")
     } catch (error) {
-      console.error('Error creating course:', error);
+      console.error("Error creating course:", error);
     }
   };
 
   return (
-    <div className="max-w-full mx-auto p-6 bg-white rounded shadow">
-      <h1 className="text-3xl font-bold mb-6">Create a New Course</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex flex-col space-y-4">
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="title">Title</label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full border rounded px-4 py-2"
-              required
-            />
+    <>
+      <div className="h-screen flex items-center justify-center bg-white">
+        <form onSubmit={handleSubmit} className=" w-[350px] md:w-[650px] p-4 ">
+          <div className="flex gap-4">
+            <div className="flex flex-col w-[49%] ">
+              <label htmlFor="title" className="font-semibold">
+                Course Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="border p-2 rounded"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col w-[49%] ">
+              <label htmlFor="instructor" className="font-semibold">
+                Instructor
+              </label>
+              <input
+                type="text"
+                id="instructor"
+                value={instructor}
+                onChange={(e) => setInstructor(e.target.value)}
+                className="border p-2 rounded"
+                required
+              />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="description">Description</label>
+          <div className="flex flex-col mt-2">
+            <label htmlFor="description" className="font-semibold">
+              Description
+            </label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full border rounded px-4 py-2"
-              required
-            ></textarea>
-          </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="content">Content</label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full border rounded px-4 py-2"
-              required
-            ></textarea>
-          </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="instructor">Instructor</label>
-            <input
-              type="text"
-              id="instructor"
-              value={instructor}
-              onChange={(e) => setInstructor(e.target.value)}
-              className="w-full border rounded px-4 py-2"
+              className="border p-2 rounded"
+              rows="4"
               required
             />
           </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="duration">Duration (hours)</label>
+          <div className="flex flex-col mt-2">
+            <label htmlFor="duration" className="font-semibold">
+              Duration (hours)
+            </label>
             <input
               type="number"
               id="duration"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              className="w-full border rounded px-4 py-2"
+              className="border p-2 rounded"
               required
             />
           </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="articles">Upload Articles (PDF, PPT, DOC, etc.)</label>
-            <input
-              type="file"
-              id="articles"
-              multiple
-              onChange={(e) => handleFileChange(e, setArticles)}
-              className="w-full border rounded px-4 py-2"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="videos">Upload Videos (MP4, MOV, etc.)</label>
-            <input
-              type="file"
-              id="videos"
-              multiple
-              onChange={(e) => handleFileChange(e, setVideos)}
-              className="w-full border rounded px-4 py-2"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2" htmlFor="audios">Upload Audios (MP3, WAV, etc.)</label>
-            <input
-              type="file"
-              id="audios"
-              multiple
-              onChange={(e) => handleFileChange(e, setAudios)}
-              className="w-full border rounded px-4 py-2"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-gray-700 mb-2">Chapters</label>
+          <div className="flex flex-col mt-4">
+            <label htmlFor="chapters" className="font-semibold">
+              Chapters
+            </label>
             {chapters.map((chapter, index) => (
-              <div key={index} className="mb-4 border rounded p-4 bg-gray-50">
-                <div className="flex flex-col mb-2">
-                  <label className="text-gray-700 mb-1">Chapter Title</label>
-                  <input
-                    type="text"
-                    value={chapter.title}
-                    onChange={(e) => handleChapterChange(index, 'title', e.target.value)}
-                    className="w-full border rounded px-4 py-2"
-                  />
+              <div
+                key={index}
+                className="border p-4 mb-4 rounded flex items-center justify-between"
+              >
+                <h3 className="font-semibold text-lg">{chapter.title}</h3>
+                {/* <p>{chapter.content}</p> */}
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleEditChapter(index)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                  >
+                    Edit Chapter
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteChapter(index)}
+                    className=" text-red-800 font-bold px-4 py-2 rounded"
+                  >
+                    <IoMdClose size={20} />
+                  </button>
                 </div>
-                <div className="flex flex-col mb-2">
-                  <label className="text-gray-700 mb-1">Chapter Content</label>
-                  <textarea
-                    value={chapter.content}
-                    onChange={(e) => handleChapterChange(index, 'content', e.target.value)}
-                    className="w-full border rounded px-4 py-2"
-                  ></textarea>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeChapter(index)}
-                  className="text-red-500 hover:underline"
-                >
-                  Remove Chapter
-                </button>
               </div>
             ))}
             <button
               type="button"
-              onClick={addChapter}
-              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              onClick={handleAddChapter}
+              className="bg-blue-500 text-white px-4 py-2 rounded my-4"
             >
               Add Chapter
             </button>
           </div>
-        </div>
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-          Create Course
-        </button>
-      </form>
-    </div>
+          <div className="flex flex-col mt-4">
+            <label htmlFor="articles" className="font-semibold">
+              Upload Articles
+            </label>
+            <input
+              type="file"
+              id="articles"
+              name="articles"
+              multiple
+              onChange={handleFileChange}
+              className="border p-2 rounded"
+            />
+          </div>
+          <div className="flex flex-col mt-4">
+            <label htmlFor="videos" className="font-semibold">
+              Upload Videos
+            </label>
+            <input
+              type="file"
+              id="videos"
+              name="videos"
+              multiple
+              onChange={handleFileChange}
+              className="border p-2 rounded"
+            />
+          </div>
+          <div className="flex flex-col mt-4">
+            <label htmlFor="audios" className="font-semibold">
+              Upload Audios
+            </label>
+            <input
+              type="file"
+              id="audios"
+              name="audios"
+              multiple
+              onChange={handleFileChange}
+              className="border p-2 rounded"
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-green-500 text-white px-4 py-2 rounded mt-4"
+          >
+            Create Course
+          </button>
+        </form>
+        <ChapterModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleChapterSave}
+          chapter={currentChapter !== null ? chapters[currentChapter] : null}
+        />
+      </div>
+    </>
   );
 };
 

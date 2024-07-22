@@ -14,7 +14,7 @@ const courseSchema = new mongoose.Schema(
     description: { type: String, required: true },
     instructor: { type: String, required: true },
     duration: { type: Number, required: true },
-    coverImage: { type: String, required: true },
+    coverImage: { type: String },
     content: {
       chapters: [chapterSchema],
       articles: [String],
