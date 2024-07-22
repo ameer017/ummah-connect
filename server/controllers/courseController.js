@@ -33,6 +33,7 @@ exports.createCourse = async (req, res) => {
     articles,
     videos,
     audios,
+    coverImage,
   } = req.body;
 
   const articlesFiles = req.files.articles
@@ -50,6 +51,7 @@ exports.createCourse = async (req, res) => {
     description,
     instructor,
     duration,
+    coverImage,
     content: {
       chapters: JSON.parse(chapters),
       articles: articlesFiles,
@@ -78,19 +80,20 @@ exports.updateCourse = async (req, res) => {
     course.description = req.body.description || course.description;
     course.instructor = req.body.instructor || course.instructor;
     course.duration = req.body.duration || course.duration;
+    course.coverImage = req.body.coverImage || course.coverImage;
 
     // Update content
     if (req.body.chapters) {
       course.content.chapters = JSON.parse(req.body.chapters);
     }
     if (req.files.articles) {
-      course.content.articles = req.files.articles.map(file => file.path);
+      course.content.articles = req.files.articles.map((file) => file.path);
     }
     if (req.files.videos) {
-      course.content.videos = req.files.videos.map(file => file.path);
+      course.content.videos = req.files.videos.map((file) => file.path);
     }
     if (req.files.audios) {
-      course.content.audios = req.files.audios.map(file => file.path);
+      course.content.audios = req.files.audios.map((file) => file.path);
     }
 
     const updatedCourse = await course.save();
