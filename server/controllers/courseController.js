@@ -24,17 +24,38 @@ exports.getCourseById = async (req, res) => {
 };
 
 exports.createCourse = async (req, res) => {
+  const {
+    title,
+    description,
+    instructor,
+    duration,
+    chapters,
+    articles,
+    videos,
+    audios,
+  } = req.body;
+
+  const articlesFiles = req.files.articles
+    ? req.files.articles.map((file) => file.path)
+    : [];
+  const videosFiles = req.files.videos
+    ? req.files.videos.map((file) => file.path)
+    : [];
+  const audiosFiles = req.files.audios
+    ? req.files.audios.map((file) => file.path)
+    : [];
+
   const course = new Course({
-    title: req.body.title,
-    description: req.body.description,
-    content: req.body.content,
-    instructor: req.body.instructor,
-    duration: req.body.duration,
-    articles: req.files.articles
-      ? req.files.articles.map((file) => file.path)
-      : [],
-    videos: req.files.videos ? req.files.videos.map((file) => file.path) : [],
-    audios: req.files.audios ? req.files.audios.map((file) => file.path) : [],
+    title,
+    description,
+    instructor,
+    duration,
+    content: {
+      chapters: JSON.parse(chapters),
+      articles: articlesFiles,
+      videos: videosFiles,
+      audios: audiosFiles,
+    },
   });
 
   try {
@@ -52,20 +73,24 @@ exports.updateCourse = async (req, res) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
+    // Update basic course details
     course.title = req.body.title || course.title;
     course.description = req.body.description || course.description;
-    course.content = req.body.content || course.content;
     course.instructor = req.body.instructor || course.instructor;
     course.duration = req.body.duration || course.duration;
 
+    // Update content
+    if (req.body.chapters) {
+      course.content.chapters = JSON.parse(req.body.chapters);
+    }
     if (req.files.articles) {
-      course.articles = req.files.articles.map((file) => file.path);
+      course.content.articles = req.files.articles.map(file => file.path);
     }
     if (req.files.videos) {
-      course.videos = req.files.videos.map((file) => file.path);
+      course.content.videos = req.files.videos.map(file => file.path);
     }
     if (req.files.audios) {
-      course.audios = req.files.audios.map((file) => file.path);
+      course.content.audios = req.files.audios.map(file => file.path);
     }
 
     const updatedCourse = await course.save();
@@ -316,7 +341,8 @@ exports.updateProgress = async (req, res) => {
       { progress: req.body.progress, completed: req.body.completed },
       { new: true }
     );
-    if (!progress) return res.status(404).json({ message: 'Progress not found' });
+    if (!progress)
+      return res.status(404).json({ message: "Progress not found" });
     res.json(progress);
   } catch (err) {
     res.status(500).json({ message: err.message });
