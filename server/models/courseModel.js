@@ -1,16 +1,25 @@
 const mongoose = require("mongoose");
 
+const chapterSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const courseSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
-    content: { type: String, required: true },
     instructor: { type: String, required: true },
     duration: { type: Number, required: true },
-    articles: [{ type: String }],
-    videos: [{ type: String }],
-    audios: [{ type: String }],
-    createdAt: { type: Date, default: Date.now },
+    content: {
+      chapters: [chapterSchema],
+      articles: [String],
+      videos: [String],
+      audios: [String],
+    },
   },
   {
     timestamps: true,

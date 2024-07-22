@@ -94,7 +94,7 @@ const HeroSection = () => {
       {/* HERO SECTION */}
       {/* bg-gradient-to-b from-[#E5E7EB] to-[#9CA3AF] */}
       <section className="bg-[#fff] pt-10 h-[84vh] flex justify-center items-center">
-        <div className="text-center w-full md:w-[70%] flex flex-col items-center justify-center">
+        <div className="text-center w-full md:w-[933px] flex flex-col items-center justify-center">
           <h1 className="text-[30px] md:text-[50px] font-bold capitalize w-full font-Guminert font-[700] ">
             Your gateway to the Muslim Community
           </h1>

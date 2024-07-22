@@ -30,6 +30,7 @@ import MentorshipSignUp from "./components/Mentorship/Mentorship";
 import FindMentorMentee from "./components/Mentorship/FindMentors";
 import ScheduleSession from "./components/Mentorship/ScheduleSession";
 import AcceptSession from "./components/Mentorship/AcceptSession";
+import CreateCourseForm from "./components/Courses/CreateCourseForm";
 
 const AppRoutes = () => (
   <Routes>
@@ -43,6 +44,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <CreateContent />
+        </Layout>
+      }
+    />
+    <Route
+      path="/create-course"
+      element={
+        <Layout>
+          <CreateCourseForm />
         </Layout>
       }
     />
