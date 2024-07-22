@@ -122,6 +122,7 @@ const Article = ({ userId }) => {
                 alt={type}
                 className="w-full h-full object-cover"
                 srcSet=""
+                loading="lazy"
               />
             </div>
 
@@ -154,6 +155,7 @@ const Article = ({ userId }) => {
                                 src={submitted.photo}
                                 alt={submitted.username}
                                 className="w-[25px] rounded-full"
+                                loading="lazy"
                               />
                               <p className="text-[15px]">
                                 {submitted.firstName} {submitted.lastName}

@@ -114,6 +114,7 @@ const EventDetails = ({ userId }) => {
           src={event.photo}
           alt={event.title}
           className="rounded-lg w-[100%] "
+          loading="lazy"
         />
 
         <div className="my-4 flex justify-between items-center">

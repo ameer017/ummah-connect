@@ -71,8 +71,6 @@ const HeroSection = () => {
     fetchContents();
   }, []);
 
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>{error}</p>;
 
   const responsive = {
     desktop: {
@@ -169,6 +167,7 @@ const HeroSection = () => {
                     src={card.fileUrl}
                     alt={card.title}
                     className="w-full h-48 object-cover"
+                    loading="lazy"
                   />
                 )}
                 {card.type === "audio" && (
