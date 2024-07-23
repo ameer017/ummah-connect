@@ -111,35 +111,32 @@ const CreateCourseForm = () => {
     formData.append("videos", JSON.stringify(videoUrls));
     formData.append("audios", JSON.stringify(audioUrls));
 
-    if (coverImage && ["image/jpeg", "image/jpg", "image/png"].includes(coverImage.type)) {
+    if (coverImage) {
       const imageFormData = new FormData();
       imageFormData.append("file", coverImage);
-      imageFormData.append("cloud_name", cloud_name);
       imageFormData.append("upload_preset", upload_preset);
 
-      try {
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-          { method: "post", body: imageFormData }
-        );
-        const imgData = await response.json();
-        formData.append("coverImage", imgData.url.toString());
-      } catch (error) {
-        console.error("Error uploading cover image:", error);
-      }
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+        { method: "post", body: imageFormData }
+      );
+      const imgData = await response.json();
+      formData.append("coverImage", imgData.url.toString());
     }
 
     try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
+
       const response = await axios.post(
         `${URL}/courses/create-course`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        config
       );
-      console.log("Course created:", response.data);
       toast.success("Course created successfully");
       navigate("/course-list");
     } catch (error) {
