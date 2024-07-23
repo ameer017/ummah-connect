@@ -280,12 +280,12 @@ const CreateCourseForm = () => {
         </div>
         <div className="flex flex-col mt-4">
           <label htmlFor="coverImage" className="font-semibold">
-            Cover Image
+            Upload Cover Image
           </label>
           <input
             type="file"
             id="coverImage"
-            accept="image/jpeg, image/png"
+            name="coverImage"
             onChange={handleFileChange}
             className="border p-2 rounded"
           />
