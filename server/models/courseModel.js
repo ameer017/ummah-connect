@@ -4,6 +4,9 @@ const chapterSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     content: { type: String, required: true },
+    articles: [String],
+    videos: [String],
+    audios: [String],
   },
   { _id: false }
 );
@@ -22,9 +25,6 @@ const courseSchema = new mongoose.Schema(
     },
     content: {
       chapters: [chapterSchema],
-      articles: [String],
-      videos: [String],
-      audios: [String],
     },
   },
   {

@@ -51,11 +51,25 @@ exports.getCourseById = async (req, res) => {
 };
 
 exports.createCourse = async (req, res) => {
-  const { title, description, instructor, duration, chapters, coverImage } =
+  const { title, description, instructor, duration, coverImage, chapters } =
     req.body;
-
   const files = req.files;
-  const uploadedFiles = await exports.uploadFilesToCloudinary(files);
+
+  const parsedChapters = JSON.parse(chapters);
+
+  const updatedChapters = await Promise.all(
+    parsedChapters.map(async (chapter, index) => {
+      const chapterFiles = files[`chapter${index}`] || {};
+      const uploadedFiles = await exports.uploadFilesToCloudinary(chapterFiles);
+
+      return {
+        ...chapter,
+        articles: uploadedFiles.articles || [],
+        videos: uploadedFiles.videos || [],
+        audios: uploadedFiles.audios || [],
+      };
+    })
+  );
 
   const course = new Course({
     title,
@@ -64,10 +78,7 @@ exports.createCourse = async (req, res) => {
     duration,
     coverImage,
     content: {
-      chapters: JSON.parse(chapters),
-      articles: uploadedFiles.articles || [],
-      videos: uploadedFiles.videos || [],
-      audios: uploadedFiles.audios || [],
+      chapters: updatedChapters,
     },
   });
 
@@ -86,25 +97,32 @@ exports.updateCourse = async (req, res) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Update basic course details
     course.title = req.body.title || course.title;
     course.description = req.body.description || course.description;
     course.instructor = req.body.instructor || course.instructor;
     course.duration = req.body.duration || course.duration;
     course.coverImage = req.body.coverImage || course.coverImage;
 
-    // Update content
     if (req.body.chapters) {
-      course.content.chapters = JSON.parse(req.body.chapters);
-    }
-    if (req.files.articles) {
-      course.content.articles = req.files.articles.map((file) => file.path);
-    }
-    if (req.files.videos) {
-      course.content.videos = req.files.videos.map((file) => file.path);
-    }
-    if (req.files.audios) {
-      course.content.audios = req.files.audios.map((file) => file.path);
+      const parsedChapters = JSON.parse(req.body.chapters);
+
+      const updatedChapters = await Promise.all(
+        parsedChapters.map(async (chapter, index) => {
+          const chapterFiles = req.files[`chapter${index}`] || {};
+          const uploadedFiles = await exports.uploadFilesToCloudinary(
+            chapterFiles
+          );
+
+          return {
+            ...chapter,
+            articles: uploadedFiles.articles || [],
+            videos: uploadedFiles.videos || [],
+            audios: uploadedFiles.audios || [],
+          };
+        })
+      );
+
+      course.content.chapters = updatedChapters;
     }
 
     const updatedCourse = await course.save();
