@@ -51,7 +51,8 @@ exports.getCourseById = async (req, res) => {
 };
 
 exports.createCourse = async (req, res) => {
-  const { title, description, instructor, duration, chapters } = req.body;
+  const { title, description, instructor, duration, chapters, coverImage } =
+    req.body;
 
   const files = req.files;
   const uploadedFiles = await exports.uploadFilesToCloudinary(files);
@@ -61,7 +62,7 @@ exports.createCourse = async (req, res) => {
     description,
     instructor,
     duration,
-    coverImage: uploadedFiles.coverImage || [],
+    coverImage,
     content: {
       chapters: JSON.parse(chapters),
       articles: uploadedFiles.articles || [],
