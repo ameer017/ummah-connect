@@ -41,25 +41,36 @@ const CreateCourseForm = () => {
   const [instructor, setInstructor] = useState("");
   const [duration, setDuration] = useState("");
   const [chapters, setChapters] = useState([]);
-  const [articles, setArticles] = useState([]);
-  const [videos, setVideos] = useState([]);
-  const [audios, setAudios] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentChapter, setCurrentChapter] = useState(null);
-  const [coverImage, setCoverImage] = useState("");
+  const [coverImage, setCoverImage] = useState(null);
 
   const navigate = useNavigate();
 
-  const handleChapterSave = (chapter) => {
+  const handleChapterSave = async (chapter) => {
+    const { articles, videos, audios, ...chapterData } = chapter;
+
+    const uploadedArticles = await handleFileUpload(articles, "articles");
+    const uploadedVideos = await handleFileUpload(videos, "videos");
+    const uploadedAudios = await handleFileUpload(audios, "audios");
+
+    const newChapter = {
+      ...chapterData,
+      articles: uploadedArticles,
+      videos: uploadedVideos,
+      audios: uploadedAudios,
+    };
+
     if (currentChapter === null) {
-      setChapters([...chapters, chapter]);
+      setChapters([...chapters, newChapter]);
     } else {
       const updatedChapters = chapters.map((ch, index) =>
-        index === currentChapter ? chapter : ch
+        index === currentChapter ? newChapter : ch
       );
       setChapters(updatedChapters);
     }
     setCurrentChapter(null);
+    setIsModalOpen(false);
   };
 
   const handleAddChapter = () => {
@@ -77,29 +88,13 @@ const CreateCourseForm = () => {
   };
 
   const handleFileChange = (event) => {
-    setCoverImage(event.target.files[0]);
-    const { name, files } = event.target;
-    switch (name) {
-      case "articles":
-        setArticles(files);
-        break;
-      case "videos":
-        setVideos(files);
-        break;
-      case "audios":
-        setAudios(files);
-        break;
-      default:
-        break;
+    if (event.target.name === "coverImage") {
+      setCoverImage(event.target.files[0]);
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const articleUrls = await handleFileUpload(articles, "articles");
-    const videoUrls = await handleFileUpload(videos, "videos");
-    const audioUrls = await handleFileUpload(audios, "audios");
 
     const formData = new FormData();
     formData.append("title", title);
@@ -107,9 +102,6 @@ const CreateCourseForm = () => {
     formData.append("instructor", instructor);
     formData.append("duration", duration);
     formData.append("chapters", JSON.stringify(chapters));
-    formData.append("articles", JSON.stringify(articleUrls));
-    formData.append("videos", JSON.stringify(videoUrls));
-    formData.append("audios", JSON.stringify(audioUrls));
 
     if (coverImage) {
       const imageFormData = new FormData();
@@ -121,7 +113,7 @@ const CreateCourseForm = () => {
         { method: "post", body: imageFormData }
       );
       const imgData = await response.json();
-      formData.append("coverImage", imgData.url.toString());
+      formData.append("coverImage", imgData.secure_url);
     }
 
     try {
@@ -150,149 +142,108 @@ const CreateCourseForm = () => {
       <form onSubmit={handleSubmit} className="w-[350px] md:w-[650px] p-4">
         <div className="flex gap-4">
           <div className="flex flex-col w-[49%]">
-            <label htmlFor="title" className="font-semibold">
-              Course Title
+            <label htmlFor="title" className="text-gray-700 font-semibold mb-2">
+              Course Title:
             </label>
             <input
               type="text"
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="border p-2 rounded font-bold"
+              className="border border-gray-300 rounded-md p-2"
               required
             />
           </div>
           <div className="flex flex-col w-[49%]">
-            <label htmlFor="instructor" className="font-semibold">
-              Instructor
+            <label htmlFor="instructor" className="text-gray-700 font-semibold mb-2">
+              Instructor:
             </label>
             <input
               type="text"
               id="instructor"
               value={instructor}
               onChange={(e) => setInstructor(e.target.value)}
-              className="border p-2 rounded"
+              className="border border-gray-300 rounded-md p-2"
               required
             />
           </div>
         </div>
-        <div className="flex flex-col mt-2">
-          <label htmlFor="description" className="font-semibold">
-            Description (100 Characters)
+        <div className="flex flex-col mb-4">
+          <label htmlFor="description" className="text-gray-700 font-semibold mb-2">
+            Description:
           </label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="border p-2 rounded"
-            rows="2"
-            maxLength="100"
+            className="border border-gray-300 rounded-md p-2"
+            rows="4"
             required
-          />
+          ></textarea>
         </div>
-        <div className="flex flex-col mt-2">
-          <label htmlFor="duration" className="font-semibold">
-            Duration (hours)
+        <div className="flex flex-col mb-4">
+          <label htmlFor="duration" className="text-gray-700 font-semibold mb-2">
+            Duration (in hours):
           </label>
           <input
             type="number"
             id="duration"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
-            className="border p-2 rounded"
+            className="border border-gray-300 rounded-md p-2"
             required
           />
         </div>
-        <div className="flex flex-col mt-4">
-          <label htmlFor="chapters" className="font-semibold">
-            Chapters
-          </label>
-          {chapters.map((chapter, index) => (
-            <div
-              key={index}
-              className="border p-4 mb-4 rounded flex items-center justify-between"
-            >
-              <h3 className="font-semibold text-lg">{chapter.title}</h3>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleEditChapter(index)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                  Edit Chapter
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteChapter(index)}
-                  className="text-red-800 font-bold px-4 py-2 rounded"
-                >
-                  <IoMdClose size={20} />
-                </button>
-              </div>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={handleAddChapter}
-            className="bg-blue-500 text-white px-4 py-2 rounded my-4"
-          >
-            Add Chapter
-          </button>
-        </div>
-        <div className="flex flex-col mt-4">
-          <label htmlFor="articles" className="font-semibold">
-            Upload Articles
-          </label>
-          <input
-            type="file"
-            id="articles"
-            name="articles"
-            multiple
-            onChange={handleFileChange}
-            className="border p-2 rounded"
-          />
-        </div>
-        <div className="flex flex-col mt-4">
-          <label htmlFor="videos" className="font-semibold">
-            Upload Videos
-          </label>
-          <input
-            type="file"
-            id="videos"
-            name="videos"
-            multiple
-            onChange={handleFileChange}
-            className="border p-2 rounded"
-          />
-        </div>
-        <div className="flex flex-col mt-4">
-          <label htmlFor="audios" className="font-semibold">
-            Upload Audios
-          </label>
-          <input
-            type="file"
-            id="audios"
-            name="audios"
-            multiple
-            onChange={handleFileChange}
-            className="border p-2 rounded"
-          />
-        </div>
-        <div className="flex flex-col mt-4">
-          <label htmlFor="coverImage" className="font-semibold">
-            Upload Cover Image
+        <div className="flex flex-col mb-4">
+          <label htmlFor="coverImage" className="text-gray-700 font-semibold mb-2">
+            Cover Image:
           </label>
           <input
             type="file"
             id="coverImage"
             name="coverImage"
             onChange={handleFileChange}
-            className="border p-2 rounded"
+            className="border border-gray-300 rounded-md p-2"
           />
+        </div>
+        <div className="flex flex-col mb-4">
+          <label className="text-gray-700 font-semibold mb-2">
+            Chapters:
+          </label>
+          {chapters.map((chapter, index) => (
+            <div key={index} className="border border-gray-300 rounded-md p-2 mb-2">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold">{chapter.title}</span>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => handleEditChapter(index)}
+                    className="text-blue-500 mr-2"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteChapter(index)}
+                    className="text-red-500"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={handleAddChapter}
+            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add Chapter
+          </button>
         </div>
         <button
           type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded mt-4"
+          className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Create Course
         </button>
