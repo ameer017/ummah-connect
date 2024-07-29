@@ -1,23 +1,37 @@
 const mongoose = require("mongoose");
 
-const courseSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+const chapterSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    articles: [String],
+    videos: [String],
+    audios: [String],
   },
-  description: {
-    type: String,
-    required: true,
+  { _id: false }
+);
+
+const courseSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    instructor: { type: String, required: true },
+    duration: { type: Number, required: true },
+    coverImage: {
+      type: String,
+      required: true,
+      default:
+        "https://images.pexels.com/photos/301920/pexels-photo-301920.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    },
+    content: {
+      chapters: [chapterSchema],
+    },
   },
-  content: {
-    type: Array,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    timestamps: true,
+    minimize: false,
+  }
+);
 
 const Course = mongoose.model("Course", courseSchema);
 module.exports = Course;

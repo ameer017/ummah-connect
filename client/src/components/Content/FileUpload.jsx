@@ -32,7 +32,7 @@ const FileUpload = ({ fileType, setUploadFile, uploadProgress }) => {
           <audio src={filePreview} className="mt-4 w-full" controls />
         )}
         {filePreview && fileType === "Article" && (
-          <img src={filePreview} className="mt-4 w-full" alt="Preview" />
+          <img src={filePreview} className="mt-4 w-full" alt="Preview" loading="lazy" />
         )}
         {uploadProgress > 0 && uploadProgress < 100 && (
           <div className="mt-4">

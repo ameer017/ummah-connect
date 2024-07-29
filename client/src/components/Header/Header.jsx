@@ -150,6 +150,7 @@ const Header = ({ userId }) => {
                 <img
                   src={imagePreview === null ? user?.photo : imagePreview}
                   alt=""
+                  loading="lazy"
                   style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                 />
               </Link>

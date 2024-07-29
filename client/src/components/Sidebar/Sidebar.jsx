@@ -31,6 +31,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
                 src={profile.photo}
                 alt=""
                 style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                loading="lazy"
               />
               <div>
                 <p className="text-[18px]">
