@@ -16,7 +16,7 @@ const navItems = [
 const contentDropdownItems = [
   { id: 1, title: "Create", url: "/create-content" },
   { id: 2, title: "Categories", url: "/content-categories" },
-  { id: 3, title: "Content Page", url: "/content-list" },
+  // { id: 3, title: "Content Page", url: "/content-list" },
 ];
 
 const Header = ({ userId }) => {

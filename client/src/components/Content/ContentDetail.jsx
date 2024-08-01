@@ -19,23 +19,24 @@ const ContentDetail = ({ userId }) => {
   // console.log(user)
   useEffect(() => {
     dispatch(getUser(userId));
-  }, [dispatch]);
+  }, [dispatch, userId]);
 
   useEffect(() => {
     const fetchContentById = async () => {
+      setLoading(true);
+
       try {
         const response = await axios.get(`${URL}/content/content/${id}`);
         setContent(response.data);
         setSubmitted(response.data.submittedBy);
-        // console.log(content)
-        // console.log(response.data.submittedBy);
-        // console.log(response.data);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.error("Error fetching content:", error);
       }
     };
     fetchContentById();
-  });
+  }, [id]);
 
   const formatDate = (dateString) => {
     const options = {
@@ -47,6 +48,11 @@ const ContentDetail = ({ userId }) => {
     };
     return new Date(dateString).toLocaleString(undefined, options);
   };
+
+  if (loading) return <p>Loading!!!</p>;
+
+  if (!content) return <p>No content available</p>;
+
   return (
     <div className="min-h-screen  flex  justify-center bg-white relative">
       <button
