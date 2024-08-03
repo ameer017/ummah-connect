@@ -49,7 +49,7 @@ const ContentDetail = ({ userId }) => {
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
-  if (loading) return <p>Loading!!!</p>;
+  if (loading) return <p className="text-center">Loading!!!</p>;
 
   if (!content) return <p>No content available</p>;
 
@@ -109,7 +109,7 @@ const ContentDetail = ({ userId }) => {
           <hr className="mt-[4rem] mb-[2rem] " />
           <div className="bg-[#e7f0f9] p-2 mt-2 ">
             <p className="font-bold">
-              Written By: {submitted.firstName} {submitted.lastName}
+              Authored By: {submitted.firstName} {submitted.lastName}
             </p>{" "}
             <p className="text-[#626262]">
               {submitted.profession} || {submitted.interests[0]}
