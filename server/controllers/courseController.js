@@ -2,9 +2,11 @@ const Course = require("../models/courseModel");
 const Enrollment = require("../models/enrollmentModel");
 const Progress = require("../models/progressModel");
 const Webinar = require("../models/webinarModel");
+const nodemailer = require("nodemailer");
 
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
+const User = require("../models/authModel");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -199,7 +201,52 @@ exports.enrollCourse = async (req, res) => {
 
   try {
     const newEnrollment = await enrollment.save();
-    res.status(201).json(newEnrollment);
+
+    const user = await User.findById(req.body.userId);
+    const course = await Course.findById(req.body.courseId);
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: 587,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.emailAddress,
+      subject: "Course Enrollment Confirmation",
+      text: `As salam 'alaekum Dear ${user.firstName} 🤗,
+
+      Thank you for enrolling in the course "${course.title}".
+
+      Course Details:
+      ---------------
+      Title: ${course.title}
+      Description: ${course.description}
+      Duration: ${course.duration}
+
+      We appreciate your interest and are excited to have you in the course.
+
+      Ma' salam,
+      The UmmahConnect Education Team`,
+    };
+
+    // Send email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).json({ message: error.message });
+      }
+      res.status(200).json({
+        message: "Enrollment successful and confirmation email sent",
+        newEnrollment,
+      });
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

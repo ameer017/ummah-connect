@@ -28,7 +28,6 @@ const EventDetails = ({ userId }) => {
   const [price, setPrice] = useState([]);
 
   const { user } = useSelector((state) => state.auth);
-  // console.log(user)
   useEffect(() => {
     dispatch(getUser(userId));
   }, [dispatch]);
@@ -38,26 +37,20 @@ const EventDetails = ({ userId }) => {
       try {
         const { data } = await axios.get(`${URL}/events/${id}`);
         setEvent(data);
-        // console.log(data);
-
+        
         if (data.organizer && data.organizer._id) {
           const organizerData = await axios.get(
             `${URL}/events/organizer/${data.organizer._id}`
           );
           setOrganizer(organizerData.data);
-          // console.log(organizerData.data);
         }
 
         const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
-        // console.log(fetchTicket.data);
         setTicketDetails(fetchTicket.data.tickets);
         setTicket(fetchTicket.data.tickets.quantity || "");
         setTicketSold(fetchTicket.data.tickets.sold);
         setPrice(fetchTicket.data.tickets.price);
-        // console.log(price);
-
-        // Check if the user has already booked a ticket
-        // console.log(user);
+        
         userId = user._id;
         setUserID(userId);
       } catch (error) {
@@ -69,7 +62,6 @@ const EventDetails = ({ userId }) => {
     fetchEvent();
   }, [id]);
 
-  // console.log(ticketDetails);
   const isOrganizer = organizer && userID === organizer._id;
 
   const buyTicketHandler = async () => {

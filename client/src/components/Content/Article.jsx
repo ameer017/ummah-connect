@@ -77,7 +77,7 @@ const Article = ({ userId }) => {
     item.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <p>Loading!!!</p>;
+  if (loading) return <p className="text-center">Loading!!!</p>;
   if (error) return <p>Failed to fetch!!!</p>;
   if (!content) return <p>No content found for this categoryLink!!!</p>;
 
@@ -134,7 +134,7 @@ const Article = ({ userId }) => {
               <div className="border my-4 rounded-lg w-[100%]">
                 <input
                   type="search"
-                  className="border w-[100%] p-2"
+                  className="border w-[100%] p-2 outline-none"
                   placeholder="Search for specific threads or topics"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}

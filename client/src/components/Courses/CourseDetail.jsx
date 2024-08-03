@@ -9,22 +9,30 @@ const CourseDetail = () => {
   const { id } = useParams();
   const [course, setCourse] = useState([]);
   const [chapter, setChapter] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourseDetail = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${URL}/courses/${id}`);
         setCourse(response.data);
         setChapter(response.data.content.chapters);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         toast.error("Failed to fetch!");
       }
     };
 
     fetchCourseDetail();
-  }, []);
+  }, [id]);
+
+  if (loading) return <p className="text-center">Loading!!!</p>;
+
+  if (!course) return <p>No course available</p>;
 
   return (
     <div className="min-h-screen flex  justify-center bg-white relative">
@@ -41,10 +49,10 @@ const CourseDetail = () => {
           <div className="flex justify-between">
             <p className="text-sm ">By : {course.instructor}.</p>
             <p className="text-sm underline">
-              Duration : {course.duration} hour/s.
+              Duration : {course.duration} hour(s).
             </p>
           </div>
-          <p className="text-xl my-4">{course.description}.</p>
+          <p className="text-xl my-4">{course.description}</p>
 
           {chapter.map((item) => (
             <div>
