@@ -74,7 +74,7 @@ const CourseList = () => {
                   Continue Course
                 </Link>
               ) : (
-                <button className="bg-blue-500 py-2 px-4 rounded text-white">
+                <button className="bg-blue-500 py-2 px-4 rounded text-white" onClick={enrollCourse}>
                   Enroll Course
                 </button>
               )}
