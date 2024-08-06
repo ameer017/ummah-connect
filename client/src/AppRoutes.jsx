@@ -32,6 +32,7 @@ import ScheduleSession from "./components/Mentorship/ScheduleSession";
 import AcceptSession from "./components/Mentorship/AcceptSession";
 import CreateCourseForm from "./components/Courses/CreateCourseForm";
 import CourseDetail from "./components/Courses/CourseDetail";
+import PaymentSuccess from "./components/Event/PaymentSuccess";
 
 const AppRoutes = () => (
   <Routes>
@@ -48,6 +49,16 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+
+    <Route
+      path="/payment-success"
+      element={
+        <Layout>
+          <PaymentSuccess />
+        </Layout>
+      }
+    />
+
     <Route
       path="/create-course"
       element={

@@ -79,6 +79,7 @@ const register = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
+      hasBooked
     } = user;
 
     res.status(201).json({
@@ -96,6 +97,7 @@ const register = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
+      hasBooked,
       token,
     });
   } else {
@@ -154,6 +156,7 @@ const login = asyncHandler(async (req, res) => {
       profession,
       interests,
       socialMediaLinks,
+      hasBooked
     } = user;
 
     res.status(201).json({
@@ -172,6 +175,7 @@ const login = asyncHandler(async (req, res) => {
       interests,
       socialMediaLinks,
       token,
+      hasBooked
     });
   } else {
     res.status(500);
@@ -502,6 +506,7 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
+      hasBooked
     } = user;
 
     res.status(201).json({
@@ -522,6 +527,7 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
+      hasBooked
     });
   } else {
     res.status(400);

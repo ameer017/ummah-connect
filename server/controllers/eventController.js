@@ -240,7 +240,7 @@ const buyTicket = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    event.hasBooked = true;
+    user.hasBooked = true;
     user.bookedEvents.push(eventId);
     await user.save();
 
