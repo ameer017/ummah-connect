@@ -29,10 +29,10 @@ const companies = [
   },
 ];
 
-
-
 const HeroSection = () => {
   const [threads, setThreads] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -48,6 +48,30 @@ const HeroSection = () => {
     fetchThreads();
   }, []);
 
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(`${URL}/events/upcoming`);
+        setEvents(response.data);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    fetchEvents();
+  });
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get(`${URL}/courses/get-all-course`);
+        setCourses(response.data);
+        // console.log(response.data)
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+    fetchCourses();
+  });
   const [spotlight, setSpotlight] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -71,7 +95,6 @@ const HeroSection = () => {
     fetchContents();
   }, []);
 
-
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -89,6 +112,18 @@ const HeroSection = () => {
       slidesToSlide: 1,
     },
   };
+
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
+
   return (
     <main className="bg-[#fff]">
       {/* HERO SECTION */}
@@ -202,42 +237,90 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* Community Highlights */}
-      {/* <section className="flex text-center py-10">
-        <div className="container mx-auto p-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">
-            Community Highlights
+      {/* Event SECTION */}
+      <section className="flex text-center py-10">
+        <div className="container mx-auto p-4 ">
+          <h2 className="text-3xl font-bold mb-8 text-center font-Guminert ">
+            Upcoming Events: Discover <br /> What's Next on Our Calendar
           </h2>
-          <p className="text-[15px] text-center my-6">
-            Stay Informed and Engaged with Highlighted Articles and Videos
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {spotlight.map((card) => (
+
+          <Carousel
+            responsive={responsive}
+            infinite={true}
+            autoPlay={false}
+            keyBoardControl={true}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+          >
+            {events.map((card) => (
               <div
-                key={card.id}
-                className="bg-white shadow-md rounded-lg overflow-hidden"
+                key={card._id}
+                className="bg-white shadow-md rounded-lg overflow-hidden mx-2 p-2"
               >
                 <img
-                  src={card.image}
+                  src={card.photo}
                   alt={card.title}
                   className="w-full h-48 object-cover"
+                  loading="lazy"
                 />
-                <div className="p-4 text-left">
+
+                <div className="p-4 text-left my-2">
                   <h3 className="text-xl font-bold mb-2">{card.title}</h3>
-                  <p className="text-gray-700 mb-4">{card.description}</p>
-                  <a
-                    href={card.link}
-                    className="text-black underline flex gap-1 items-center"
-                  >
-                    <IoIosArrowRoundForward /> Read more
-                  </a>
+                  <p className="text-gray-700 mb-4">
+                    {card.description.length > 100
+                      ? `${card.description.substring(0, 100)}...`
+                      : card.description}
+                  </p>
+
+                  <p>Date: {formatDate(card.date)}</p>
                 </div>
               </div>
             ))}
+          </Carousel>
+        </div>
+      </section>
+
+      {/* Course section */}
+      <section className="py-10">
+        <div className="container mx-auto p-4">
+          <div className="flex items-center justify-between p-2">
+            <h1 className="text-3xl font-bold w-[20%] ">
+              Ecplore Our Popular Courses
+            </h1>
+
+            <Link to="/course-list" className="flex items-center gap-2">
+              <IoIosArrowRoundForward size={20} />
+              View All Courses
+            </Link>
+          </div>
+
+          <div className=" py-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+            {courses?.length > 0 ? (
+              courses.map((course) => (
+                <div
+                  key={course._id}
+                  className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                >
+                  <img src={course.coverImage} alt="cover image" />
+                  <p className="mt-4 font-bold">{course.title}</p>
+                  <p className="text-gray-700 border-b py-2">
+                    {course.description.length > 150
+                      ? `${course.description.substring(0, 150)}...`
+                      : course.description}
+                  </p>
+                  <p className="my-2">Instructor: {course.instructor}</p>
+                </div>
+              ))
+            ) : (
+              <p>No recent forum activity.</p>
+            )}
           </div>
         </div>
-      </section> */}
+      </section>
 
+      {/* Mentorship section */}
       <section className="py-10 bg-[#0a66c2] ">
         <div className="flex items-center text-white p-2 justify-center  flex-col py-6">
           <p className="text-center text-[20px] w-full md:w-3/4  ">
@@ -277,8 +360,8 @@ const HeroSection = () => {
                 >
                   <p className="mt-4 font-bold">{thread.title}</p>
                   <p className="text-gray-700 border-b py-2">
-                    {thread.content.length > 50
-                      ? `${thread.content.substring(0, 50)}...`
+                    {thread.content.length > 100
+                      ? `${thread.content.substring(0, 100)}...`
                       : thread.content}
                   </p>
                   <Link
