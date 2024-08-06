@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { AdminLink } from "../Protect/HiddenLink";
-import { toast } from "react-toastify";
-import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import { IoMdCheckmarkCircle } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
-import { IoMdCheckmarkCircle } from "react-icons/io";
+import { toast } from "react-toastify";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -26,6 +25,7 @@ const EventDetails = ({ userId }) => {
   const [userID, setUserID] = useState("");
   const [ticketSold, setTicketSold] = useState("");
   const [price, setPrice] = useState([]);
+  const [hasBooked, setHasBooked] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
   useEffect(() => {
@@ -33,34 +33,33 @@ const EventDetails = ({ userId }) => {
       dispatch(getUser(userId));
       setUserID(user._id);
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, userId]);
 
-  // console.log(user)
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const { data } = await axios.get(`${URL}/events/${id}`);
         setEvent(data);
-        // console.log(data);
         const organizerData = data.organizer._id;
-        setOrganizer(organizerData);
-        // console.log(organizer);
-
+        const organizerResponse = await axios.get(
+          `${URL}/events/organizer/${organizerData}`
+        );
+        setOrganizer(organizerResponse.data);
         const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
-        if (fetchTicket && fetchTicket.data && fetchTicket.data.tickets) {
+        if (fetchTicket.data && fetchTicket.data.tickets) {
           const ticketData = fetchTicket.data.tickets;
           setTicketDetails(ticketData);
-
-          const ticketPrice = ticketData.price;
-          const ticketQuantity = ticketData.quantity;
-          const ticketSold = ticketData.sold;
-          setPrice(ticketPrice);
-          setTicket(ticketQuantity);
-          setTicketSold(ticketSold);
+          setPrice(ticketData.price);
+          setTicket(ticketData.quantity);
+          setTicketSold(ticketData.sold);
         } else {
           console.error("Ticket data is not available");
         }
-        // console.log(fetchTicket.data);
+
+        const fetchUserBooking = await axios.get(
+          `${URL}/auth/get-user/${userId}`
+        );
+        setHasBooked(fetchUserBooking.data.hasBooked);
       } catch (error) {
         console.error(error);
         setError("Failed to fetch event details");
@@ -72,8 +71,6 @@ const EventDetails = ({ userId }) => {
 
   const isOrganizer = organizer && userID === organizer._id;
   const isNotOrganizer = !isOrganizer;
-  // console.log(isNotOrganizer)
-  // console.log(userID)
 
   const buyTicketHandler = async () => {
     setLoading(true);
@@ -85,13 +82,10 @@ const EventDetails = ({ userId }) => {
         quantity,
         returnUrl,
       });
-      console.log(data);
-      // Assuming data contains the payment link
       const paymentLink = data.paymentLink;
-      const ticketPrice = data.tickets.price;
       if (paymentLink) {
         window.location.href = paymentLink;
-      } else if (ticketPrice === 0) {
+      } else if (data.tickets.price === 0) {
         navigate("/event-list");
         toast.success("Ticket purchased successfully!");
       } else {
@@ -115,11 +109,11 @@ const EventDetails = ({ userId }) => {
         BACK
       </button>
 
-      <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[2rem] ">
+      <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[2rem]">
         <img
           src={event.photo}
           alt={event.title}
-          className="rounded-lg w-[100%] "
+          className="rounded-lg w-[100%]"
           loading="lazy"
         />
 
@@ -130,12 +124,12 @@ const EventDetails = ({ userId }) => {
             </p>
             <div>
               <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
-              <p className="text-gray-700 mb-4 w-[90%] ">{event.subTitle}</p>
+              <p className="text-gray-700 mb-4 w-[90%]">{event.subTitle}</p>
             </div>
           </div>
-          {ticket > 0 && !isOrganizer && (
+          {ticket > 0 && !isOrganizer && !hasBooked && (
             <div className="px-2">
-              <div className="mb-4  ">
+              <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
                   Quantity
                 </label>
@@ -159,18 +153,18 @@ const EventDetails = ({ userId }) => {
             </div>
           )}
 
-          {isNotOrganizer.hasBooked && (
+          {isNotOrganizer && hasBooked && (
             <button
-              className=" text-black px-4 py-2 rounded cursor-not-allowed bg-green-100 flex items-center gap-2 "
+              className="text-black px-4 py-2 rounded cursor-not-allowed bg-green-100 flex items-center gap-2"
               disabled
             >
               Booked <IoMdCheckmarkCircle color="white" />
             </button>
           )}
 
-          {ticket.quantity <= 0 && (
+          {ticket <= 0 && (
             <button
-              className=" bg-red-500 text-white py-2 px-4 rounded cursor-not-allowed"
+              className="bg-red-500 text-white py-2 px-4 rounded cursor-not-allowed"
               disabled
             >
               Sold Out
@@ -181,7 +175,7 @@ const EventDetails = ({ userId }) => {
 
         <div className="flex justify-between border rounded-lg items-center px-2 py-6">
           <div className="flex flex-col">
-            <p className=" mb-2 font-bold">Date and Time:</p>
+            <p className="mb-2 font-bold">Date and Time:</p>
             {new Date(event.date).toLocaleString()}
           </div>
           <div className="flex flex-col">
@@ -192,38 +186,32 @@ const EventDetails = ({ userId }) => {
 
         <div className="border my-4 rounded-lg p-4">
           <h1 className="font-bold my-4">About this event</h1>
-
           <p>{event.description}</p>
-
           <p className="mt-6 font-bold">
-            {" "}
-            Available Seat: {ticket}/{event.limit}{" "}
+            Available Seat: {ticket}/{event.limit}
           </p>
         </div>
-        {/* <AdminLink> */}
+
         <div className="border my-4 rounded-lg p-4">
           <h1 className="font-bold my-4">Tickets Metrics</h1>
-
           <div className="flex justify-between p-2">
             <p>Ticket Sold: {ticketSold}</p>
-            <p>Ticket Remaining: {ticket} </p>
+            <p>Ticket Remaining: {ticket}</p>
           </div>
         </div>
-        {/* </AdminLink> */}
 
         <div className="border my-4 rounded-lg p-4">
           <h1 className="font-bold my-4">Organized By:</h1>
-
-          <p>
-            {organizer ? (
-              <>
-                <p>Name: {organizer.firstName}</p>
-                <p>Interests: {organizer.interests}</p>
-              </>
-            ) : (
-              <p>Loading organizer details...</p>
-            )}
-          </p>
+          {organizer ? (
+            <>
+              <p>
+                Name: {organizer.firstName} {organizer.lastName}
+              </p>
+              {/* <p>Interests: {organizer.interests.join(", ")}</p> */}
+            </>
+          ) : (
+            <p>Loading organizer details...</p>
+          )}
         </div>
       </div>
     </div>

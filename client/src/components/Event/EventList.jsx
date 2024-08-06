@@ -179,7 +179,8 @@ const EventList = ({ userId }) => {
                   trending.map((event) => (
                     <div
                       key={event._id}
-                      className="w-full bg-green-100 p-4 border rounded-lg cursor-pointer"
+                      className="w-full p-4 border rounded-lg cursor-pointer bg-green-100 "
+                     
                     >
                       <p>
                         <MdEventNote size={15} />
