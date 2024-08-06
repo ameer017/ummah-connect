@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ChapterModal from "./ChapterModal";
 import { IoMdClose } from "react-icons/io";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../redux/feature/auth/authSlice";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
@@ -46,6 +48,15 @@ const CreateCourseForm = () => {
   const [coverImage, setCoverImage] = useState(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user && user._id) {
+      dispatch(getUser(user._id));
+    }
+  }, [dispatch, user]);
 
   const handleChapterSave = async (chapter) => {
     const { articles, videos, audios, ...chapterData } = chapter;
@@ -129,6 +140,14 @@ const CreateCourseForm = () => {
         formData,
         config
       );
+
+      const courseId = response.data._id;
+      const progressData = {
+        userId: user._id,
+        courseId: courseId,
+      };
+
+      await axios.post(`${URL}/progress/add-progress`, progressData, config);
       toast.success("Course created successfully");
       navigate("/course-list");
     } catch (error) {
@@ -155,7 +174,10 @@ const CreateCourseForm = () => {
             />
           </div>
           <div className="flex flex-col w-[49%]">
-            <label htmlFor="instructor" className="text-gray-700 font-semibold mb-2">
+            <label
+              htmlFor="instructor"
+              className="text-gray-700 font-semibold mb-2"
+            >
               Instructor:
             </label>
             <input
@@ -169,7 +191,10 @@ const CreateCourseForm = () => {
           </div>
         </div>
         <div className="flex flex-col mb-4">
-          <label htmlFor="description" className="text-gray-700 font-semibold mb-2">
+          <label
+            htmlFor="description"
+            className="text-gray-700 font-semibold mb-2"
+          >
             Description:
           </label>
           <textarea
@@ -182,7 +207,10 @@ const CreateCourseForm = () => {
           ></textarea>
         </div>
         <div className="flex flex-col mb-4">
-          <label htmlFor="duration" className="text-gray-700 font-semibold mb-2">
+          <label
+            htmlFor="duration"
+            className="text-gray-700 font-semibold mb-2"
+          >
             Duration (in hours):
           </label>
           <input
@@ -195,7 +223,10 @@ const CreateCourseForm = () => {
           />
         </div>
         <div className="flex flex-col mb-4">
-          <label htmlFor="coverImage" className="text-gray-700 font-semibold mb-2">
+          <label
+            htmlFor="coverImage"
+            className="text-gray-700 font-semibold mb-2"
+          >
             Cover Image:
           </label>
           <input
@@ -207,11 +238,12 @@ const CreateCourseForm = () => {
           />
         </div>
         <div className="flex flex-col mb-4">
-          <label className="text-gray-700 font-semibold mb-2">
-            Chapters:
-          </label>
+          <label className="text-gray-700 font-semibold mb-2">Chapters:</label>
           {chapters.map((chapter, index) => (
-            <div key={index} className="border border-gray-300 rounded-md p-2 mb-2">
+            <div
+              key={index}
+              className="border border-gray-300 rounded-md p-2 mb-2"
+            >
               <div className="flex justify-between items-center">
                 <span className="font-semibold">{chapter.title}</span>
                 <div>
