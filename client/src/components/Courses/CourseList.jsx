@@ -4,14 +4,25 @@ import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { MdOutlineCreateNewFolder } from "react-icons/md";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../redux/feature/auth/authSlice";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const CourseList = () => {
   useRedirectLoggedOutUser("/login");
+  const dispatch = useDispatch();
 
   const [courses, setCourses] = useState([]);
   const [enrolled, setEnrolled] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user && user._id) {
+      dispatch(getUser(user._id));
+    }
+  }, [dispatch, user]);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -27,20 +38,26 @@ const CourseList = () => {
     fetchCourses();
   }, []);
 
-  const enrollCourse = async () => {
+  const enrollCourse = async (courseId) => {
     try {
-      const response = await axios.post(`${URL}/courses/enroll`);
+      setLoading(true);
+      const response = await axios.post(`${URL}/enrollments/enroll`, {
+        userId: user._id,
+        courseId,
+      });
       setEnrolled(response.data);
       toast.success("Enrolled");
       console.log(response.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error(error);
       toast.error("Enrollment failed");
     }
   };
 
   return (
-    <div className="w-full p-4 md:px-[5em]  rounded-lg  ">
+    <div className="w-full p-4 md:px-[5em] rounded-lg">
       <div className="flex flex-col md:flex-row items-center justify-between mb-4 p-4">
         <h1 className="font-bold text-2xl md:text-3xl mb-2 md:mb-0">
           Courses Overview.
@@ -60,11 +77,11 @@ const CourseList = () => {
             className="p-4 border rounded-lg shadow-sm bg-gray-100"
           >
             <img src={course.coverImage} alt="" className="rounded mb-4" />
-            <h2 className="font-semibold text-[22.31px] ">{course.title}</h2>
-            <p className="text-[#222222] text-[11.71px] ">
+            <h2 className="font-semibold text-[22.31px]">{course.title}</h2>
+            <p className="text-[#222222] text-[13.71px]">
               Instructor: {course.instructor}
             </p>
-            <p className="text-[#222222] text-[13.71px] ">
+            <p className="text-[#222222] text-[15.71px]">
               {course.description}
             </p>
 
@@ -74,15 +91,13 @@ const CourseList = () => {
                   Continue Course
                 </Link>
               ) : (
-                <button className="bg-blue-500 py-2 px-4 rounded text-white" onClick={enrollCourse}>
-                  Enroll Course
+                <button
+                  className="bg-blue-500 py-2 px-4 rounded text-white"
+                  onClick={() => enrollCourse(course._id)}
+                >
+                  {loading ? "Enrolling" : "Enroll Course"}
                 </button>
               )}
-            </div>
-            <div className="border-b py-2 text-right">
-              <Link to={`/course/single/${course._id}`} className="underline ">
-                View Details
-              </Link>
             </div>
           </div>
         ))}

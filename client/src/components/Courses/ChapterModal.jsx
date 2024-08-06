@@ -45,6 +45,11 @@ const ChapterModal = ({ isOpen, onClose, onSave, chapter }) => {
       audios,
     });
     onClose();
+    setTitle("");
+    setContent("");
+    setArticles([]);
+    setVideos([]);
+    setAudios([]);
   };
 
   if (!isOpen) return null;
