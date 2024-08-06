@@ -30,22 +30,21 @@ const EventDetails = ({ userId }) => {
   const { user } = useSelector((state) => state.auth);
   useEffect(() => {
     if (user) {
-      dispatch(getUser(user._userId));
-      setUserID(user._userId);
+      dispatch(getUser(userId));
+      setUserID(user._id);
     }
   }, [dispatch, user]);
 
+  // console.log(user)
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const { data } = await axios.get(`${URL}/events/${id}`);
         setEvent(data);
-        if (data.organizer && data.organizer._id) {
-          const organizerData = await axios.get(
-            `${URL}/events/organizer/${data.organizer._id}`
-          );
-          setOrganizer(organizerData.data);
-        }
+        // console.log(data);
+        const organizerData = data.organizer._id;
+        setOrganizer(organizerData);
+        // console.log(organizer);
 
         const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
         if (fetchTicket && fetchTicket.data && fetchTicket.data.tickets) {
@@ -73,6 +72,8 @@ const EventDetails = ({ userId }) => {
 
   const isOrganizer = organizer && userID === organizer._id;
   const isNotOrganizer = !isOrganizer;
+  // console.log(isNotOrganizer)
+  // console.log(userID)
 
   const buyTicketHandler = async () => {
     setLoading(true);
@@ -132,7 +133,7 @@ const EventDetails = ({ userId }) => {
               <p className="text-gray-700 mb-4 w-[90%] ">{event.subTitle}</p>
             </div>
           </div>
-          {!isNotOrganizer.hasBooked && ticket > 0 && !isOrganizer && (
+          {ticket > 0 && !isOrganizer && (
             <div className="px-2">
               <div className="mb-4  ">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
