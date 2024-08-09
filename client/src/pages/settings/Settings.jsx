@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { getUser } from "../../redux/feature/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { HiOutlineViewGridAdd } from "react-icons/hi";
 import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import PageMenu from "../../components/PageMenu/PageMenu";
