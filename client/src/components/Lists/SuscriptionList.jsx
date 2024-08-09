@@ -4,7 +4,6 @@ import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import ReactPaginate from "react-paginate";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
-import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import axios from "axios";
 
@@ -21,6 +20,7 @@ const SuscriptionList = ({ userId }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
+
   const initialState = {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -28,6 +28,7 @@ const SuscriptionList = ({ userId }) => {
     role: user?.role || "",
   };
   const [profile, setProfile] = useState(initialState);
+
 
   useEffect(() => {
     dispatch(getUser(userId));
