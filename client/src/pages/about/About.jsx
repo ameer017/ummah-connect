@@ -13,8 +13,9 @@ const About = () => {
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Our Mission
             </h2>
+
             <p className="text-gray-700 leading-relaxed">
-              UmmahConnect aims to bring Muslims closer together through
+              <b>UmmahConnect</b> aims to bring Muslims closer together through
               technology, fostering a strong and supportive online community. We
               provide educational resources, community forums, and networking
               opportunities for Muslims worldwide.
