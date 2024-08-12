@@ -16,6 +16,7 @@ const EventList = ({ userId }) => {
   const [events, setEvents] = useState([]);
   const [trending, setTrending] = useState([]);
   const [past, setPast] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
@@ -50,21 +51,27 @@ const EventList = ({ userId }) => {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true)
       const response = await fetch(`${URL}/events/upcoming`);
       const data = await response.json();
-      setEvents(data);
+      setEvents(data)
+      setLoading(false);
     };
     const fetchTrendingEvents = async () => {
+      setLoading(true)
       const response = await fetch(`${URL}/events/trending-events`);
       const data = await response.json();
       // console.log(data);
       setTrending(data);
+      setLoading(false)
     };
     const fetchPastEvents = async () => {
+      setLoading(true)
       const response = await fetch(`${URL}/events/past`);
       const data = await response.json();
       // console.log(data);
       setPast(data);
+      setLoading(false)
     };
 
     fetchEvents();
@@ -92,7 +99,7 @@ const EventList = ({ userId }) => {
       alert("An error occurred. Please try again.");
     }
   };
-
+if(loading) return <p className="text-center">Loading....</p>
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <Sidebar

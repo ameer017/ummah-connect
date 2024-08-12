@@ -96,10 +96,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/forum"
+                  to="/content-categories"
                   className="inline-block py-2 pl-3 pr-5  hover:text-white no-underline"
                 >
-                  Forum
+                  Categories
                 </Link>
               </li>
               <li>
@@ -110,14 +110,7 @@ const Footer = () => {
                   Contents
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/content-categories"
-                  className="inline-block py-2 pl-3 pr-5  hover:text-white no-underline"
-                >
-                  Categories
-                </Link>
-              </li>
+
               <li>
                 <Link
                   to="/content-categories"
@@ -134,10 +127,18 @@ const Footer = () => {
                   Events
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/forum"
+                  className="inline-block py-2 pl-3 pr-5  hover:text-white no-underline"
+                >
+                  Forum
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
-        <div className="pt-4 mt-4 pt-6 border-t border-white-500 flex justify-between px-6 flex-col gap-2 md:flex-row justify-center items-center text-[13px]">
+        <div className=" mt-4 pt-6 border-t border-white-500 flex md:justify-between px-6 flex-col gap-2 md:flex-row justify-center items-center text-[13px]">
           <div>
             <p className="text-center  ">
               Copyright &copy; {currentTime}, Ummah Connect.&nbsp;All rights
