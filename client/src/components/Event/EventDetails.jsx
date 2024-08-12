@@ -18,6 +18,7 @@ const EventDetails = ({ userId }) => {
   const [event, setEvent] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [error, setError] = useState("");
   const [organizer, setOrganizer] = useState(null);
   const [ticket, setTicket] = useState([]);
@@ -37,6 +38,7 @@ const EventDetails = ({ userId }) => {
 
   useEffect(() => {
     const fetchEvent = async () => {
+      setFetching(true)
       try {
         const { data } = await axios.get(`${URL}/events/${id}`);
         setEvent(data);
@@ -52,7 +54,9 @@ const EventDetails = ({ userId }) => {
           setPrice(ticketData.price);
           setTicket(ticketData.quantity);
           setTicketSold(ticketData.sold);
+          setFetching(false)
         } else {
+          setFetching(false)
           console.error("Ticket data is not available");
         }
 
@@ -99,7 +103,7 @@ const EventDetails = ({ userId }) => {
       setLoading(false);
     }
   };
-
+  if (fetching) return <p className="text-center">Loading...</p>
   return (
     <div className="min-h-screen flex items-center justify-center bg-white relative">
       <button
