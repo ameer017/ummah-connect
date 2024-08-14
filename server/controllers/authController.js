@@ -22,6 +22,7 @@ const validateUserInput = (reqBody) => {
     gender,
   } = reqBody;
 
+  
   if (
     !firstName ||
     !lastName ||
