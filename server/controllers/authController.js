@@ -701,9 +701,11 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const sendAutomatedEmail = asyncHandler(async (req, res) => {
+
   const { subject, send_to, reply_to, template, url } = req.body;
 
   if (!subject || !send_to || !reply_to || !template) {
+    
     res.status(500);
     throw new Error("Missing email parameter");
   }
