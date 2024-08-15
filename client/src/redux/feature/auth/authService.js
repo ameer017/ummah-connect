@@ -33,8 +33,8 @@ const getLoginStatus = async () => {
   return response.data;
 };
 
-const getUser = async (userId) => {
-  const response = await axios.get(`${API_URL}get-user/${userId}`);
+const getUser = async (id) => {
+  const response = await axios.get(`${API_URL}get-user/${id}`);
   return response.data;
 };
 
@@ -112,16 +112,6 @@ const loginWithGoogle = async (userToken) => {
   return response.data;
 };
 
-// export const getUserBookedEvents = async (userId) => {
-//   try {
-//     const response = await axios.get(`${API_URL}${userId}/booked-events`);
-//     console.log(response.data)
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching user's booked events:", error);
-//     throw error;
-//   }
-// };
 
 const authService = {
   register,
