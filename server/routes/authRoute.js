@@ -30,7 +30,7 @@ route.post("/sendAutomatedEmail", protect, sendAutomatedEmail);
 
 route.post("/login-with-google/callback", loginWithGoogle);
 
-route.get("/get-user/:userId", protect, getUser);
+route.get("/get-user/:Id", protect, getUser);
 route.get("/get-users", protect, getUsers);
 route.get("/login-status", loginStatus);
 
