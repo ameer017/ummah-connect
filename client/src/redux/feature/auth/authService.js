@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const BACKEND_URL = "https://ummah-connect-server-side.vercel.app";
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 export const API_URL = `${BACKEND_URL}/auth/`;
 
 
@@ -35,9 +35,9 @@ const getLoginStatus = async () => {
   return response.data;
 };
 
-const getUser = async (id) => {
+const getUser = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/get-user/${id}`); 
+    const response = await axios.get(`${API_URL}get-user/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching user:", error);
