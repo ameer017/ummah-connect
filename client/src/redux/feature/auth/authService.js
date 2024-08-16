@@ -1,7 +1,9 @@
 import axios from "axios";
 
+
 const BACKEND_URL = "https://ummah-connect-server-side.vercel.app";
 export const API_URL = `${BACKEND_URL}/auth/`;
+
 
 export const validateEmail = (email) => {
   return email.match(
@@ -34,9 +36,15 @@ const getLoginStatus = async () => {
 };
 
 const getUser = async (id) => {
-  const response = await axios.get(`${API_URL}get-user/${id}`);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/get-user/${id}`); 
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
 };
+
 
 // Update profile
 const updateUser = async (userData) => {

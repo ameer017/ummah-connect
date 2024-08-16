@@ -486,7 +486,7 @@ const upgradeUser = asyncHandler(async (req, res) => {
 });
 //GET
 const getUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.params.Id); // use req.params.Id to fetch the user
 
   if (user) {
     const {
@@ -510,7 +510,7 @@ const getUser = asyncHandler(async (req, res) => {
       hasBooked
     } = user;
 
-    res.status(201).json({
+    res.status(200).json({
       _id,
       firstName,
       lastName,
@@ -531,10 +531,12 @@ const getUser = asyncHandler(async (req, res) => {
       hasBooked
     });
   } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+    res.status(404); // Return 404 if the user is not found
+    throw new Error("User not found");
   }
 });
+
+
 
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find().sort("-createdAt").select("-password");
@@ -701,9 +703,11 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const sendAutomatedEmail = asyncHandler(async (req, res) => {
+
   const { subject, send_to, reply_to, template, url } = req.body;
 
   if (!subject || !send_to || !reply_to || !template) {
+
     res.status(500);
     throw new Error("Missing email parameter");
   }
