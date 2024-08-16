@@ -19,9 +19,10 @@ const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const Profile = ({ userId }) => {
   useRedirectLoggedOutUser("/login");
+
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  // console.log(userId)
+  console.log(user)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -51,8 +52,10 @@ const Profile = ({ userId }) => {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
-    dispatch(getUser(userId));
-  }, [dispatch]);
+    if (userId) {
+      dispatch(getUser(userId));
+    }
+  }, [dispatch, userId]);
 
   useLayoutEffect(() => {
     if (user) {
@@ -129,9 +132,8 @@ const Profile = ({ userId }) => {
       )}
 
       <div
-        className={`w-full bg-white p-4 flex justify-center ${
-          isSidebarOpen ? "md:ml-1/4" : ""
-        }`}
+        className={`w-full bg-white p-4 flex justify-center ${isSidebarOpen ? "md:ml-1/4" : ""
+          }`}
       >
         <div className="flex flex-col items-left justify-center w-full md:w-5/6 p-4">
           {!profile.isVerified && <Notification />}
