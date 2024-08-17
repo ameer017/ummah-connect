@@ -24,6 +24,7 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin: [
+      "*",
       "http://localhost:5173",
       "https://console.cloudinary.com",
       "https://api.cloudinary.com",

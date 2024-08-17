@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { validateEmail } from "../../redux/feature/auth/authService";
 import {
   login,
-  loginWithGoogle,
   RESET,
 } from "../../redux/feature/auth/authSlice";
 const initialState = {
@@ -25,7 +24,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isLoading, isLoggedIn, isSuccess, message, isError, twoFactor } =
+  const { isLoading, isLoggedIn, isSuccess, message, isError, user } =
     useSelector((state) => state.auth);
 
   const loginUser = async (e) => {
@@ -49,12 +48,12 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && isLoggedIn) {
-      navigate("/profile");
+    if (isSuccess && isLoggedIn && user) {
+      navigate(`/profile`);
     }
 
     dispatch(RESET());
-  }, [isLoggedIn, isSuccess, dispatch, navigate, isError]);
+  }, [isLoggedIn, isSuccess, dispatch, navigate, isError, user]);
 
   return (
     <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">

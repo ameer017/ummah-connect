@@ -108,81 +108,93 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { emailAddress, password } = req.body;
+  try {
+    const { emailAddress, password } = req.body;
 
-  if (!emailAddress || !password) {
-    res.status(400);
-    throw new Error("Please add email and password");
-  }
+    if (!emailAddress || !password) {
+      console.error("Email or password not provided");
+      res.status(400);
+      throw new Error("Please add email and password");
+    }
 
-  const user = await User.findOne({ emailAddress });
+    const user = await User.findOne({ emailAddress });
 
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found, please signup");
-  }
+    if (!user) {
+      console.error(`User not found with email: ${emailAddress}`);
+      res.status(404);
+      throw new Error("User not found, please signup");
+    }
 
-  const passwordIsCorrect = await bcrypt.compare(password, user.password);
+    const passwordIsCorrect = await bcrypt.compare(password, user.password);
 
-  if (!passwordIsCorrect) {
-    res.status(400);
-    throw new Error("Invalid email or password");
-  }
+    if (!passwordIsCorrect) {
+      console.error("Password mismatch for user:", emailAddress);
+      res.status(400);
+      throw new Error("Invalid email or password");
+    }
 
-  // Generate Token
-  const token = generateToken(user._id);
+    // Generate Token
+    const token = generateToken(user._id);
 
-  if (user && passwordIsCorrect) {
-    // Send HTTP-only cookie
-    res.cookie("token", token, {
-      path: "/",
-      httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 86400), // 1 day
-      sameSite: "none",
-      secure: true,
-    });
+    if (user && passwordIsCorrect) {
+      // Send HTTP-only cookie
+      res.cookie("token", token, {
+        path: "/",
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 86400), // 1 day
+        sameSite: "none",
+        secure: true,
+      });
 
-    const {
-      _id,
-      firstName,
-      lastName,
-      emailAddress,
-      phone,
-      gender,
-      role,
-      isVerified,
-      photo,
-      username,
-      location,
-      profession,
-      interests,
-      socialMediaLinks,
-      hasBooked
-    } = user;
+      const {
+        _id,
+        firstName,
+        lastName,
+        emailAddress,
+        phone,
+        gender,
+        role,
+        isVerified,
+        photo,
+        username,
+        location,
+        profession,
+        interests,
+        socialMediaLinks,
+        hasBooked
+      } = user;
 
-    res.status(201).json({
-      _id,
-      firstName,
-      lastName,
-      emailAddress,
-      phone,
-      gender,
-      role,
-      isVerified,
-      photo,
-      username,
-      location,
-      profession,
-      interests,
-      socialMediaLinks,
-      token,
-      hasBooked
-    });
-  } else {
-    res.status(500);
-    throw new Error("Something went wrong, please try again");
+      console.log("User logged in successfully:", emailAddress);
+
+      res.status(201).json({
+        _id,
+        firstName,
+        lastName,
+        emailAddress,
+        phone,
+        gender,
+        role,
+        isVerified,
+        photo,
+        username,
+        location,
+        profession,
+        interests,
+        socialMediaLinks,
+        token,
+        hasBooked
+      });
+    } else {
+      console.error("Unexpected error during login for user:", emailAddress);
+      res.status(500);
+      throw new Error("Something went wrong, please try again");
+    }
+  } catch (error) {
+    console.error("Error during login process:", error.message);
+    res.status(500).json({ message: error.message });
   }
 });
+
 
 const forgotPassword = asyncHandler(async (req, res) => {
   const { emailAddress } = req.body;
@@ -510,7 +522,7 @@ const getUser = asyncHandler(async (req, res) => {
       hasBooked
     } = user;
 
-    res.status(201).json({
+    res.status(200).json({
       _id,
       firstName,
       lastName,
@@ -531,10 +543,12 @@ const getUser = asyncHandler(async (req, res) => {
       hasBooked
     });
   } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+    res.status(404); // Return 404 if the user is not found
+    throw new Error("User not found");
   }
 });
+
+
 
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find().sort("-createdAt").select("-password");
@@ -701,9 +715,11 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const sendAutomatedEmail = asyncHandler(async (req, res) => {
+
   const { subject, send_to, reply_to, template, url } = req.body;
 
   if (!subject || !send_to || !reply_to || !template) {
+
     res.status(500);
     throw new Error("Missing email parameter");
   }

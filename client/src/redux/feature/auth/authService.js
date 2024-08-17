@@ -1,7 +1,9 @@
 import axios from "axios";
 
-const BACKEND_URL = "https://ummah-connect-server-side.vercel.app";
+
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 export const API_URL = `${BACKEND_URL}/auth/`;
+
 
 export const validateEmail = (email) => {
   return email.match(
@@ -34,9 +36,15 @@ const getLoginStatus = async () => {
 };
 
 const getUser = async (userId) => {
-  const response = await axios.get(`${API_URL}get-user/${userId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}get-user/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
 };
+
 
 // Update profile
 const updateUser = async (userData) => {
@@ -112,16 +120,6 @@ const loginWithGoogle = async (userToken) => {
   return response.data;
 };
 
-// export const getUserBookedEvents = async (userId) => {
-//   try {
-//     const response = await axios.get(`${API_URL}${userId}/booked-events`);
-//     console.log(response.data)
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching user's booked events:", error);
-//     throw error;
-//   }
-// };
 
 const authService = {
   register,
