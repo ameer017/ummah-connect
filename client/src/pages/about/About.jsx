@@ -1,65 +1,86 @@
-import React from 'react';
+import React from "react";
 
 const About = () => {
   return (
-    <div className="container mx-auto p-6">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">About Us</h1>
-        <p className="text-gray-600">Learn more about our mission, vision, and the team behind our platform.</p>
-      </div>
+    <div className="bg-white py-10">
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
+          About Us.
+        </h1>
+        <div className="  p-6">
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Our Mission
+            </h2>
 
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold mb-4">Introduction</h2>
-        <p className="text-gray-700">
-          Welcome to our platform! We aim to bridge the knowledge gap in the Muslim Ummah by providing access to valuable information and resources. Our goal is to foster growth, development, and a well-informed community.
-        </p>
-      </div>
-
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold mb-4">Mission</h2>
-        <p className="text-gray-700">
-          Our mission is to create a comprehensive platform that centralizes high-quality Islamic content. We strive to make this information easily accessible and engaging, empowering individuals to enhance their understanding of Islam and its teachings.
-        </p>
-      </div>
-
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold mb-4">Vision</h2>
-        <p className="text-gray-700">
-          We envision a world where every Muslim has access to accurate and beneficial Islamic knowledge. Our platform aims to become a trusted source for educational materials, fostering a community that values continuous learning and spiritual growth.
-        </p>
-      </div>
-
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold mb-4">Our Team</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div className="text-center p-4 border rounded-lg shadow-lg">
-            <img
-              className="w-24 h-24 rounded-full mx-auto mb-4"
-              src="https://via.placeholder.com/150"
-              alt="Team Member"
-            />
-            <h3 className="text-xl font-bold">Abdullah Raji Al Ameer</h3>
-            <p className="text-gray-600">Chief Content Officer</p>
-          </div>
-          <div className="text-center p-4 border rounded-lg shadow-lg">
-            <img
-              className="w-24 h-24 rounded-full mx-auto mb-4"
-              src="https://via.placeholder.com/150"
-              alt="Team Member"
-            />
-            <h3 className="text-xl font-bold">Abdullah Qaasim</h3>
-            <p className="text-gray-600">Software Developer</p>
-          </div>
-          <div className="text-center p-4 border rounded-lg shadow-lg">
-            <img
-              className="w-24 h-24 rounded-full mx-auto mb-4"
-              src="https://via.placeholder.com/150"
-              alt="Team Member"
-            />
-            <h3 className="text-xl font-bold">Roqeeb Yusuf</h3>
-            <p className="text-gray-600">Lead Developer</p>
-          </div>
-          {/* Add more team members as needed */}
+            <p className="text-gray-700 leading-relaxed">
+              <b>UmmahConnect</b> aims to bring Muslims closer together through
+              technology, fostering a strong and supportive online community. We
+              provide educational resources, community forums, and networking
+              opportunities for Muslims worldwide.
+            </p>
+          </section>
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Our Goals
+            </h2>
+            <ul className="list-disc list-inside text-gray-700 leading-relaxed">
+              <li>
+                Expand our content library with diverse and valuable resources.
+              </li>
+              <li>
+                Enhance our community engagement tools to foster stronger
+                connections.
+              </li>
+              <li>
+                Introduce new features like live webinars and virtual study
+                groups.
+              </li>
+            </ul>
+          </section>
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Features
+            </h2>
+            <ul className="list-disc list-inside text-gray-700 leading-relaxed">
+              <li>Comprehensive library of Islamic educational materials.</li>
+              <li>Engaging community forums for meaningful conversations.</li>
+              <li>
+                Networking opportunities for professional and social
+                connections.
+              </li>
+              <li>Regular live webinars with knowledgeable speakers.</li>
+              <li>Organized virtual study groups for various topics.</li>
+              <li>Enhanced tools for community engagement.</li>
+              <li>User profiles to showcase skills and interests.</li>
+              <li>
+                Event management tools for organizing and participating in
+                events.
+              </li>
+              <li>
+                Continuous expansion of content library with diverse
+                perspectives.
+              </li>
+              <li>
+                Support and help resources for mental health, financial advice,
+                and more.
+              </li>
+              <li>
+                Opportunities for users to contribute content and resources.
+              </li>
+            </ul>
+          </section>
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Join Us
+            </h2>
+            <p className="text-gray-700 leading-relaxed">
+              We invite all Muslims to join our community and contribute to the
+              growth and support of our Ummah. Together, we can create a
+              positive impact and strengthen our bonds through shared knowledge
+              and experiences.
+            </p>
+          </section>
         </div>
       </div>
     </div>

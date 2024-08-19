@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { RiMenuUnfold2Line } from "react-icons/ri";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { RiFacebookBoxFill, RiMenuUnfold2Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { ShowOnLogin, ShowOnLogout } from "../Protect/HiddenLink";
-import { RESET, logout } from "../../redux/feature/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { RESET, getUser, logout } from "../../redux/feature/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const navItems = [
   { id: 1, title: "About", url: "/about" },
@@ -11,17 +11,15 @@ const navItems = [
   { id: 3, title: "Forum", url: "/forum" },
   { id: 4, title: "Events", url: "/event-list" },
   { id: 5, title: "Courses", url: "/course-list" },
-  { id: 6, title: "Profile", url: "/profile" },
-  { id: 7, title: "Contact", url: "/contact" },
 ];
 
 const contentDropdownItems = [
   { id: 1, title: "Create", url: "/create-content" },
   { id: 2, title: "Categories", url: "/content-categories" },
-  { id: 3, title: "Content Page", url: "/content-list" },
+  // { id: 3, title: "Content Page", url: "/content-list" },
 ];
 
-const Header = () => {
+const Header = ({ userId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,13 +42,39 @@ const Header = () => {
     navigate("/login");
   };
 
+  const { isLoading, isLoggedIn, isSuccess, message, user } = useSelector(
+    (state) => state.auth
+  );
+
+  const initialState = {
+    photo: user?.photo || "",
+  };
+
+  const [profile, setProfile] = useState(initialState);
+  const [imagePreview, setImagePreview] = useState(null);
+
+
+  useEffect(() => {
+    dispatch(getUser(userId));
+  }, [dispatch]);
+
+  useLayoutEffect(() => {
+    if (user) {
+      setProfile({
+        ...profile,
+
+        photo: user.photo,
+      });
+    }
+  }, [user]);
+
   return (
     <div>
       <header className="relative shadow-lg p-[1em] md:px-[5em] md:py-[2em] bg-[#fff]  ">
-        <nav className="flex justify-between">
+        <nav className="flex justify-between items-center">
           <Link
             to="/"
-            className="block mr-2 w-30 text-2xl font-serif font-bold text-[#000]"
+            className="block  w-30 text-2xl font-serif font-bold text-[#000]"
           >
             Ummah Connect
           </Link>
@@ -120,6 +144,17 @@ const Header = () => {
                 className="text-[30px] text-[#fff] cursor-pointer md:hidden"
               />
             </div>
+
+            <ShowOnLogin>
+              <Link to="/profile">
+                <img
+                  src={imagePreview === null ? user?.photo : imagePreview}
+                  alt=""
+                  loading="lazy"
+                  style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+                />
+              </Link>
+            </ShowOnLogin>
           </div>
         </nav>
       </header>

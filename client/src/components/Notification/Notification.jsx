@@ -18,11 +18,11 @@ const Notification = () => {
         <p className="text-[1.3rem]">
           <b>Message:</b> &nbsp;
         </p>
-        <p className="text-[1.3rem]">
+        <p className="text-[1.3rem] text-black ">
           To verify your account, check your email for a verification link.
           &nbsp;
         </p>
-        <p className="pointer text-blue-700 " onClick={sendVerEmail}>
+        <p className="pointer text-blue-700 cursor-pointer hover:underline " onClick={sendVerEmail}>
           <b>Resend Link</b>
         </p>
       </div>

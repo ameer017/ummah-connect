@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const bcrypt = require('bcrypt');
-
+const bcrypt = require("bcrypt");
 
 const authSchema = new Schema(
   {
@@ -16,10 +15,7 @@ const authSchema = new Schema(
     username: { type: String, required: true },
     location: { type: String, default: "Nigeria" },
     profession: { type: String, default: "Student" },
-    interests: {
-      type: String,
-      default : "Quran recitation"
-    },
+    interests: [String],
 
     emailAddress: {
       type: String,
@@ -47,7 +43,6 @@ const authSchema = new Schema(
       type: String,
       required: true,
       default: "subscriber",
-      // subscriber, author, and admin (suspended)
     },
     isVerified: {
       type: Boolean,
@@ -59,6 +54,29 @@ const authSchema = new Schema(
       instagram: { type: String, default: "" },
       linkedin: { type: String, default: "" },
     },
+    hasBooked: {
+      type: Boolean,
+      default: false
+    },
+
+    bookedEvents: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event",
+      },
+    ],
+
+    tag: {
+      type: String,
+      enum: ["mentor", "mentee", "none"],
+      default: "none",
+    },
+    expertise: [String],
+    availableTimes: [String],
+    available: {
+    type: Boolean,
+    default: true,
+  },
   },
   {
     timestamps: true,

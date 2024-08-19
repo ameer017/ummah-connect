@@ -1,57 +1,33 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import Notification from "../../components/Notification/Notification";
-import { FaPen } from "react-icons/fa";
-import EditProfileModal from "./EditProfileModal";
-import { FaFacebookF, FaInstagram, FaLinkedin } from "react-icons/fa";
-import { BsTwitterX } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import { IoIosArrowForward } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
-import PageMenu from "../../components/PageMenu/PageMenu";
-import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
+import { FaFacebookF, FaInstagram, FaLinkedin, FaUsers } from "react-icons/fa";
+import { BiMessageSquareEdit } from "react-icons/bi";
+import { BsTwitterX } from "react-icons/bs";
+import EditProfileModal from "./EditProfileModal";
 import axios from "axios";
+import { IoIosArrowRoundForward } from "react-icons/io";
+import { MdEventNote } from "react-icons/md";
+import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
+import Notification from "../../components/Notification/Notification";
 import { AdminLink } from "../../components/Protect/HiddenLink";
+import Sidebar from "../../components/Sidebar/Sidebar";
+
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const Profile = ({ userId }) => {
   useRedirectLoggedOutUser("/login");
+
   const dispatch = useDispatch();
-  const { isLoading, isLoggedIn, isSuccess, message, user } = useSelector(
-    (state) => state.auth
-  );
+  const { user } = useSelector((state) => state.auth);
+  console.log(user)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const [threads, setThreads] = useState([]);
-
-  useEffect(() => {
-    const fetchThreads = async () => {
-      try {
-        const response = await axios.get(`${URL}/discussion/all-threads`);
-        setThreads(response.data);
-        // console.log(response.data)
-      } catch (error) {
-        console.error("Error fetching threads:", error);
-      }
-    };
-
-    fetchThreads();
-  }, []);
-
-  const [reports, setReports] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const response = await axios.get(`${URL}/discussion/reports`);
-        setReports(response.data.reports);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching reports:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchReports();
-  }, []);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   const initialState = {
     firstName: user?.firstName || "",
@@ -76,8 +52,10 @@ const Profile = ({ userId }) => {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
-    dispatch(getUser(userId));
-  }, [dispatch]);
+    if (userId) {
+      dispatch(getUser(userId));
+    }
+  }, [dispatch, userId]);
 
   useLayoutEffect(() => {
     if (user) {
@@ -108,106 +86,194 @@ const Profile = ({ userId }) => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const [threads, setThreads] = useState([]);
+
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        const response = await axios.get(`${URL}/discussion/all-threads`);
+        setThreads(response.data);
+        // console.log(response.data)
+      } catch (error) {
+        console.error("Error fetching threads:", error);
+      }
+    };
+
+    fetchThreads();
+  }, []);
+
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const response = await fetch(`${URL}/events/upcoming`);
+      const data = await response.json();
+      setEvents(data);
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="cursor-pointer group overflow-hidden p-5 duration-1000 hover:duration-1000 relative w-screen h-[80vh] bg-neutral-800 ">
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 -top-12 -left-12 absolute shadow-yellow-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-        <div className="group-hover:rotate-45 bg-transparent group-hover:scale-150 top-44 left-14 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 top-24 left-56 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 top-12 left-12 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-12 h-12"></div>
-        <div className="group-hover:rotate-45 bg-transparent group-hover:scale-150 top-12 left-12 absolute shadow-green-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-44 h-44"></div>
-        <div className="group-hover:rotate-45 bg-transparent group-hover:scale-150 -top-24 -left-12 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-64 h-64"></div>
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 top-24 left-12 absolute shadow-sky-500 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-4 h-4"></div>
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        profile={profile}
+        user={user}
+      />
+      {!isSidebarOpen && (
+        <button
+          className="p-2 bg-white fixed top-40 left-0 z-10 mt-2 mr-2 border rounded-full"
+          onClick={toggleSidebar}
+        >
+          <IoIosArrowForward size={25} color="black" />
+        </button>
+      )}
 
-        <div className="w-full h-full shadow-xl shadow-neutral-900 p-3  rounded-xl flex-col gap-2 flex justify-center items-center text-white">
+      <div
+        className={`w-full bg-white p-4 flex justify-center ${isSidebarOpen ? "md:ml-1/4" : ""
+          }`}
+      >
+        <div className="flex flex-col items-left justify-center w-full md:w-5/6 p-4">
           {!profile.isVerified && <Notification />}
-
-          <PageMenu />
-
-          <div>
-            <img
-              src={imagePreview === null ? user?.photo : imagePreview}
-              alt=""
-              style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-            />
+          <div className="p-4">
+            <h1 className="font-normal text-[45px] ">General Overview</h1>
+            <p className="text-neutral-400 text-[18px] ">
+              General Overview: A Snapshot of Your Information, Activities, and
+              Achievements
+            </p>
           </div>
-          <p className="text-neutral-300">
-            Name: {profile.firstName} &nbsp; Username: {profile.username}
-          </p>
-          <p className="text-neutral-300">Email: {profile.emailAddress}</p>
-          <p className="text-neutral-300">Gender: {profile.gender} </p>
-          <p className="text-neutral-300">Role: {profile.role} </p>
-
-          <div className="flex gap-4">
-            <a href={profile.facebook}>
-              <FaFacebookF size={20} color="white" />
-            </a>
-            <a href={profile.instagram} >
-              <FaInstagram size={20} color="white" />
-            </a>
-            <a href={profile.linkedIn} >
-              <FaLinkedin size={20} color="white" />
-            </a>
-            <a href={profile.x} >
-              <BsTwitterX size={20} color="white" />
-            </a>
-
-            <FaPen
-              className=""
-              size={20}
-              color="white"
-              title="Edit Profile"
-              onClick={openModal}
-            />
-          </div>
-
-          <AdminLink>
-            <hr className="border w-screen " />
-
-            <div className="flex flex-col items-center justify-center py-[10px] ">
-              <h2>Metrics</h2>
-
-              <div className="flex gap-[10px] w-300px flex-col md:w-screen md:flex-row  justify-center  text-center p-2">
-                <div>
-                  <h2 className="font-bold text-2xl">
-                    Forum Activities and Contributions
-                  </h2>
-                  <p>Total Forum Discussions: {threads?.length}</p>
-                  <p>Total Forum Thread Reports: {reports?.length}</p>
-                </div>
-                <div></div>
-                <div></div>
+          <div className="p-4">
+            <p className="text-[24px] font-[500] ">Profile Overview</p>
+            <div className="border p-6 rounded-lg">
+              <img
+                src={imagePreview === null ? user?.photo : imagePreview}
+                alt=""
+                style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                loading="lazy"
+              />
+              <div>
+                <p className="text-[16px] ">Name and Basic Info</p>
+                <p className="text-[14px] text-neutral-400 mt-2">
+                  Name: {profile.firstName} {profile.lastName}
+                </p>
+                <p className="text-[14px] text-neutral-400">
+                  Email: {profile.emailAddress}
+                </p>
+                <p className="text-[14px] text-neutral-400">
+                  Interest: {profile.interests}
+                </p>
+              </div>
+              <div
+                className="flex items-center justify-center gap-2 rounded-lg border bg-neutral-100 w-[150px] my-4 p-3 cursor-pointer"
+                onClick={openModal}
+              >
+                <BiMessageSquareEdit
+                  size={15}
+                  color="black"
+                  title="Edit Profile"
+                />
+                <p>Edit Profile</p>
+              </div>
+              <div className="flex gap-4">
+                <a href={profile.facebook}>
+                  <FaFacebookF size={20} color="blue" />
+                </a>
+                <a href={profile.instagram}>
+                  <FaInstagram size={20} color="#d62976" />
+                </a>
+                <a href={profile.linkedIn}>
+                  <FaLinkedin size={20} color="#0077B5" />
+                </a>
+                <a href={profile.x}>
+                  <BsTwitterX size={20} color="#121212" />
+                </a>
               </div>
             </div>
-          </AdminLink>
-          <hr className="border w-screen " />
-          <div className="flex gap-[30px] w-300px flex-col md:w-screen md:flex-row  justify-center  text-center p-2">
-            {/* <div>
-              <h2 className="font-bold text-2xl">Activity and Contributions</h2>
-              <p>Posts: (List or Link to Posts)</p>
-              <p>Posts: {threads.length}</p>
-            </div> */}
-            <div>
-              <h2 className="font-bold text-2xl">Personal Information</h2>
-              <p>Location: {profile.location} </p>
+          </div>
+          <div className="p-4">
+            <p className="text-[24px] font-[500] ">Enrolled Courses</p>
+
+            <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border"></div>
+          </div>
+          <div className="p-4">
+            <p className="text-[24px] font-[500] ">Upcoming Events</p>
+            <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+              {events?.length > 0 ? (
+                events.map((event) => (
+                  <div
+                    key={event._id}
+                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                  >
+                    <p>
+                      <MdEventNote size={15} />
+                    </p>
+                    <p className="mt-4">{event.title}</p>
+                    <p className="text-gray-700 border-b py-2">
+                      {event.description.length > 100
+                        ? `${event.description.substring(0, 100)}...`
+                        : event.description}
+                    </p>
+                    <div className="flex items-center justify-between my-3 border-b py-2">
+                      <p className="text-sm">
+                        {new Date(event.date).toLocaleDateString()}
+                      </p>
+                      <Link
+                        to={`/event/${event._id}`}
+                        className="text-sm underline"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+
+                    <AdminLink>
+                      <div className="flex justify-between mt-2">
+                        <button
+                          className="px-4 py-2 text-black flex items-center border rounded-lg"
+                          onClick={() => handleRSVP(event._id)}
+                        >
+                          Manage RSVP
+                        </button>
+                      </div>
+                    </AdminLink>
+                  </div>
+                ))
+              ) : (
+                <p>No events available.</p>
+              )}
             </div>
-            <div>
-              <h2 className="font-bold text-2xl">
-                Educational and Professional Information
-              </h2>
-              <p>Profession: {profile.profession} </p>
-              <p>Interest: {profile.interests} </p>
+          </div>
+          <div className="p-4">
+            <h1 className="text-[24px] font-[500] ">Recent Forum Activity</h1>
+
+            <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+              {threads?.length > 0 ? (
+                threads.map((thread) => (
+                  <div
+                    key={thread._id}
+                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                  >
+                    <p className="mt-4 text-[16px] ">{thread.title}</p>
+                    <p className="text-[#656565] border-b py-2 text-[12px] ">
+                      {thread.content.length > 50
+                        ? `${thread.content.substring(0, 50)}...`
+                        : thread.content}
+                    </p>
+                    <Link
+                      to={`/threads/${thread._id}`}
+                      className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4"
+                    >
+                      <IoIosArrowRoundForward size={14} /> View Thread
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <p>No recent forum activity.</p>
+              )}
             </div>
           </div>
         </div>
-
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 -bottom-12 -right-12 absolute shadow-yellow-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-        <div className="group-hover:rotate-45 bg-transparent group-hover:scale-150 bottom-44 right-14 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 bottom-24 right-56 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 bottom-12 right-12 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-12 h-12"></div>
-        <div className="group-hover:rotate-45 bg-transparent group-hover:scale-150 bottom-12 right-12 absolute shadow-green-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-44 h-44"></div>
-        <div className="group-hover:rotate-45 bg-transparent group-hover:scale-150 -bottom-24 -right-12 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-64 h-64"></div>
-        <div className="group-hover:-rotate-45 bg-transparent group-hover:scale-150 bottom-24 right-12 absolute shadow-sky-500 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-4 h-4"></div>
       </div>
 
       <EditProfileModal isOpen={isModalOpen} onClose={closeModal} />

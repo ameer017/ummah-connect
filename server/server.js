@@ -23,7 +23,12 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "*",
+      "http://localhost:5173",
+      "https://console.cloudinary.com",
+      "https://api.cloudinary.com",
+    ],
     credentials: true,
     optionSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -38,7 +43,12 @@ app.use("/auth", require("./routes/authRoute"));
 app.use("/content", require("./routes/contentRoute"));
 app.use("/discussion", require("./routes/forumRoute"));
 app.use("/events", require("./routes/eventRoute"));
-app.use("/mentorships", require("./routes/mentorship"));
+app.use("/mentorship", require("./routes/mentorship"));
+app.use("/subscribe", require("./routes/subscriptionRoute"));
+app.use("/courses", require("./routes/courseRoute"));
+app.use("/enrollments", require("./routes/enrollmentRoute"));
+app.use("/progress", require("./routes/progressRoute"));
+app.use("/webinars", require("./routes/webinarRoute"));
 
 const PORT = process.env.PORT || 5000;
 

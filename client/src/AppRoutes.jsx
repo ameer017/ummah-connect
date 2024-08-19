@@ -9,7 +9,6 @@ import ChangePassword from "./pages/auth/ChangePassword";
 import Profile from "./pages/profile/Profile";
 import CreateContent from "./components/Content/CreateContent";
 import EditContent from "./components/Content/EditContent";
-import ContentListPage from "./components/Content/ContentListPage";
 import ContentCategories from "./components/Content/ContentCategories";
 import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
@@ -18,14 +17,22 @@ import ForumList from "./components/Forum/ForumList";
 import CreateThread from "./components/Forum/CreateThread";
 import ReportThread from "./components/Forum/ReportThread";
 import ThreadDetail from "./components/Forum/ThreadDetail";
-
 import EventList from "./components/Event/EventList";
+import CourseList from "./components/Courses/CourseList";
 import EventDetails from "./components/Event/EventDetails";
 import EventCreate from "./components/Event/EventCreate";
-import MentorshipList from "./components/Courses/MentorshipList";
-import CourseList from "./components/Courses/CourseList";
-import MentorshipForm from "./components/Courses/MentorshipForm";
-
+import Settings from "./pages/settings/Settings";
+import Article from "./components/Content/Article";
+import ContentDetail from "./components/Content/ContentDetail";
+import SuscriptionList from "./components/Lists/SuscriptionList";
+import Unsubscribe from "./components/Footer/Unsubscribe";
+import MentorshipSignUp from "./components/Mentorship/Mentorship";
+import FindMentorMentee from "./components/Mentorship/FindMentors";
+import ScheduleSession from "./components/Mentorship/ScheduleSession";
+import AcceptSession from "./components/Mentorship/AcceptSession";
+import CreateCourseForm from "./components/Courses/CreateCourseForm";
+import CourseDetail from "./components/Courses/CourseDetail";
+import PaymentSuccess from "./components/Event/PaymentSuccess";
 
 const AppRoutes = () => (
   <Routes>
@@ -33,12 +40,30 @@ const AppRoutes = () => (
     <Route path="/register" element={<Signup />} />
     <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
-   
+
     <Route
       path="/create-content"
       element={
         <Layout>
           <CreateContent />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/payment-success"
+      element={
+        <Layout>
+          <PaymentSuccess />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/create-course"
+      element={
+        <Layout>
+          <CreateCourseForm />
         </Layout>
       }
     />
@@ -51,10 +76,10 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/content-list"
+      path="/content/:id"
       element={
         <Layout>
-          <ContentListPage />
+          <Article />
         </Layout>
       }
     />
@@ -66,7 +91,25 @@ const AppRoutes = () => (
         </Layout>
       }
     />
-  
+
+    <Route
+      path="/content/single/:id"
+      element={
+        <Layout>
+          <ContentDetail />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/course/single/:id"
+      element={
+        <Layout>
+          <CourseDetail />
+        </Layout>
+      }
+    />
+
     <Route path="/verify/:verificationToken" element={<Verify />} />
     <Route
       path="/profile"
@@ -92,6 +135,14 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+    <Route
+      path="/settings"
+      element={
+        <Layout>
+          <Settings />
+        </Layout>
+      }
+    />
     <Route path="/change-password" element={<ChangePassword />} />
 
     <Route
@@ -99,6 +150,22 @@ const AppRoutes = () => (
       element={
         <Layout>
           <UserList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/subscribers"
+      element={
+        <Layout>
+          <SuscriptionList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/unsubscribe"
+      element={
+        <Layout>
+          <Unsubscribe />
         </Layout>
       }
     />
@@ -145,7 +212,6 @@ const AppRoutes = () => (
       }
     />
     <Route
-
       path="/course-list"
       element={
         <Layout>
@@ -154,7 +220,6 @@ const AppRoutes = () => (
       }
     />
     <Route
-
       path="/event/:id"
       element={
         <Layout>
@@ -175,7 +240,23 @@ const AppRoutes = () => (
       path="/mentors-overview"
       element={
         <Layout>
-          <MentorshipList />
+          <FindMentorMentee tag="mentor" />
+        </Layout>
+      }
+    />
+    <Route
+      path="/mentors-overview"
+      element={
+        <Layout>
+          <FindMentorMentee tag="mentee" />
+        </Layout>
+      }
+    />
+    <Route
+      path="/accept-session/:sessionId"
+      element={
+        <Layout>
+          <AcceptSession />
         </Layout>
       }
     />
@@ -183,11 +264,18 @@ const AppRoutes = () => (
       path="/create-mentorship"
       element={
         <Layout>
-          <MentorshipForm />
+          <MentorshipSignUp />
         </Layout>
       }
     />
-
+    <Route
+      path="/schedule-session/:id"
+      element={
+        <Layout>
+          <ScheduleSession />
+        </Layout>
+      }
+    />
   </Routes>
 );
 

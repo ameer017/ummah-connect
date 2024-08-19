@@ -1,16 +1,31 @@
 const mongoose = require("mongoose");
 
 const mentorshipSchema = new mongoose.Schema({
-  mentor: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  mentee: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  mentorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  menteeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  sessionDate: {
+    type: Date,
+    required: true,
+  },
+  topics: [String],
   status: {
     type: String,
-    enum: ["Pending", "Accepted", "Rejected"],
-    default: "Pending",
+    enum: ["pending", "accepted", "declined"],
+    default: "pending",
   },
-  startDate: { type: Date },
-  endDate: { type: Date },
-  notes: { type: String },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model("Mentorship", mentorshipSchema);
+const Mentorship = mongoose.model("Mentorship", mentorshipSchema);
+module.exports = Mentorship;

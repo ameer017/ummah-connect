@@ -1,7 +1,9 @@
 import axios from "axios";
 
-const BACKEND_URL = "http://localhost:5000";
+
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 export const API_URL = `${BACKEND_URL}/auth/`;
+
 
 export const validateEmail = (email) => {
   return email.match(
@@ -34,9 +36,15 @@ const getLoginStatus = async () => {
 };
 
 const getUser = async (userId) => {
-  const response = await axios.get(`${API_URL}get-user/${userId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}get-user/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
 };
+
 
 // Update profile
 const updateUser = async (userData) => {
@@ -68,7 +76,7 @@ const changePassword = async (userData) => {
 // Reset Password
 const resetPassword = async (userData, resetToken) => {
   const response = await axios.patch(
-    `${API_URL}resetPassword/${resetToken}`,
+    `${API_URL}reset-password/${resetToken}`,
     userData
   );
 
@@ -77,7 +85,7 @@ const resetPassword = async (userData, resetToken) => {
 
 // fORGOT Password
 const forgotPassword = async (userData) => {
-  const response = await axios.post(API_URL + "forgotPassword", userData);
+  const response = await axios.post(API_URL + "forgot-password", userData);
 
   return response.data.message;
 };
@@ -112,6 +120,7 @@ const loginWithGoogle = async (userToken) => {
   return response.data;
 };
 
+
 const authService = {
   register,
   login,
@@ -127,7 +136,7 @@ const authService = {
   getUsers,
   deleteUser,
   upgradeUser,
-  loginWithGoogle,
+  loginWithGoogle
 };
 
 export default authService;

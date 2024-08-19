@@ -1,18 +1,82 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Sidebar from "../Sidebar/Sidebar";
+import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import { getUser } from "../../redux/feature/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { MdEventNote, MdOutlineCreateNewFolder } from "react-icons/md";
+import { IoIosArrowRoundForward } from "react-icons/io";
+import { AdminLink } from "../Protect/HiddenLink";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
-const EventList = () => {
+const EventList = ({ userId }) => {
+  useRedirectLoggedOutUser("/login");
+  const dispatch = useDispatch();
+
   const [events, setEvents] = useState([]);
+  const [trending, setTrending] = useState([]);
+  const [past, setPast] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const initialState = {
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    photo: user?.photo || "",
+    role: user?.role || "",
+  };
+
+  const [profile, setProfile] = useState(initialState);
+
+  useEffect(() => {
+    dispatch(getUser(userId));
+  }, [dispatch]);
+
+  useLayoutEffect(() => {
+    if (user) {
+      setProfile({
+        ...profile,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        photo: user.photo,
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const response = await fetch(`${URL}/events`);
+      setLoading(true)
+      const response = await fetch(`${URL}/events/upcoming`);
       const data = await response.json();
-      setEvents(data);
+      setEvents(data)
+      setLoading(false);
+    };
+    const fetchTrendingEvents = async () => {
+      setLoading(true)
+      const response = await fetch(`${URL}/events/trending-events`);
+      const data = await response.json();
+      // console.log(data);
+      setTrending(data);
+      setLoading(false)
+    };
+    const fetchPastEvents = async () => {
+      setLoading(true)
+      const response = await fetch(`${URL}/events/past`);
+      const data = await response.json();
+      // console.log(data);
+      setPast(data);
+      setLoading(false)
     };
 
     fetchEvents();
+    fetchTrendingEvents();
+    fetchPastEvents();
   }, []);
 
   const handleRSVP = async (eventId) => {
@@ -35,51 +99,171 @@ const EventList = () => {
       alert("An error occurred. Please try again.");
     }
   };
-
+if(loading) return <p className="text-center">Loading....</p>
   return (
-    <div className="flex min-h-screen">
-      <div className="w-1/4 bg-gray-200 p-4 flex flex-col space-y-2">
-        <p className=" text-[20px] ">Events Overview</p>
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        profile={profile}
+        user={user}
+      />
 
-        <Link
-          to="/create-event"
-          className="text-blue-500 hover:text-blue-700 text-[18px] "
-        >
-          Create Event
-        </Link>
+      <div
+        className={`w-full bg-white p-4 flex justify-center ${
+          isSidebarOpen ? "md:ml-1/4" : ""
+        }`}
+      >
+        <div className="flex flex-col items-left  w-full md:w-5/6 p-4">
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <h1 className="font-bold text-3xl">Events</h1>
+              <AdminLink>
+                <Link to="/create-event">
+                  <MdOutlineCreateNewFolder size={20} />
+                </Link>
+              </AdminLink>
+            </div>
 
-        {/* <Link
-          to="/report-thread"
-          className="text-blue-500 hover:text-blue-700 text-[18px] "
-        >
-          Reports
-        </Link> */}
-      </div>
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Upcoming Events</h1>
-        <ul className="space-y-4">
-          {events.map((event) => (
-            <li key={event._id} className="p-4 border rounded shadow-md">
-              <Link
-                to={`/event/${event._id}`}
-                className="text-xl font-semibold text-blue-500 hover:underline"
-              >
-                {event.title}
-              </Link>
-              <p>{event.description}</p>
-              <p className="text-sm text-gray-500">
-                {new Date(event.date).toLocaleDateString()}
-              </p>
-              <p className="text-sm text-gray-500">{event.location}</p>
-              <button
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                onClick={() => handleRSVP(event._id)}
-              >
-                RSVP
-              </button>
-            </li>
-          ))}
-        </ul>
+            <div className="p-4">
+              <h1 className="text-3xl">Upcoming Events</h1>
+              <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {events?.length > 0 ? (
+                  events.map((event) => (
+                    <div
+                      key={event._id}
+                      className="w-full bg-green-100 p-4 border rounded-lg cursor-pointer"
+                    >
+                      <img
+                        src={event.photo}
+                        alt={event.title}
+                        className="rounded-lg  "
+                      />
+                      <p className="mt-4">{event.title}</p>
+                      <p className="text-gray-700 border-b py-2">
+                        {event.description.length > 100
+                          ? `${event.description.substring(0, 100)}...`
+                          : event.description}
+                      </p>
+                      <div className="flex items-center justify-between my-3 border-b py-2">
+                        <p className="text-sm">
+                          Date: {new Date(event.date).toLocaleDateString()}
+                        </p>
+                        <Link
+                          to={`/event/${event._id}`}
+                          className="text-sm underline"
+                        >
+                          View Details
+                        </Link>
+                      </div>
+
+                      {/* <div className="flex justify-between mt-2">
+                        <button
+                          className="px-4 py-2 text-black flex items-center"
+                          onClick={() => handleRSVP(event._id)}
+                        >
+                          <IoIosArrowRoundForward size={20} /> RSVP Now
+                        </button>
+                        <button
+                          className="px-4 py-2 text-black underline"
+                          onClick={() => handleRSVP(event._id)}
+                        >
+                          Cancel RSVP
+                        </button>
+                      </div> */}
+                    </div>
+                  ))
+                ) : (
+                  <p>No events available.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="p-4">
+              <h1 className="text-3xl">Top Trending</h1>
+              <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {trending?.length > 0 ? (
+                  trending.map((event) => (
+                    <div
+                      key={event._id}
+                      className="w-full p-4 border rounded-lg cursor-pointer bg-green-100 "
+                     
+                    >
+                      <p>
+                        <MdEventNote size={15} />
+                      </p>
+                      <p className="mt-4">{event.title}</p>
+                      <p className="text-gray-700 border-b py-2">
+                        {event.description.length > 100
+                          ? `${event.description.substring(0, 100)}...`
+                          : event.description}
+                      </p>
+                      <div className="flex items-center justify-between my-3 border-b py-2">
+                        <p className="text-sm">
+                          Date: {new Date(event.date).toLocaleDateString()}
+                        </p>
+                        <Link
+                          to={`/event/${event._id}`}
+                          className="text-sm underline"
+                        >
+                          View Details
+                        </Link>
+                      </div>
+
+                      {/* <div className="flex justify-between mt-2">
+                        <button
+                          className="px-4 py-2 text-black flex items-center"
+                          onClick={() => handleRSVP(event._id)}
+                        >
+                          <IoIosArrowRoundForward size={20} /> RSVP Now
+                        </button>
+                      </div> */}
+                    </div>
+                  ))
+                ) : (
+                  <p>No events available.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="p-4">
+              <h1 className="text-3xl">Past Events</h1>
+              <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {past?.length > 0 ? (
+                  past.map((event) => (
+                    <div
+                      key={event._id}
+                      className="w-full bg-red-100 p-4 border rounded-lg cursor-pointer"
+                    >
+                      <p>
+                        <MdEventNote size={15} />
+                      </p>
+                      <p className="mt-4">{event.title}</p>
+                      <p className="text-gray-700 border-b py-2">
+                        {event.description.length > 100
+                          ? `${event.description.substring(0, 100)}...`
+                          : event.description}
+                      </p>
+                      <div className="flex items-center justify-between my-3 border-b py-2">
+                        <p className="text-sm">
+                          Date: {new Date(event.date).toLocaleDateString()}
+                        </p>
+                        <Link
+                          to={`/event/${event._id}`}
+                          className="text-sm underline"
+                        >
+                          View Details
+                        </Link>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No events available.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
