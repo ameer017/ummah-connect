@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -16,6 +17,7 @@ const CourseList = () => {
   const [courses, setCourses] = useState([]);
   const [enrolled, setEnrolled] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -26,17 +28,27 @@ const CourseList = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
+      setFetching(true)
       try {
         const response = await axios.get(`${URL}/courses/get-all-course`);
         setCourses(response.data);
-        console.log(response.data);
+        setFetching(false)
+
       } catch (error) {
+        setFetching(false)
         console.error("Error fetching courses:", error);
       }
     };
 
     fetchCourses();
   }, []);
+
+  useEffect(() => {
+    setFetching(true);
+    setTimeout(() => {
+      setFetching(false);
+    }, 3000);
+  })
 
   const enrollCourse = async (courseId) => {
     try {
@@ -70,6 +82,7 @@ const CourseList = () => {
           </button>
         </Link>
       </div>
+      {/* {fetching ?  <PageLoader/> :  ()} */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {courses.map((course) => (
           <div
