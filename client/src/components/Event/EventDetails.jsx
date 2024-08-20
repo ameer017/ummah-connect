@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
 import { toast } from "react-toastify";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -103,11 +104,17 @@ const EventDetails = ({ userId }) => {
       setLoading(false);
     }
   };
-  if (fetching) return <p className="text-center">Loading...</p>
+  if (fetching){
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <PageLoader/>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-white relative">
       <button
-        className="absolute top-4 left-4 underline text-black px-4 py-2 rounded"
+        className="absolute top-4 left-16 underline text-black px-4 py-2 rounded"
         onClick={() => navigate(-1)}
       >
         BACK

@@ -6,6 +6,7 @@ import { LuPenSquare } from "react-icons/lu";
 import { SlTrash } from "react-icons/sl";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -43,17 +44,13 @@ const ThreadDetail = ({ userId }) => {
         const response = await axios.get(`${URL}/discussion/threads/${id}`);
         setThread(response.data.thread);
         setCreator(response.data.thread.createdBy);
-        // console.log(response.data.thread.createdBy);
         setReplies(response.data.replies);
         setLoading(false);
-        // console.log(replies)
 
         setReplyerID(response.data.replies[0].createdBy);
         console.log(replyerID);
 
-        // const userInfo = user._id;
-        //   setReplyerID(userInfo);
-        //   console.log(replyerID);
+
 
         const userInfo = user._id;
         setUserID(userInfo);
@@ -146,7 +143,13 @@ const ThreadDetail = ({ userId }) => {
     setShowReportForm(!showReportForm);
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <PageLoader />
+      </div>
+    );
+  }
   if (!thread) return <p>Thread not found</p>;
 
   const isCreator = creator && userID === creator._id;
@@ -155,7 +158,7 @@ const ThreadDetail = ({ userId }) => {
   return (
     <div className="min-h-screen border flex items-center justify-center bg-white relative">
       <button
-        className="absolute top-4 left-4 underline text-black px-4 py-2 rounded"
+        className="absolute top-4 left-16 underline text-black px-4 py-2 rounded"
         onClick={() => navigate(-1)}
       >
         BACK
