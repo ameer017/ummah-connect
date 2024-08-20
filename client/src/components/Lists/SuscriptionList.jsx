@@ -133,10 +133,10 @@ const SuscriptionList = ({ userId }) => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {index + 1}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-[15px] text-gray-900">
                           {email}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-[15px] text-gray-900">
                           {formatDate(dateSubscribed)}
                         </td>
                       </tr>

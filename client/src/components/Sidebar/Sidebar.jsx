@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward, IoIosArrowBack,  } from "react-icons/io";
 import { GrOverview, GrNotes } from "react-icons/gr";
 import { IoBookOutline } from "react-icons/io5";
 import {
@@ -42,7 +42,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
                 </p>
               </div>
             </div>
-            <div className="-mr-[40px] ">
+            <div className="md:-mr-[40px] ">
               <button
                 className="p-2 bg-white text-white border rounded-full"
                 onClick={toggleSidebar}

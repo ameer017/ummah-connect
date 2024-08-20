@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-import heroBackground from "../../assets/hero-background.jpg";
-import { FaBookQuran } from "react-icons/fa6";
-import { PiBookOpenText, PiGraduationCapLight } from "react-icons/pi";
-import { DiHtml5Multimedia } from "react-icons/di";
 import { TbRocket } from "react-icons/tb";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
@@ -58,20 +54,20 @@ const HeroSection = () => {
       }
     };
     fetchEvents();
-  });
+  }, []);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(`${URL}/courses/get-all-course`);
-        setCourses(response.data);
-        // console.log(response.data)
+        setCourses(response.data.slice(0, 3));
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
     };
     fetchCourses();
-  });
+  }, []);
+
   const [spotlight, setSpotlight] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -286,7 +282,7 @@ const HeroSection = () => {
       <section className="py-10">
         <div className="container mx-auto p-4">
           <div className="flex items-center justify-between p-2">
-            <h1 className="text-3xl font-bold w-[20%] ">
+            <h1 className="text-3xl font-bold md:w-[20%] w-full ">
               Ecplore Our Popular Courses
             </h1>
 
@@ -341,7 +337,7 @@ const HeroSection = () => {
       <section className="py-10">
         <div className="container mx-auto p-4">
           <div className="flex items-center justify-between p-2">
-            <h1 className="text-3xl font-bold w-[10%] ">
+            <h1 className="text-3xl font-bold md:w-[10%] w-full ">
               Join The Conversation
             </h1>
 

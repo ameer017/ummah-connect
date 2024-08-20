@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdEventNote, MdOutlineCreateNewFolder } from "react-icons/md";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { AdminLink } from "../Protect/HiddenLink";
+import PageLoader from "../Loader/PageLoader";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const EventList = ({ userId }) => {
@@ -99,7 +100,13 @@ const EventList = ({ userId }) => {
       alert("An error occurred. Please try again.");
     }
   };
-if(loading) return <p className="text-center">Loading....</p>
+if(loading){
+  return (
+    <div className="flex justify-center items-center min-h-screen">
+      <PageLoader />
+    </div>
+  );
+}
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <Sidebar
