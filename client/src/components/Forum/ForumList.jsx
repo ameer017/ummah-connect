@@ -7,6 +7,7 @@ import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import Sidebar from "../Sidebar/Sidebar";
 import { HiOutlineViewGridAdd } from "react-icons/hi";
 import { AdminLink } from "../Protect/HiddenLink";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -69,7 +70,13 @@ const ForumList = ({ userId }) => {
     thread.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <PageLoader />
+      </div>
+    );
+  }
   if (!threads) return <p>Threads not found</p>;
 
   const formatDate = (dateString) => {
@@ -94,9 +101,8 @@ const ForumList = ({ userId }) => {
       />
 
       <div
-        className={`w-full bg-white p-4 flex justify-center ${
-          isSidebarOpen ? "md:ml-1/4" : ""
-        }`}
+        className={`w-full bg-white p-4 flex justify-center ${isSidebarOpen ? "md:ml-1/4" : ""
+          }`}
       >
         <div className="flex flex-col items-left  w-full md:w-5/6 p-4">
           <div className="p-4">
