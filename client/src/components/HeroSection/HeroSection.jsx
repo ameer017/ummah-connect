@@ -120,6 +120,8 @@ const HeroSection = () => {
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
+  if(!events) return <p>No upcoming events at the moment</p>
+
   return (
     <main className="bg-[#fff]">
       {/* HERO SECTION */}
