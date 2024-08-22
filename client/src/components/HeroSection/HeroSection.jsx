@@ -147,7 +147,7 @@ const HeroSection = () => {
 
       {/* COLLABORATE */}
 
-      <section className="py-12 bg-white">
+      {/* <section className="py-12 bg-white">
         <div className="container mx-auto px-4 overflow-hidden">
           <p className="text-[23px] text-center mb-8">
             We collaborate with over <span className="text-blue-800">325 </span>{" "}
@@ -166,7 +166,7 @@ const HeroSection = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* SpotLight SECTION */}
       <section className="flex text-center py-10">
