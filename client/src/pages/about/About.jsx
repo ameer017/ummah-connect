@@ -2,26 +2,26 @@ import React from "react";
 
 const About = () => {
   return (
-    <div className="bg-white py-10">
+    <div className="bg-gray-50 py-10">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
+        <h1 className="text-5xl font-bold text-center text-gray-800 mb-8 animate-bounce">
           About Us.
         </h1>
-        <div className="  p-6">
+        <div className="bg-white shadow-lg rounded-lg p-8 transition-transform duration-300 hover:scale-105">
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">
               Our Mission
             </h2>
-
             <p className="text-gray-700 leading-relaxed">
-              <b>UmmahConnect</b> aims to bring Muslims closer together through
-              technology, fostering a strong and supportive online community. We
-              provide educational resources, community forums, and networking
-              opportunities for Muslims worldwide.
+              <strong>UmmahConnect</strong> aims to bring Muslims closer
+              together through technology, fostering a strong and supportive
+              online community. We provide educational resources, community
+              forums, and networking opportunities for Muslims worldwide.
             </p>
           </section>
+
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">
               Our Goals
             </h2>
             <ul className="list-disc list-inside text-gray-700 leading-relaxed">
@@ -38,11 +38,12 @@ const About = () => {
               </li>
             </ul>
           </section>
+
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">
               Features
             </h2>
-            <ul className="list-disc list-inside text-gray-700 leading-relaxed">
+            <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-2">
               <li>Comprehensive library of Islamic educational materials.</li>
               <li>Engaging community forums for meaningful conversations.</li>
               <li>
@@ -70,8 +71,9 @@ const About = () => {
               </li>
             </ul>
           </section>
+
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">
               Join Us
             </h2>
             <p className="text-gray-700 leading-relaxed">

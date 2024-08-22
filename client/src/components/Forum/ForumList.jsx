@@ -147,7 +147,7 @@ const ForumList = ({ userId }) => {
                         Author: {thread.createdBy.username}{" "}
                       </p>
                       <p className=" py-2 mt-2">
-                        Last Activity: {formatDate(thread.createdBy.updatedAt)}{" "}
+                        Created: {formatDate(thread.createdBy.updatedAt)}{" "}
                       </p>
                     </div>
                   </Link>
