@@ -28,6 +28,7 @@ const EventDetails = ({ userId }) => {
   const [ticketSold, setTicketSold] = useState("");
   const [price, setPrice] = useState([]);
   const [hasBooked, setHasBooked] = useState(false);
+  const [bookedEvents, setBookedEvents] = useState([]);
 
   const { user } = useSelector((state) => state.auth);
   useEffect(() => {
@@ -74,6 +75,24 @@ const EventDetails = ({ userId }) => {
     fetchEvent();
   }, [id]);
 
+
+  useEffect(() => {
+    const fetchBookedEvents = async () => {
+      try {
+        const response = await axios.get(`${URL}/auth/${userId}/booked-events`); 
+        setBookedEvents(response.data.bookedEvents);
+      } catch (error) {
+        setError(error.response?.data?.message || "Failed to fetch booked events");
+        toast.error(error.response?.data?.message || "Failed to fetch booked events");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookedEvents();
+  }, []);
+
+
   const isOrganizer = organizer && userID === organizer._id;
   const isNotOrganizer = !isOrganizer;
 
@@ -87,14 +106,15 @@ const EventDetails = ({ userId }) => {
         quantity,
         returnUrl,
       });
+
       const paymentLink = data.paymentLink;
       if (paymentLink) {
         window.location.href = paymentLink;
-      } else if (data.tickets.price === 0) {
+      } else if (price === 0) {
         navigate("/event-list");
         toast.success("Ticket purchased successfully!");
       } else {
-        throw new Error("Payment link not available");
+        navigate("/event-list")
       }
     } catch (error) {
       setError(
@@ -104,10 +124,10 @@ const EventDetails = ({ userId }) => {
       setLoading(false);
     }
   };
-  if (fetching){
+  if (fetching) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <PageLoader/>
+        <PageLoader />
       </div>
     );
   }

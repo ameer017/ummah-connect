@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 // Define the ticket schema
 const ticketSchema = new mongoose.Schema(
   {
-    price: { type: Number, required: true },
+    price: { type: Number, default: 0 },
     quantity: { type: Number, required: true },
     sold: { type: Number, default: 0 },
     paymentLink: { type: String, default: "" },
