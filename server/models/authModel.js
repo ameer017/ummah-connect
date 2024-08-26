@@ -54,11 +54,6 @@ const authSchema = new Schema(
       instagram: { type: String, default: "" },
       linkedin: { type: String, default: "" },
     },
-    hasBooked: {
-      type: Boolean,
-      default: false
-    },
-
     bookedEvents: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -74,9 +69,9 @@ const authSchema = new Schema(
     expertise: [String],
     availableTimes: [String],
     available: {
-    type: Boolean,
-    default: true,
-  },
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
