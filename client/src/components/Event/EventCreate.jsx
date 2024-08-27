@@ -12,10 +12,8 @@ const initialState = {
   date: "",
   location: "",
   limit: "",
-  ticketPrice: "",
   photo: "",
   trending: false,
-  paymentLink: "",
 };
 
 const EventCreate = () => {
@@ -27,22 +25,22 @@ const EventCreate = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-  
+
     setFormData((prevState) => {
       const updatedFormData = {
         ...prevState,
         [name]: type === "checkbox" ? checked : value,
       };
-  
+
       // Reset paymentLink only if ticketPrice is set to "0"
       if (name === "ticketPrice" && value === "0") {
         updatedFormData.paymentLink = "";
       }
-  
+
       return updatedFormData;
     });
   };
-  
+
 
   const handleFileChange = (e) => {
     setEventImage(e.target.files[0]);
@@ -84,10 +82,7 @@ const EventCreate = () => {
       const eventPayload = {
         ...formData,
         photo: imageUrl,
-        tickets: {
-          price: formData.ticketPrice,
-          paymentLink: formData.paymentLink,
-        },
+        tickets
       };
 
       const { data } = await axios.post(`${URL}/events`, eventPayload, config);
@@ -175,34 +170,6 @@ const EventCreate = () => {
                 value={formData.limit}
                 onChange={handleInputChange}
                 min="1"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-              />
-            </div>
-          </div>
-          <div className="flex justify-between">
-            <div className="mb-4 w-[48%]">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Ticket Price
-              </label>
-              <input
-                type="number"
-                name="ticketPrice"
-                value={formData.ticketPrice}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-              />
-            </div>
-            <div className="mb-4 w-[48%]">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Ticket Payment Link
-              </label>
-              <input
-                type="text"
-                name="paymentLink"
-                value={formData.paymentLink}
-                onChange={handleInputChange}
-                disabled={formData.ticketPrice === "0"}
-
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
               />
             </div>

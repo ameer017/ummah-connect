@@ -25,10 +25,8 @@ const EventDetails = ({ userId }) => {
   const [ticketDetails, setTicketDetails] = useState({});
   const [userID, setUserID] = useState("");
   const [hasBooked, setHasBooked] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(0);
 
   const { user } = useSelector((state) => state.auth);
-  // console.log(user)
 
   useEffect(() => {
     if (user) {
@@ -53,31 +51,16 @@ const EventDetails = ({ userId }) => {
         // Fetch ticket details
         const { data: ticketData } = await axios.get(`${URL}/events/${id}/ticket`);
         setTicketDetails(ticketData.tickets);
-        // console.log(ticketData.tickets)
-
-        // Debugging logs
-        // console.log("Fetched eventData:", eventData);
-        // console.log("Fetched user:", user);
 
         // Check if user has already booked this event
         if (user && user.bookedEvents && Array.isArray(user.bookedEvents)) {
           const eventId = String(eventData._id);  // Ensure event ID is a string
-          // console.log("Event ID to check:", eventId);
-
-          // Check if the event ID exists in bookedEvents
-          const isBooked = user.bookedEvents.some(evId => {
-            // console.log("Checking booked event ID:", evId);
-            return String(evId) === eventId;
-          });
-
+          const isBooked = user.bookedEvents.some(evId => String(evId) === eventId);
           setHasBooked(isBooked);
-          // console.log("Booking status:", isBooked);
         } else {
           setHasBooked(false);
-          // console.log("No booked events or user not defined");
         }
       } catch (error) {
-        // console.error("Error fetching event details:", error);
         setError("Failed to fetch event details");
       } finally {
         setFetching(false);
@@ -87,35 +70,14 @@ const EventDetails = ({ userId }) => {
     fetchEventDetails();
   }, [id, user, dispatch]);
 
-  useEffect(() => {
-    if (ticketDetails.price) {
-      setTotalPrice(ticketDetails.price * quantity);
-    }
-  }, [quantity, ticketDetails]);
-
-
-
-  const buyTicketHandler = async () => {
+  const bookTicketHandler = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const returnUrl = `${window.location.origin}/payment-success`;
-      const { data } = await axios.post(`${URL}/events/buy-ticket/${id}`, {
-        quantity,
-        returnUrl,
-      });
-
-      const paymentLink = ticketDetails.paymentLink;
-      console.log(paymentLink)
-      if (paymentLink) {
-        window.location.href = paymentLink;
-      } else if (ticketDetails.price === 0) {
-        navigate("/event-list");
-        toast.success("Ticket purchased successfully!");
-      } else {
-        navigate("/event-list");
-      }
+      await axios.post(`${URL}/events/book-ticket/${id}`, { quantity });
+      navigate("/event-list");
+      toast.success("Ticket booked successfully!");
     } catch (error) {
       setError(
         error.response?.data?.message || error.message || "An error occurred"
@@ -184,11 +146,11 @@ const EventDetails = ({ userId }) => {
               </div>
 
               <button
-                onClick={buyTicketHandler}
+                onClick={bookTicketHandler}
                 className="w-[100%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
                 disabled={loading || ticketDetails.quantity <= 0}
               >
-                {loading ? "Processing..." : `Buy Ticket # ${totalPrice}`}
+                {loading ? "Processing..." : `Book Ticket`}
               </button>
             </div>
           )}
@@ -236,7 +198,7 @@ const EventDetails = ({ userId }) => {
         <div className="border my-4 rounded-lg p-4">
           <h1 className="font-bold my-4">Tickets Metrics</h1>
           <div className="flex justify-between p-2">
-            <p>Ticket Sold: {ticketDetails.sold}</p>
+            <p>Ticket Booked: {ticketDetails.sold}</p>
             <p>Ticket Remaining: {ticketDetails.quantity}</p>
           </div>
         </div>

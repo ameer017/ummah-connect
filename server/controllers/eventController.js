@@ -265,21 +265,19 @@ const buyTicket = async (req, res) => {
       subject: "Ticket Purchase Confirmation",
       text: `As salam 'alaekum Dear ${user.firstName} 🤗,
     
-      Thank you for purchasing ${quantity} ticket(s) for the event "${
-        event.title
-      }".
+      Thank you for purchasing ${quantity} ticket(s) for the event "${event.title
+        }".
     
       Event Details:
       ---------------
       Title: ${event.title}
-      Description: ${event.description}
+      Description: \t${event.subTitle}
       Date: ${new Date(event.date).toLocaleString()}
       Location: ${event.location}
     
       Your Ticket Information:
       -------------------------
       Quantity: ${quantity}
-      Price: ${ticket.price}
     
       We appreciate your support and look forward to seeing you at the event.
     
