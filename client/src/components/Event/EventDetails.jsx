@@ -77,20 +77,18 @@ const EventDetails = ({ userId }) => {
 
 
   useEffect(() => {
-    const fetchBookedEvents = async () => {
-      try {
-        const response = await axios.get(`${URL}/auth/${userId}/booked-events`); 
-        setBookedEvents(response.data.bookedEvents);
-      } catch (error) {
-        setError(error.response?.data?.message || "Failed to fetch booked events");
-        toast.error(error.response?.data?.message || "Failed to fetch booked events");
-      } finally {
-        setLoading(false);
-      }
-    };
+    console.log(user)
+    // const fetchBookedEvents = user
 
-    fetchBookedEvents();
+    // fetchBookedEvents();
   }, []);
+
+  useEffect(() => {
+    if (bookedEvents.length > 0 && event) {
+      const isBooked = bookedEvents.some(ev => ev._id === event._id);
+      setIsEventBooked(isBooked);
+    }
+  }, [bookedEvents, event]);
 
 
   const isOrganizer = organizer && userID === organizer._id;

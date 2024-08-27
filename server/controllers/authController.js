@@ -519,7 +519,7 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
-      hasBooked
+      bookedEvents
     } = user;
 
     res.status(200).json({
@@ -540,7 +540,7 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
-      hasBooked
+      bookedEvents
     });
   } else {
     res.status(404); // Return 404 if the user is not found
@@ -766,9 +766,9 @@ const getUserBookedEvents = async (req, res) => {
     }
 
     // Check if the user has booked any events
-    if (!user.bookedEvents.length) {
-      return res.status(404).json({ message: "No booked events found for this user" });
-    }
+    // if (!user.bookedEvents.length) {
+    //   return res.status(404).json({ message: "No booked events found for this user" });
+    // }
 
     // Retrieve the event details for the booked events
     const bookedEvents = await Event.find({ _id: { $in: user.bookedEvents } })
