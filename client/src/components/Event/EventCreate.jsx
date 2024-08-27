@@ -27,11 +27,22 @@ const EventCreate = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
+  
+    setFormData((prevState) => {
+      const updatedFormData = {
+        ...prevState,
+        [name]: type === "checkbox" ? checked : value,
+      };
+  
+      // Reset paymentLink only if ticketPrice is set to "0"
+      if (name === "ticketPrice" && value === "0") {
+        updatedFormData.paymentLink = "";
+      }
+  
+      return updatedFormData;
     });
   };
+  
 
   const handleFileChange = (e) => {
     setEventImage(e.target.files[0]);
@@ -190,6 +201,8 @@ const EventCreate = () => {
                 name="paymentLink"
                 value={formData.paymentLink}
                 onChange={handleInputChange}
+                disabled={formData.ticketPrice === "0"}
+
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
               />
             </div>

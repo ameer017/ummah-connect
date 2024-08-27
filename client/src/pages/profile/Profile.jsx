@@ -22,7 +22,7 @@ const Profile = ({ userId }) => {
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  console.log(user)
+  // console.log(user)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {

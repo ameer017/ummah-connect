@@ -2,7 +2,6 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/authModel");
 const Token = require("../models/tokenModel");
-const Cryptr = require("cryptr");
 const { OAuth2Client } = require("google-auth-library");
 const { generateToken, hashToken } = require("../utils");
 const sendEmail = require("../utils/sendEmail");
@@ -519,7 +518,7 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
-      hasBooked
+      bookedEvents
     } = user;
 
     res.status(200).json({
@@ -540,7 +539,7 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
-      hasBooked
+      bookedEvents
     });
   } else {
     res.status(404); // Return 404 if the user is not found
@@ -754,22 +753,35 @@ const sendAutomatedEmail = asyncHandler(async (req, res) => {
 });
 
 const getUserBookedEvents = async (req, res) => {
+  const userId = req.user._id;
+
   try {
-    const userId = await User.findById(req.user._id);
+    // Find the user by ID and populate the booked events
+    const user = await User.findById(userId).populate("bookedEvents");
 
-    // Find the user by ID and populate the bookedEvents field
-    const userEvent = await User.findById(userId).populate("bookedEvents");
-    console.log(userEvent);
-
-    if (!userEvent) {
+    if (!user) {
+      // Return 404 if the user is not found
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json(userEvent.bookedEvents);
+    // Check if the user has booked any events
+    // if (!user.bookedEvents.length) {
+    //   return res.status(404).json({ message: "No booked events found for this user" });
+    // }
+
+    // Retrieve the event details for the booked events
+    const bookedEvents = await Event.find({ _id: { $in: user.bookedEvents } })
+      .populate("tickets")
+      .select("title description date location");
+
+    // Return the list of booked events
+    res.status(200).json({ bookedEvents });
   } catch (error) {
+    // Handle any errors during the process
     res.status(500).json({ message: error.message });
   }
 };
+
 
 module.exports = {
   register,

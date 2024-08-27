@@ -59,11 +59,22 @@ const Article = ({ userId }) => {
       setLoading(true);
       try {
         const response = await axios.get(`${URL}/content/category/${id}`);
-        setType(response.data[0].type);
-        setContent(response.data);
-        // console.log(response.data[0].fileUrl)
-
-        setSubmitted(response.data[0].submittedBy);
+        if (response.data && response.data.length > 0) {
+          setType(response.data[0].type);
+          setContent(response.data);
+  
+          // Extract 'submittedBy' from all items
+          const allSubmitted = response.data.map(item => item.submittedBy);
+          const names = allSubmitted.map(submitter => {
+            return {
+              firstName: submitter.firstName,
+              lastName: submitter.lastName,
+            };
+          });
+          console.log(names)
+          setSubmitted(allSubmitted);
+        }
+  
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch content:", error);
