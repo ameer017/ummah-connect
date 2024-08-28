@@ -35,7 +35,7 @@ const CourseDetail = () => {
       try {
         const response = await axios.get(`${URL}/courses/${id}`);
         setCourse(response.data);
-        setChapters(response.data.content.chapters);
+        setChapters(response.data.chapters);
 
         const progressResponse = await axios.get(
           `${URL}/progress/${userId}/${id}`
