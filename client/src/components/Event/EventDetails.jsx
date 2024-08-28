@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
 import { toast } from "react-toastify";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -18,17 +19,15 @@ const EventDetails = ({ userId }) => {
   const [event, setEvent] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
   const [organizer, setOrganizer] = useState(null);
-  const [ticket, setTicket] = useState([]);
-  const [ticketDetails, setTicketDetails] = useState([]);
+  const [ticketDetails, setTicketDetails] = useState({});
   const [userID, setUserID] = useState("");
-  const [ticketSold, setTicketSold] = useState("");
-  const [price, setPrice] = useState([]);
   const [hasBooked, setHasBooked] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
+
   useEffect(() => {
     if (user) {
       dispatch(getUser(userId));
@@ -37,64 +36,48 @@ const EventDetails = ({ userId }) => {
   }, [dispatch, user, userId]);
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      setFetching(true)
+    const fetchEventDetails = async () => {
       try {
-        const { data } = await axios.get(`${URL}/events/${id}`);
-        setEvent(data);
-        const organizerData = data.organizer._id;
-        const organizerResponse = await axios.get(
-          `${URL}/events/organizer/${organizerData}`
-        );
-        setOrganizer(organizerResponse.data);
-        const fetchTicket = await axios.get(`${URL}/events/${id}/ticket`);
-        if (fetchTicket.data && fetchTicket.data.tickets) {
-          const ticketData = fetchTicket.data.tickets;
-          setTicketDetails(ticketData);
-          setPrice(ticketData.price);
-          setTicket(ticketData.quantity);
-          setTicketSold(ticketData.sold);
-          setFetching(false)
-        } else {
-          setFetching(false)
-          console.error("Ticket data is not available");
-        }
+        // Fetch event details
+        const { data: eventData } = await axios.get(`${URL}/events/${id}`);
+        setEvent(eventData);
 
-        const fetchUserBooking = await axios.get(
-          `${URL}/auth/get-user/${userId}`
+        // Fetch organizer details
+        const { data: organizerData } = await axios.get(
+          `${URL}/events/organizer/${eventData.organizer._id}`
         );
-        setHasBooked(fetchUserBooking.data.hasBooked);
+        setOrganizer(organizerData);
+
+        // Fetch ticket details
+        const { data: ticketData } = await axios.get(`${URL}/events/${id}/ticket`);
+        setTicketDetails(ticketData.tickets);
+
+        // Check if user has already booked this event
+        if (user && user.bookedEvents && Array.isArray(user.bookedEvents)) {
+          const eventId = String(eventData._id);  // Ensure event ID is a string
+          const isBooked = user.bookedEvents.some(evId => String(evId) === eventId);
+          setHasBooked(isBooked);
+        } else {
+          setHasBooked(false);
+        }
       } catch (error) {
-        console.error(error);
         setError("Failed to fetch event details");
+      } finally {
+        setFetching(false);
       }
     };
 
-    fetchEvent();
-  }, [id]);
+    fetchEventDetails();
+  }, [id, user, dispatch]);
 
-  const isOrganizer = organizer && userID === organizer._id;
-  const isNotOrganizer = !isOrganizer;
-
-  const buyTicketHandler = async () => {
+  const bookTicketHandler = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const returnUrl = `${window.location.origin}/payment-success`;
-      const { data } = await axios.post(`${URL}/events/buy-ticket/${id}`, {
-        quantity,
-        returnUrl,
-      });
-      const paymentLink = data.paymentLink;
-      if (paymentLink) {
-        window.location.href = paymentLink;
-      } else if (data.tickets.price === 0) {
-        navigate("/event-list");
-        toast.success("Ticket purchased successfully!");
-      } else {
-        throw new Error("Payment link not available");
-      }
+      await axios.post(`${URL}/events/book-ticket/${id}`, { quantity });
+      navigate("/event-list");
+      toast.success("Ticket booked successfully!");
     } catch (error) {
       setError(
         error.response?.data?.message || error.message || "An error occurred"
@@ -103,17 +86,31 @@ const EventDetails = ({ userId }) => {
       setLoading(false);
     }
   };
-  if (fetching) return <p className="text-center">Loading...</p>
+
+  if (fetching) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <PageLoader />
+      </div>
+    );
+  }
+
+  const isOrganizer = organizer && userID === organizer._id;
+  const isNotOrganizer = !isOrganizer;
+
+  // Ensure tickets are available and the user has not booked already
+  const ticketsAvailable = ticketDetails.quantity > 0 && !hasBooked;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white relative">
+    <div className="min-h-screen flex items-center justify-center  relative">
       <button
-        className="absolute top-4 left-4 underline text-black px-4 py-2 rounded"
+        className="absolute top-4 left-16 underline text-black px-4 py-2 rounded"
         onClick={() => navigate(-1)}
       >
         BACK
       </button>
 
-      <div className="bg-white p-8 rounded w-[350px] md:w-[800px] mt-[2rem]">
+      <div className=" p-8 rounded w-[350px] md:w-[800px] mt-[2rem]">
         <img
           src={event.photo}
           alt={event.title}
@@ -131,28 +128,29 @@ const EventDetails = ({ userId }) => {
               <p className="text-gray-700 mb-4 w-[90%]">{event.subTitle}</p>
             </div>
           </div>
-          {ticket > 0 && !isOrganizer && !hasBooked && (
+
+          {ticketsAvailable && isNotOrganizer && (
             <div className="px-2">
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
                   Quantity
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}
                   className="w-[100%] px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
                   min="1"
-                  max={ticket || 1}
+                  max={ticketDetails.quantity || 1}
                 />
               </div>
 
               <button
-                onClick={buyTicketHandler}
+                onClick={bookTicketHandler}
                 className="w-[100%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
-                disabled={loading || ticket <= 0}
+                disabled={loading || ticketDetails.quantity <= 0}
               >
-                {loading ? "Processing..." : `Buy Ticket # ${price}`}
+                {loading ? "Processing..." : `Book Ticket`}
               </button>
             </div>
           )}
@@ -166,7 +164,7 @@ const EventDetails = ({ userId }) => {
             </button>
           )}
 
-          {ticket <= 0 && (
+          {!ticketsAvailable && !hasBooked && (
             <button
               className="bg-red-500 text-white py-2 px-4 rounded cursor-not-allowed"
               disabled
@@ -175,6 +173,7 @@ const EventDetails = ({ userId }) => {
             </button>
           )}
         </div>
+
         {error && <p className="text-red-500 mt-2">{error}</p>}
 
         <div className="flex justify-between border rounded-lg items-center px-2 py-6">
@@ -192,15 +191,15 @@ const EventDetails = ({ userId }) => {
           <h1 className="font-bold my-4">About this event</h1>
           <p>{event.description}</p>
           <p className="mt-6 font-bold">
-            Available Seat: {ticket}/{event.limit}
+            Available Seat: {ticketDetails.quantity}/{event.limit}
           </p>
         </div>
 
         <div className="border my-4 rounded-lg p-4">
           <h1 className="font-bold my-4">Tickets Metrics</h1>
           <div className="flex justify-between p-2">
-            <p>Ticket Sold: {ticketSold}</p>
-            <p>Ticket Remaining: {ticket}</p>
+            <p>Ticket Booked: {ticketDetails.sold}</p>
+            <p>Ticket Remaining: {ticketDetails.quantity}</p>
           </div>
         </div>
 
@@ -211,7 +210,6 @@ const EventDetails = ({ userId }) => {
               <p>
                 Name: {organizer.firstName} {organizer.lastName}
               </p>
-              {/* <p>Interests: {organizer.interests.join(", ")}</p> */}
             </>
           ) : (
             <p>Loading organizer details...</p>

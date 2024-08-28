@@ -7,6 +7,7 @@ import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
 import Sidebar from "../Sidebar/Sidebar";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -58,11 +59,22 @@ const Article = ({ userId }) => {
       setLoading(true);
       try {
         const response = await axios.get(`${URL}/content/category/${id}`);
-        setType(response.data[0].type);
-        setContent(response.data);
-  // console.log(response.data[0].fileUrl)
-
-        setSubmitted(response.data[0].submittedBy);
+        if (response.data && response.data.length > 0) {
+          setType(response.data[0].type);
+          setContent(response.data);
+  
+          // Extract 'submittedBy' from all items
+          const allSubmitted = response.data.map(item => item.submittedBy);
+          const names = allSubmitted.map(submitter => {
+            return {
+              firstName: submitter.firstName,
+              lastName: submitter.lastName,
+            };
+          });
+          console.log(names)
+          setSubmitted(allSubmitted);
+        }
+  
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch content:", error);
@@ -77,7 +89,13 @@ const Article = ({ userId }) => {
     item.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <p className="text-center">Loading!!!</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <PageLoader />
+      </div>
+    );
+  }
   if (error) return <p>Failed to fetch!!!</p>;
   if (!content) return <p>No content found for this categoryLink!!!</p>;
 
@@ -102,9 +120,8 @@ const Article = ({ userId }) => {
       />
 
       <div
-        className={`w-full bg-white p-4 flex justify-center ${
-          isSidebarOpen ? "md:ml-1/4" : ""
-        }`}
+        className={`w-full bg-white p-4 flex justify-center ${isSidebarOpen ? "md:ml-1/4" : ""
+          }`}
       >
         <div className="flex flex-col items-left w-full md:w-5/6 p-4">
           <div className="p-4">
@@ -114,10 +131,10 @@ const Article = ({ userId }) => {
                   type === "article"
                     ? "https://images.pexels.com/photos/4792085/pexels-photo-4792085.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                     : type === "audio"
-                    ? "https://images.pexels.com/photos/257904/pexels-photo-257904.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                    : type === "video"
-                    ? "https://images.pexels.com/photos/5662857/pexels-photo-5662857.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                    : ""
+                      ? "https://images.pexels.com/photos/257904/pexels-photo-257904.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                      : type === "video"
+                        ? "https://images.pexels.com/photos/5662857/pexels-photo-5662857.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                        : ""
                 }
                 alt={type}
                 className="w-full h-full object-cover"
@@ -185,7 +202,7 @@ const Article = ({ userId }) => {
                                     className="w-[400px]"
                                     autoPlay
                                   >
-                                    <source src={item.fileUrl} type="audio/mpeg"  />
+                                    <source src={item.fileUrl} type="audio/mpeg" />
                                     Your browser does not support the audio element.
                                   </audio>
                                 )}

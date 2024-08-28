@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { getUser } from "../../redux/feature/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -49,14 +50,20 @@ const ContentDetail = ({ userId }) => {
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
-  if (loading) return <p className="text-center">Loading!!!</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <PageLoader />
+      </div>
+    );
+  }
 
   if (!content) return <p>No content available</p>;
 
   return (
     <div className="min-h-screen  flex  justify-center bg-white relative">
       <button
-        className="absolute top-4 left-4 underline text-black px-4 py-2 rounded"
+        className="absolute top-4 left-16 underline text-black px-4 py-2 rounded"
         onClick={() => navigate(-1)}
       >
         BACK

@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../redux/feature/auth/authSlice";
+import PageLoader from "../Loader/PageLoader";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -81,7 +82,13 @@ const CourseDetail = () => {
     }
   };
 
-  if (loading) return <p className="text-center">Loading!!!</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <PageLoader />
+      </div>
+    );
+  }
 
   if (!course) return <p>No course available</p>;
 
@@ -132,9 +139,8 @@ const CourseDetail = () => {
                         <span
                           className="absolute right-0 w-4 h-4 bg-teal-600 rounded-full"
                           style={{
-                            transform: `translateX(${
-                              progress.progress - 100
-                            }%)`,
+                            transform: `translateX(${progress.progress - 100
+                              }%)`,
                           }}
                         />
                       </div>

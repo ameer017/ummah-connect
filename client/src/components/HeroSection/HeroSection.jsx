@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-import heroBackground from "../../assets/hero-background.jpg";
-import { FaBookQuran } from "react-icons/fa6";
-import { PiBookOpenText, PiGraduationCapLight } from "react-icons/pi";
-import { DiHtml5Multimedia } from "react-icons/di";
 import { TbRocket } from "react-icons/tb";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
@@ -58,20 +54,20 @@ const HeroSection = () => {
       }
     };
     fetchEvents();
-  });
+  }, []);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(`${URL}/courses/get-all-course`);
-        setCourses(response.data);
-        // console.log(response.data)
+        setCourses(response.data.slice(0, 3));
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
     };
     fetchCourses();
-  });
+  }, []);
+
   const [spotlight, setSpotlight] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -124,13 +120,15 @@ const HeroSection = () => {
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
+  if(!events) return <p>No upcoming events at the moment</p>
+
   return (
     <main className="bg-[#fff]">
       {/* HERO SECTION */}
       {/* bg-gradient-to-b from-[#E5E7EB] to-[#9CA3AF] */}
       <section className="bg-[#fff] pt-10 h-[84vh] flex justify-center items-center">
         <div className="text-center w-full md:w-[933px] flex flex-col items-center justify-center">
-          <h1 className="text-[30px] md:text-[50px] font-bold capitalize w-full font-Guminert font-[700] ">
+          <h1 className="text-[30px] md:text-[50px]  capitalize w-full font-Guminert font-[700] ">
             Your gateway to the Muslim Community
           </h1>
 
@@ -142,7 +140,7 @@ const HeroSection = () => {
 
           <Link
             to="/register"
-            className="bg-[#0a66c2] text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2 hover:-translate-y-1 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 "
+            className="bg-[#0a66c2] text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 "
           >
             Get Started <TbRocket />
           </Link>
@@ -151,7 +149,7 @@ const HeroSection = () => {
 
       {/* COLLABORATE */}
 
-      <section className="py-12 bg-white">
+      {/* <section className="py-12 bg-white">
         <div className="container mx-auto px-4 overflow-hidden">
           <p className="text-[23px] text-center mb-8">
             We collaborate with over <span className="text-blue-800">325 </span>{" "}
@@ -170,7 +168,7 @@ const HeroSection = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* SpotLight SECTION */}
       <section className="flex text-center py-10">
@@ -286,7 +284,7 @@ const HeroSection = () => {
       <section className="py-10">
         <div className="container mx-auto p-4">
           <div className="flex items-center justify-between p-2">
-            <h1 className="text-3xl font-bold w-[20%] ">
+            <h1 className="text-3xl font-bold md:w-[20%] w-full ">
               Ecplore Our Popular Courses
             </h1>
 
@@ -331,7 +329,7 @@ const HeroSection = () => {
 
           <Link
             to="/create-mentorship"
-            className="rounded-full px-4 py-2 bg-white text-[#000] my-4 hover:-translate-y-1 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="rounded-full px-4 py-2 bg-white text-[#000] my-4 hover:-translate-y-1 transition duration-500 ease-in-out transform hover:scale-110"
           >
             Sign Up For Mentorship
           </Link>
@@ -341,7 +339,7 @@ const HeroSection = () => {
       <section className="py-10">
         <div className="container mx-auto p-4">
           <div className="flex items-center justify-between p-2">
-            <h1 className="text-3xl font-bold w-[10%] ">
+            <h1 className="text-3xl font-bold md:w-[10%] w-full ">
               Join The Conversation
             </h1>
 
@@ -366,7 +364,7 @@ const HeroSection = () => {
                   </p>
                   <Link
                     to={`/threads/${thread._id}`}
-                    className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4 flex justify-between"
+                    className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4  justify-between"
                   >
                     View Thread <IoIosArrowRoundForward size={20} />
                   </Link>

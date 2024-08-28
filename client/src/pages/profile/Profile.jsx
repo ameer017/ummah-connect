@@ -22,7 +22,7 @@ const Profile = ({ userId }) => {
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  console.log(user)
+  // console.log(user)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -138,14 +138,14 @@ const Profile = ({ userId }) => {
         <div className="flex flex-col items-left justify-center w-full md:w-5/6 p-4">
           {!profile.isVerified && <Notification />}
           <div className="p-4">
-            <h1 className="font-normal text-[45px] ">General Overview</h1>
-            <p className="text-neutral-400 text-[18px] ">
+            <h1 className="font-normal text-[20px] md:text-[45px] ">General Overview</h1>
+            <p className="text-neutral-400 text-[14px] md:text-[18px] ">
               General Overview: A Snapshot of Your Information, Activities, and
-              Achievements
+              Achievements.
             </p>
           </div>
           <div className="p-4">
-            <p className="text-[24px] font-[500] ">Profile Overview</p>
+            <p className="text-[18px] md:text-[24px] font-[500] ">Profile Overview</p>
             <div className="border p-6 rounded-lg">
               <img
                 src={imagePreview === null ? user?.photo : imagePreview}
@@ -193,12 +193,12 @@ const Profile = ({ userId }) => {
             </div>
           </div>
           <div className="p-4">
-            <p className="text-[24px] font-[500] ">Enrolled Courses</p>
+            <p className="text-[18px] md:text-[24px] font-[500] ">Enrolled Courses</p>
 
             <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border"></div>
           </div>
           <div className="p-4">
-            <p className="text-[24px] font-[500] ">Upcoming Events</p>
+            <p className="text-[18px] md:text-[24px] font-[500] ">Upcoming Events</p>
             <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
               {events?.length > 0 ? (
                 events.map((event) => (
@@ -245,7 +245,7 @@ const Profile = ({ userId }) => {
             </div>
           </div>
           <div className="p-4">
-            <h1 className="text-[24px] font-[500] ">Recent Forum Activity</h1>
+            <h1 className="text-[18px] md:text-[24px] font-[500] ">Recent Forum Activity</h1>
 
             <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
               {threads?.length > 0 ? (
