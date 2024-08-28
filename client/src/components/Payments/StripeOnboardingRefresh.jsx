@@ -21,7 +21,7 @@ const StripeOnboardingRefresh = () => {
                 };
     
                 const response = await axios.post(
-                    `${URL}/auth/generate-stripe-account-link`,
+                    `${URL}/payments/generate-stripe-account-link`,
                     config
                 );
 				window.location.href = response.data.url;

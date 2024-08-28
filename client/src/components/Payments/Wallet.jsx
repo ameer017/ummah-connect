@@ -29,7 +29,7 @@ const Wallet = () => {
 					Authorization: `Bearer ${localStorage.getItem("token")}`,
 				},
 			};
-			const response = await axios.get(`${URL}/auth/payouts/get-payout-details`, config);
+			const response = await axios.get(`${URL}/payments/get-payout-details`, config);
 			const data = await response.data;
 			setBalance(data.availableBalance);
 			setBankAccount(data.bankAccount);
@@ -64,7 +64,7 @@ const Wallet = () => {
 				},
 			};
 			const response = await axios.post(
-				`${URL}/auth/payouts/initiate-payout`,
+				`${URL}/payments/initiate-payout`,
 				{ amount: parseFloat(withdrawAmount) },
 				config
 			);
