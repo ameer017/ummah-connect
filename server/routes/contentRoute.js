@@ -19,7 +19,7 @@ route.put("/content/:id/approve", protect, contentController.approveContent);
 route.put("/content/:id/reject", protect, contentController.rejectContent);
 
 // Fetch all content
-route.get("/contents", protect, contentController.getAllContent);
+route.get("/contents", contentController.getAllContent);
 
 // Fetch content by ID
 route.get("/content/:id", protect, contentController.getContentById);

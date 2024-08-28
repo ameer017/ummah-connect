@@ -33,6 +33,11 @@ import AcceptSession from "./components/Mentorship/AcceptSession";
 import CreateCourseForm from "./components/Courses/CreateCourseForm";
 import CourseDetail from "./components/Courses/CourseDetail";
 import PaymentSuccess from "./components/Event/PaymentSuccess";
+import StripeOnboardingRefresh from "./components/Payments/StripeOnboardingRefresh";
+import StripeOnboardingComplete from "./components/Payments/StripeOnboardingComplete";
+import CourseInfo from "./components/Courses/CourseInfo";
+import StudyPage from "./components/Courses/StudyPage";
+import Wallet from "./components/Payments/Wallet";
 
 const AppRoutes = () => (
   <Routes>
@@ -102,10 +107,18 @@ const AppRoutes = () => (
     />
 
     <Route
-      path="/course/single/:id"
+      path="/course-info/:courseId"
       element={
         <Layout>
-          <CourseDetail />
+          <CourseInfo />
+        </Layout>
+      }
+    />
+    <Route
+      path="/study/:courseId"
+      element={
+        <Layout>
+          <StudyPage />
         </Layout>
       }
     />
@@ -150,6 +163,30 @@ const AppRoutes = () => (
       element={
         <Layout>
           <UserList />
+        </Layout>
+      }
+    />
+    <Route
+      path="/generate-stripe-link"
+      element={
+        <Layout>
+          <StripeOnboardingRefresh />
+        </Layout>
+      }
+    />
+    <Route
+      path="/complete-stripe-link"
+      element={
+        <Layout>
+          <StripeOnboardingComplete />
+        </Layout>
+      }
+    />
+    <Route
+      path="/wallet"
+      element={
+        <Layout>
+          <Wallet />
         </Layout>
       }
     />
