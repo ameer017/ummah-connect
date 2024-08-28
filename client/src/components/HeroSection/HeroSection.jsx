@@ -324,7 +324,7 @@ const HeroSection = () => {
           <p className="text-center text-[20px] w-full md:w-3/4  ">
             Discover our Mentorship Program offering guidance in career,
             personal development, and spiritual growth. Our mentors are here to
-            support your journey. Sign Up for Mentorship
+            support your journey.
           </p>
 
           <Link
