@@ -49,6 +49,7 @@ const ChangeRole = ({ _id, email }) => {
           <option value="">-- select --</option>
           <option value="subscriber">Subscriber</option>
           <option value="author">Author</option>
+          <option value="instructor">Instructor</option>
           <option value="admin">Admin</option>
           <option value="suspended">Suspended</option>
         </select>

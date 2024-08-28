@@ -9,6 +9,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
+
 
 const validateUserInput = (reqBody) => {
   const {
@@ -713,6 +715,82 @@ const deleteUser = asyncHandler(async (req, res) => {
   });
 });
 
+const generateStripeAccountLink = async (req, res) => {
+	try {
+
+    const user = req.user
+    console.log(user)
+		// const userId = user._id;
+		// const userId = req.user._id;
+		// const user = await User.findById(userId);
+
+		let stripeAccountId = user.stripeAccountId;
+
+		if (!stripeAccountId) {
+			// Create a new account if it doesn't exist
+			const account = await stripe.accounts.create({
+				type: "express",
+				country: "US", // Change as needed
+				email: user.email,
+				capabilities: {
+					card_payments: { requested: true },
+					transfers: { requested: true },
+				},
+			});
+
+			stripeAccountId = account.id;
+			user.stripeAccountId = stripeAccountId;
+			await user.save();
+		}
+
+		const accountLink = await stripe.accountLinks.create({
+			account: stripeAccountId,
+			refresh_url: `${process.env.FRONTEND_URL}/generate-stripe-link`,
+			return_url: `${process.env.FRONTEND_URL}/complete-stripe-link`,
+			type: "account_onboarding",
+		});
+
+		res.json({ url: accountLink.url });
+	} catch (error) {
+		console.error("[GENERATE_STRIPE_ACCOUNT_LINK]", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+};
+const completeStripeConnectOnboarding = async (req, res) => {
+	try {
+    const user = req.user
+    console.log(user)
+		// const userId = user._id;
+
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		if (!user.stripeAccountId) {
+			return res
+				.status(400)
+				.json({ message: "No Stripe account found for this user" });
+		}
+
+		// Retrieve the account to check its status
+		const account = await stripe.accounts.retrieve(user.stripeAccountId);
+
+		if (account.details_submitted) {
+			// The account setup is complete
+			user.stripeOnboardingComplete = true;
+			await user.save();
+
+			res.json({ message: "Stripe account setup completed successfully" });
+		} else {
+			// The account setup is not complete
+			res.status(400).json({ message: "Stripe account setup is not complete" });
+		}
+	} catch (error) {
+		console.error("[COMPLETE_STRIPE_CONNECT_ONBOARDING]", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+};
+
 const sendAutomatedEmail = asyncHandler(async (req, res) => {
 
   const { subject, send_to, reply_to, template, url } = req.body;
@@ -801,4 +879,6 @@ module.exports = {
   deleteUser,
   sendAutomatedEmail,
   getUserBookedEvents,
+  generateStripeAccountLink,
+  completeStripeConnectOnboarding
 };

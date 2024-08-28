@@ -27,6 +27,31 @@ const authSchema = new Schema(
       type: String,
       required: [true, "Please add a password"],
     },
+    enrolledCourses: [
+			{
+				course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+				lastStudiedAt: { type: Date, default: null },
+        progress: { type: Number, default: 0 },
+        completedChapters: [Number],
+			},
+		],
+		// createdCourses: [{ type: Schema.Types.ObjectId, ref: "Course" }],
+	
+    stripeAccountId: String,
+		stripeOnboardingComplete: { type: Boolean, default: false },
+    transactions: [
+			{
+				type: {
+					type: String,
+					enum: ["purchase", "payout", "balanceTransfer"],
+				},
+				amount: Number,
+				status: String,
+				courseId: { type: Schema.Types.ObjectId, ref: "Course" },
+				stripeTransactionId: String,
+				createdAt: { type: Date, default: Date.now },
+			},
+		],
     photo: {
       type: String,
       default:

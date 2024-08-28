@@ -1,119 +1,90 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { MdOutlineCreateNewFolder } from "react-icons/md";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { getUser } from "../../redux/feature/auth/authSlice";
-import PageLoader from "../Loader/PageLoader";
-import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
-
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
+import { FiClock, FiDollarSign } from 'react-icons/fi';
+import axios from 'axios';
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const CourseList = () => {
-  useRedirectLoggedOutUser("/login");
-  const dispatch = useDispatch();
-
   const [courses, setCourses] = useState([]);
-  const [enrolled, setEnrolled] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true);
-  const { user } = useSelector((state) => state.auth);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  const pageSize = 10; // Number of courses per page
 
   useEffect(() => {
-    if (user && user._id) {
-      dispatch(getUser(user._id));
-    }
-  }, [dispatch, user]);
+    fetchCourses(currentPage);
+  }, [currentPage]);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await axios.get(`${URL}/courses/get-all-course`);
-        setCourses(response.data);
-      } catch (error) {
-        toast.error("Error fetching courses");
-        console.error("Error fetching courses:", error);
-      } finally {
-        setFetching(false);
-      }
-    };
-
-    fetchCourses();
-  }, []);
-
-  const enrollCourse = async (courseId) => {
+  const fetchCourses = async (page) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await axios.post(`${URL}/enrollments/enroll`, {
-        userId: user._id,
-        courseId,
-      });
-      setEnrolled(response.data);
-      toast.success("Enrolled successfully!");
+      const config = {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${localStorage.getItem("token")}`,
+				},
+			};
+      const response = await axios.get(`${URL}/courses/all/paginated?page=${page}&limit=${pageSize}`, config);
+      const data =  response.data;
+      // console.log(data)
+      setCourses(data.courses);
+      setTotalPages(data.totalPages);
+      setLoading(false);
     } catch (error) {
-      toast.error("Enrollment failed");
-      console.error("Error during enrollment:", error);
-    } finally {
+      console.error('Error fetching courses:', error);
       setLoading(false);
     }
   };
 
-  if (fetching) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <PageLoader />
-      </div>
-    );
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="w-full p-4 md:px-[5em] rounded-lg">
-      <div className="flex flex-col md:flex-row items-center justify-between mb-4 p-4">
-        <h1 className="font-bold text-2xl md:text-3xl mb-2 md:mb-0">
-          Courses Overview
-        </h1>
-        <Link to="/create-course">
-          <button className="flex items-center gap-2 bg-blue-800 text-white rounded-full py-2 px-4 hover:bg-blue-700 transition duration-300">
-            <MdOutlineCreateNewFolder size={20} />
-            Create New
-          </button>
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">All Courses</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map((course) => (
-          <div
-            key={course._id}
-            className="p-4 border rounded-lg shadow-sm bg-gray-100"
-          >
-            <img src={course.coverImage} alt={course.title} className="rounded mb-4" />
-            <h2 className="font-semibold text-[22.31px]">{course.title}</h2>
-            <p className="text-[#222222] text-[13.71px]">
-              Instructor: {course.instructor}
-            </p>
-            <p className="text-[#222222] text-[15.71px]">
-              {course.description}
-            </p>
-
-            <div className="border-y py-2 my-2">
-              {enrolled && enrolled.courseId === course._id ? (
-                <Link to={`/course/single/${course._id}`} className="underline">
-                  Continue Course
-                </Link>
-              ) : (
-                <button
-                  className="bg-blue-500 py-2 px-4 rounded text-white"
-                  onClick={() => enrollCourse(course._id)}
-                  disabled={loading}
-                >
-                  {loading ? "Enrolling..." : "Enroll Course"}
-                </button>
-              )}
-            </div>
-          </div>
+          <Card key={course._id} className="flex flex-col">
+            <CardHeader>
+              <img src={course.coverImage} alt={course.title} className="w-full h-48 object-cover rounded-t-lg" />
+              <CardTitle className="mt-2">{course.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 line-clamp-2">{course.description}</p>
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex items-center">
+                  <FiClock className="mr-2" />
+                  <span>{course.duration} hours</span>
+                </div>
+                <div className="flex items-center">
+                  <FiDollarSign className="mr-2" />
+                  <span>{course.price === 0 ? 'Free' : `$${course.price}`}</span>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="mt-auto">
+              <Link to={`/course-info/${course._id}`} className="w-full">
+                <Button className="w-full">Learn More</Button>
+              </Link>
+            </CardFooter>
+          </Card>
         ))}
       </div>
+      <Pagination
+        className="mt-8"
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
