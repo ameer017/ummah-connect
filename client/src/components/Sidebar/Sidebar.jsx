@@ -72,7 +72,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 					</Link>
 					{/* </InstructorLink> */}
 
-					<Link
+					{/* <Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
 							"/my-events"
 						)}`}
@@ -80,7 +80,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 					>
 						<MdOutlineEventAvailable size={25} />{" "}
 						<p className="text-[17px]">Booked Events</p>
-					</Link>
+					</Link> */}
 					<Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
 							"/forum"

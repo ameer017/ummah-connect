@@ -61,8 +61,6 @@ app.use("/mentorship", require("./routes/mentorship"));
 app.use("/subscribe", require("./routes/subscriptionRoute"));
 app.use("/courses", require("./routes/courseRoute"));
 app.use("/payments", require("./routes/paymentRoute"));
-// app.use("/enrollments", require("./routes/enrollmentRoute"));
-// app.use("/progress", require("./routes/progressRoute"));
 app.use("/webinars", require("./routes/webinarRoute"));
 
 const PORT = process.env.PORT || 5000;
