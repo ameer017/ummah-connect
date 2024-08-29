@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { FiClock, FiDollarSign } from 'react-icons/fi';
 import axios from 'axios';
+import PageLoader from "../Loader/PageLoader";
+
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const CourseList = () => {
@@ -13,7 +15,7 @@ const CourseList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const pageSize = 10; // Number of courses per page
+  const pageSize = 10; 
 
   useEffect(() => {
     fetchCourses(currentPage);
@@ -45,8 +47,12 @@ const CourseList = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
+    return (
+        <div className="flex justify-center items-center min-h-screen">
+            <PageLoader />
+        </div>
+    );
+}
 
   return (
     <div className="container mx-auto p-4">
