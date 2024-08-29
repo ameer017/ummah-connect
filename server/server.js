@@ -40,6 +40,7 @@ app.use(
 			"http://localhost:5173",
 			"https://console.cloudinary.com",
 			"https://api.cloudinary.com",
+			"https://ummah-connect.vercel.app"
 		],
 		credentials: true,
 		optionSuccessStatus: 200,
