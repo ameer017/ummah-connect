@@ -35,6 +35,7 @@ const EventDetails = ({ userId }) => {
     }
   }, [dispatch, user, userId]);
 
+  // console.log(user)
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -54,7 +55,7 @@ const EventDetails = ({ userId }) => {
 
         // Check if user has already booked this event
         if (user && user.bookedEvents && Array.isArray(user.bookedEvents)) {
-          const eventId = String(eventData._id);  // Ensure event ID is a string
+          const eventId = String(eventData._id);
           const isBooked = user.bookedEvents.some(evId => String(evId) === eventId);
           setHasBooked(isBooked);
         } else {
@@ -75,9 +76,15 @@ const EventDetails = ({ userId }) => {
     setError("");
 
     try {
-      await axios.post(`${URL}/events/book-ticket/${id}`, { quantity });
+      await axios.post(
+        `${URL}/events/buy-ticket/${id}`,
+        {
+          quantity,
+          userId: userID, // Add userId to the request body
+
+        },);
       navigate("/event-list");
-      toast.success("Ticket booked successfully!");
+      toast.success("Ticket booked successfully! Check your mailbox for the event details");
     } catch (error) {
       setError(
         error.response?.data?.message || error.message || "An error occurred"
