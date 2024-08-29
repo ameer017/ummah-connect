@@ -102,14 +102,14 @@ const Footer = () => {
                   Categories
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/content-list"
                   className="inline-block py-2 pl-3 pr-5  hover:text-white no-underline"
                 >
                   Contents
                 </Link>
-              </li>
+              </li> */}
 
               <li>
                 <Link
