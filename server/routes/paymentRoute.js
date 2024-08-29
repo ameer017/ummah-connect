@@ -6,6 +6,7 @@ const {
 	completeStripeConnectOnboarding,
 	getPayoutDetails,
 	initiatePayout,
+    getTransactionHistory
 } = require("../controllers/paymentController");
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.post(
 );
 
 router.get("/get-payout-details", protect, getPayoutDetails);
+router.get("/get-transaction-history", protect, getTransactionHistory);
 router.post("/initiate-payout", protect, initiatePayout);
 
 module.exports = router;

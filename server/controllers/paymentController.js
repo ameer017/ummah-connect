@@ -8,7 +8,7 @@ const generateStripeAccountLink = async (req, res) => {
 	try {
 
     const user = req.user
-    console.log(user)
+    // console.log(user)
 		// const userId = user._id;
 		// const userId = req.user._id;
 		// const user = await User.findById(userId);
@@ -48,7 +48,6 @@ const generateStripeAccountLink = async (req, res) => {
 const completeStripeConnectOnboarding = async (req, res) => {
 	try {
     const user = req.user
-    console.log(user)
 		// const userId = user._id;
 
 		if (!user) {
@@ -277,6 +276,7 @@ const getPayoutDetails = async (req, res) => {
 			const { last4, bank_name } = bankAccounts.data[0];
 			bankAccount = { last4, bank_name };
 		}
+        // console.log(availableBalance, bankAccount)
 
 		res.json({ availableBalance, bankAccount });
 	} catch (error) {
@@ -318,12 +318,24 @@ const initiatePayout = async (req, res) => {
 
 		await user.save();
 
-		console.log("payout initiated", payout);
+		// console.log("payout initiated", payout);
 
 		res.json({ message: "Payout initiated successfully", payoutId: payout.id });
 	} catch (error) {
 		console.error("[INITIATE_PAYOUT]", error);
 		res.status(500).json({ message: "Failed to initiate payout" });
+	}
+};
+
+const getTransactionHistory = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const user = await User.findById(userId).populate("transactions.courseId");
+
+		res.json(user.transactions);
+	} catch (error) {
+		console.error("[GET_TRANSACTION_HISTORY]", error);
+		res.status(500).json({ message: "Internal server error" });
 	}
 };
 
@@ -333,4 +345,5 @@ module.exports = {
     handleStripeWebhook,
     getPayoutDetails,
     initiatePayout,
+    getTransactionHistory
 };

@@ -38,6 +38,7 @@ import StripeOnboardingComplete from "./components/Payments/StripeOnboardingComp
 import CourseInfo from "./components/Courses/CourseInfo";
 import StudyPage from "./components/Courses/StudyPage";
 import Wallet from "./components/Payments/Wallet";
+import Transactions from "./components/Payments/Transactions";
 
 const AppRoutes = () => (
   <Routes>
@@ -187,6 +188,14 @@ const AppRoutes = () => (
       element={
         <Layout>
           <Wallet />
+        </Layout>
+      }
+    />
+    <Route
+      path="/transactions-history"
+      element={
+        <Layout>
+          <Transactions />
         </Layout>
       }
     />
