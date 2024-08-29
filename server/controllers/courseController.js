@@ -88,28 +88,10 @@ exports.createCourse = async (req, res) => {
 			req.body;
 
 		const user = req.user;
-		// const files = req.files;
-		// console.log(req.files)
 
 		const parsedChapters = JSON.parse(chapters);
 
 		console.log(parsedChapters);
-
-		// const updatedChapters = await Promise.all(
-		// 	parsedChapters.map(async (chapter, index) => {
-		// 		const chapterFiles = files[`chapter${index}`] || {};
-		// 		// const uploadedFiles = await exports.uploadFilesToCloudinary(
-		// 		// 	chapterFiles
-		// 		// );
-
-		// 		return {
-		// 			...chapter,
-		// 			article: uploadedFiles.article || [],
-		// 			video: uploadedFiles.video || [],
-		// 			audio: uploadedFiles.audio || [],
-		// 		};
-		// 	})
-		// );
 
 		const course = new Course({
 			title,
@@ -118,7 +100,6 @@ exports.createCourse = async (req, res) => {
 			instructor: user._id,
 			duration,
 			coverImage,
-			// chapters: updatedChapters,
 			chapters: parsedChapters,
 		});
 
@@ -231,64 +212,6 @@ exports.addReview = async (req, res) => {
 	}
 };
 
-// exports.enrollCourse = async (req, res) => {
-// 	const enrollment = new Enrollment({
-// 		userId: req.body.userId,
-// 		courseId: req.body.courseId,
-// 	});
-
-// 	try {
-// 		const newEnrollment = await enrollment.save();
-
-// 		const user = await User.findById(req.body.userId);
-// 		const course = await Course.findById(req.body.courseId);
-
-// 		const transporter = nodemailer.createTransport({
-// 			host: process.env.EMAIL_HOST,
-// 			port: 587,
-// 			auth: {
-// 				user: process.env.EMAIL_USER,
-// 				pass: process.env.EMAIL_PASS,
-// 			},
-// 			tls: {
-// 				rejectUnauthorized: false,
-// 			},
-// 		});
-
-// 		const mailOptions = {
-// 			from: process.env.EMAIL_USER,
-// 			to: user.emailAddress,
-// 			subject: "Course Enrollment Confirmation",
-// 			text: `As salam 'alaekum Dear ${user.firstName} 🤗,
-
-//       Thank you for enrolling in the course "${course.title}".
-
-//       Course Details:
-//       ---------------
-//       Title: ${course.title}
-//       Description: ${course.description}
-//       Duration: ${course.duration}
-
-//       We appreciate your interest and are excited to have you in the course.
-
-//       Ma' salam,
-//       The UmmahConnect Education Team`,
-// 		};
-
-// 		// Send email
-// 		transporter.sendMail(mailOptions, (error, info) => {
-// 			if (error) {
-// 				return res.status(500).json({ message: error.message });
-// 			}
-// 			res.status(200).json({
-// 				message: "Enrollment successful and confirmation email sent",
-// 				newEnrollment,
-// 			});
-// 		});
-// 	} catch (err) {
-// 		res.status(400).json({ message: err.message });
-// 	}
-// };
 
 exports.enrollCourse = async (req, res) => {
 	try {
@@ -419,252 +342,172 @@ exports.enrollCourse = async (req, res) => {
 	}
 };
 
-exports.handleStripeWebhook = async (req, res) => {
-	try {
-		const { body, headers } = req;
-		const signature = headers["stripe-signature"];
+// exports.handleStripeWebhook = async (req, res) => {
+// 	try {
+// 		const { body, headers } = req;
+// 		const signature = headers["stripe-signature"];
 
-		let event;
-		try {
-			event = stripe.webhooks.constructEvent(
-				body,
-				signature,
-				process.env.STRIPE_WEBHOOK_SECRET
-			);
-		} catch (error) {
-			console.log(error);
-			return res.status(400).send(`Webhook Error: ${error.message}`);
-		}
+// 		let event;
+// 		try {
+// 			event = stripe.webhooks.constructEvent(
+// 				body,
+// 				signature,
+// 				process.env.STRIPE_WEBHOOK_SECRET
+// 			);
+// 		} catch (error) {
+// 			console.log(error);
+// 			return res.status(400).send(`Webhook Error: ${error.message}`);
+// 		}
 
-		const session = event.data.object;
-		const userId = session?.metadata?.userId;
-		const courseId = session?.metadata?.courseId;
+// 		const session = event.data.object;
+// 		const userId = session?.metadata?.userId;
+// 		const courseId = session?.metadata?.courseId;
 
-		const user = await User.findById(userId);
+// 		const user = await User.findById(userId);
 
-		if (event.type === "checkout.session.completed") {
-			const course = await Course.findById(courseId);
-			const instructor = await User.findById(course.instructor);
+// 		if (event.type === "checkout.session.completed") {
+// 			const course = await Course.findById(courseId);
+// 			const instructor = await User.findById(course.instructor);
 
-			if (!instructor.stripeAccountId) {
-				console.error("Instructor has no connected Stripe account");
-				return res
-					.status(400)
-					.send("Instructor has no connected Stripe account");
-			}
+// 			if (!instructor.stripeAccountId) {
+// 				console.error("Instructor has no connected Stripe account");
+// 				return res
+// 					.status(400)
+// 					.send("Instructor has no connected Stripe account");
+// 			}
 
-			const totalAmountCents = session.amount_total;
-			const totalAmountDollars = totalAmountCents / 100;
-			const platformFeeCents = Math.round(totalAmountCents * 0.1); // 10% platform fee
-			const instructorAmountCents = totalAmountCents - platformFeeCents;
-			const instructorAmountDollars = instructorAmountCents / 100;
+// 			const totalAmountCents = session.amount_total;
+// 			const totalAmountDollars = totalAmountCents / 100;
+// 			const platformFeeCents = Math.round(totalAmountCents * 0.1); // 10% platform fee
+// 			const instructorAmountCents = totalAmountCents - platformFeeCents;
+// 			const instructorAmountDollars = instructorAmountCents / 100;
 
-			// Transfer funds to instructor's Stripe account
-			try {
-				const transfer = await stripe.transfers.create({
-					amount: instructorAmountCents,
-					currency: session.currency,
-					destination: instructor.stripeAccountId,
-					transfer_group: session.id,
-				});
+// 			// Transfer funds to instructor's Stripe account
+// 			try {
+// 				const transfer = await stripe.transfers.create({
+// 					amount: instructorAmountCents,
+// 					currency: session.currency,
+// 					destination: instructor.stripeAccountId,
+// 					transfer_group: session.id,
+// 				});
 
-				// Record the transaction for the instructor (payout)
-				instructor.transactions.push({
-					type: "balanceTransfer",
-					amount: instructorAmountDollars,
-					courseId: course._id,
-					stripeTransactionId: transfer.id,
-					status: "success",
-				});
-				await instructor.save();
-			} catch (error) {
-				console.error("Failed to transfer funds to instructor:", error);
-				return res.status(500).send("Failed to transfer funds to instructor");
-			}
+// 				// Record the transaction for the instructor (payout)
+// 				instructor.transactions.push({
+// 					type: "balanceTransfer",
+// 					amount: instructorAmountDollars,
+// 					courseId: course._id,
+// 					stripeTransactionId: transfer.id,
+// 					status: "success",
+// 				});
+// 				await instructor.save();
+// 			} catch (error) {
+// 				console.error("Failed to transfer funds to instructor:", error);
+// 				return res.status(500).send("Failed to transfer funds to instructor");
+// 			}
 
-			// Record the transaction for the student (purchase)
-			user.transactions.push({
-				type: "purchase",
-				amount: totalAmountDollars,
-				courseId: course._id,
-				stripeTransactionId: session.id,
-				status: "completed",
-			});
+// 			// Record the transaction for the student (purchase)
+// 			user.transactions.push({
+// 				type: "purchase",
+// 				amount: totalAmountDollars,
+// 				courseId: course._id,
+// 				stripeTransactionId: session.id,
+// 				status: "completed",
+// 			});
 
-			// Update course and user
-			course.purchasedBy.push({ user: userId, amount: totalAmountDollars });
-			await course.save();
+// 			// Update course and user
+// 			course.purchasedBy.push({ user: userId, amount: totalAmountDollars });
+// 			await course.save();
 
-			user.enrolledCourses.push({
-				course: courseId,
-				lastStudiedAt: new Date(),
-			});
-			await user.save();
+// 			user.enrolledCourses.push({
+// 				course: courseId,
+// 				lastStudiedAt: new Date(),
+// 			});
+// 			await user.save();
 
-			const transporter = nodemailer.createTransport({
-				host: process.env.EMAIL_HOST,
-				port: 587,
-				auth: {
-					user: process.env.EMAIL_USER,
-					pass: process.env.EMAIL_PASS,
-				},
-				tls: {
-					rejectUnauthorized: false,
-				},
-			});
-			const mailOptions = {
-				from: process.env.EMAIL_USER,
-				to: user.emailAddress,
-				subject: "Course Enrollment Confirmation",
-				text: `As salam 'alaekum Dear ${user.firstName} 🤗,
+// 			const transporter = nodemailer.createTransport({
+// 				host: process.env.EMAIL_HOST,
+// 				port: 587,
+// 				auth: {
+// 					user: process.env.EMAIL_USER,
+// 					pass: process.env.EMAIL_PASS,
+// 				},
+// 				tls: {
+// 					rejectUnauthorized: false,
+// 				},
+// 			});
+// 			const mailOptions = {
+// 				from: process.env.EMAIL_USER,
+// 				to: user.emailAddress,
+// 				subject: "Course Enrollment Confirmation",
+// 				text: `As salam 'alaekum Dear ${user.firstName} 🤗,
 
-      Thank you for enrolling in the course "${course.title}".
+//       Thank you for enrolling in the course "${course.title}".
 
-      Course Details:
-      ---------------
-      Title: ${course.title}
-      Description: ${course.description}
-      Duration: ${course.duration}
+//       Course Details:
+//       ---------------
+//       Title: ${course.title}
+//       Description: ${course.description}
+//       Duration: ${course.duration}
 
-      We appreciate your interest and are excited to have you in the course.
+//       We appreciate your interest and are excited to have you in the course.
 
-      Ma' salam,
-      The UmmahConnect Education Team`,
-			};
+//       Ma' salam,
+//       The UmmahConnect Education Team`,
+// 			};
 
-			// Send email
-			transporter.sendMail(mailOptions, (error, info) => {
-				if (error) {
-					return res.status(500).json({ message: error.message });
-				}
-			});
+// 			// Send email
+// 			transporter.sendMail(mailOptions, (error, info) => {
+// 				if (error) {
+// 					return res.status(500).json({ message: error.message });
+// 				}
+// 			});
 
-		} else if (
-			event.type === "payout.paid" ||
-			event.type === "payout.failed" ||
-			event.type === "payout.pending" ||
-			event.type === "payout.updated"
-		) {
-			const payout = event.data.object;
-			const status = payout.status;
-			const payoutId = payout.id;
+// 		} else if (
+// 			event.type === "payout.paid" ||
+// 			event.type === "payout.failed" ||
+// 			event.type === "payout.pending" ||
+// 			event.type === "payout.updated"
+// 		) {
+// 			const payout = event.data.object;
+// 			const status = payout.status;
+// 			const payoutId = payout.id;
 
-			// Find the user with the transaction that has the payout ID
-			const user = await User.findOne({
-				"transactions.stripeTransactionId": payoutId,
-			});
+// 			// Find the user with the transaction that has the payout ID
+// 			const user = await User.findOne({
+// 				"transactions.stripeTransactionId": payoutId,
+// 			});
 
-			if (user) {
-				// Find the existing transaction
-				const existingTransaction = user.transactions.find(
-					(transaction) => transaction.stripeTransactionId === payoutId
-				);
+// 			if (user) {
+// 				// Find the existing transaction
+// 				const existingTransaction = user.transactions.find(
+// 					(transaction) => transaction.stripeTransactionId === payoutId
+// 				);
 
-				if (existingTransaction) {
-					// Update the existing transaction
-					existingTransaction.status = status;
-				} else {
-					console.log("No existing transaction found, this shouldn't happen.");
-				}
+// 				if (existingTransaction) {
+// 					// Update the existing transaction
+// 					existingTransaction.status = status;
+// 				} else {
+// 					console.log("No existing transaction found, this shouldn't happen.");
+// 				}
 
-				await user.save();
-			} else {
-				console.log(`No user found with payout ID: ${payoutId}`);
-			}
-		} else {
-			return res
-				.status(200)
-				.send(`Webhook Error: Unhandled event type ${event.type}`);
-		}
+// 				await user.save();
+// 			} else {
+// 				console.log(`No user found with payout ID: ${payoutId}`);
+// 			}
+// 		} else {
+// 			return res
+// 				.status(200)
+// 				.send(`Webhook Error: Unhandled event type ${event.type}`);
+// 		}
 
-		res.status(200).send();
-	} catch (error) {
-		console.error("[HANDLE_STRIPE_WEBHOOK]", error);
-		res.status(500).send("Internal server error");
-	}
-};
+// 		res.status(200).send();
+// 	} catch (error) {
+// 		console.error("[HANDLE_STRIPE_WEBHOOK]", error);
+// 		res.status(500).send("Internal server error");
+// 	}
+// };
 
 
-exports.getPayoutDetails = async (req, res) => {
-	try {
-		const userId = req.user._id;
-		const user = await User.findById(userId);
-
-		if (!user.stripeAccountId) {
-			return res
-				.status(400)
-				.json({ message: "No Stripe account found for this user" });
-		}
-
-		// Retrieve the balance from Stripe
-		const balance = await stripe.balance.retrieve({
-			stripeAccount: user.stripeAccountId,
-		});
-
-		// Get the available balance in the default currency (usually USD)
-		const availableBalance =
-			balance.available.find((bal) => bal.currency === "usd").amount / 100;
-
-		// Retrieve the default bank account (assuming the user has set one up)
-		const bankAccounts = await stripe.accounts.listExternalAccounts(
-			user.stripeAccountId,
-			{ object: "bank_account", limit: 1 }
-		);
-
-		let bankAccount = null;
-		if (bankAccounts.data.length > 0) {
-			const { last4, bank_name } = bankAccounts.data[0];
-			bankAccount = { last4, bank_name };
-		}
-
-		res.json({ availableBalance, bankAccount });
-	} catch (error) {
-		console.error("[GET_PAYOUT_DETAILS]", error);
-		res.status(500).json({ message: "Internal server error" });
-	}
-};
-
-exports.initiatePayout = async (req, res) => {
-	try {
-		const userId = req.user._id;
-		const { amount } = req.body;
-		const user = await User.findById(userId);
-
-		if (!user.stripeAccountId) {
-			return res
-				.status(400)
-				.json({ message: "No Stripe account found for this user" });
-		}
-
-		// Create a payout
-		const payout = await stripe.payouts.create(
-			{
-				amount: Math.round(amount * 100), // Convert to cents
-				currency: "usd",
-			},
-			{
-				stripeAccount: user.stripeAccountId,
-			}
-		);
-
-		user.transactions.push({
-			type: "payout",
-			amount: payout.amount / 100, // Convert cents to dollars
-			stripeTransactionId: payout.id,
-			status: "initiated",
-			createdAt: new Date(payout.created * 1000), // Convert Unix timestamp to Date
-		});
-
-		await user.save();
-
-		console.log("payout initiated", payout);
-
-		res.json({ message: "Payout initiated successfully", payoutId: payout.id });
-	} catch (error) {
-		console.error("[INITIATE_PAYOUT]", error);
-		res.status(500).json({ message: "Failed to initiate payout" });
-	}
-};
 
 
 exports.getEnrolledCourses = async (req, res) => {
@@ -765,129 +608,6 @@ exports.completeChapter = async (req, res) => {
 	}
 };
 
-// exports.getAllEnrollments = async (req, res) => {
-// 	try {
-// 		const enrollments = await Enrollment.find().populate("userId courseId");
-// 		res.json(enrollments);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.getUserEnrollment = async (req, res) => {
-// 	try {
-// 		const enrollments = await Enrollment.find({
-// 			userId: req.params.userId,
-// 		}).populate("courseId");
-// 		res.json(enrollments);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.getEnrollmentById = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findById(req.params.id).populate(
-// 			"userId courseId"
-// 		);
-// 		if (!enrollment) {
-// 			return res.status(404).json({ message: "Enrollment not found" });
-// 		}
-// 		res.json(enrollment);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.updateEnrollment = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findById(req.params.id);
-// 		if (!enrollment) {
-// 			return res.status(404).json({ message: "Enrollment not found" });
-// 		}
-
-// 		enrollment.userId = req.body.userId || enrollment.userId;
-// 		enrollment.courseId = req.body.courseId || enrollment.courseId;
-
-// 		const updatedEnrollment = await enrollment.save();
-// 		res.json(updatedEnrollment);
-// 	} catch (err) {
-// 		res.status(400).json({ message: err.message });
-// 	}
-// };
-
-// exports.deleteEnrollment = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findById(req.params.id);
-// 		if (!enrollment) {
-// 			return res.status(404).json({ message: "Enrollment not found" });
-// 		}
-
-// 		await enrollment.remove();
-// 		res.json({ message: "Enrollment deleted" });
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.isUserEnrolled = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findOne({
-// 			userId: req.params.userId,
-// 			courseId: req.params.courseId,
-// 		});
-
-// 		if (enrollment) {
-// 			res.json({ enrolled: true });
-// 		} else {
-// 			res.json({ enrolled: false });
-// 		}
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.addProgress = async (req, res) => {
-// 	const progress = new Progress({
-// 		userId: req.body.userId,
-// 		courseId: req.body.courseId,
-// 		progress: 0,
-// 		completed: false,
-// 	});
-
-// 	console.log(req.body);
-
-// 	try {
-// 		const newProgress = await progress.save();
-// 		res.status(201).json(newProgress);
-// 	} catch (err) {
-// 		// console.log(err)
-// 		res.status(400).json({ message: err.message });
-// 	}
-// };
-
-// exports.getUserProgress = async (req, res) => {
-// 	try {
-// 		const progress = await Progress.findOne({
-// 			userId: req.params.userId,
-// 			courseId: req.params.courseId,
-// 		});
-// 		res.json(progress);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.getAllUserProgress = async (req, res) => {
-// 	try {
-// 		const progress = await Progress.find({
-// 			userId: req.params.userId,
-// 		}).populate("courseId");
-// 		res.json(progress);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
 
 exports.generateCertificate = async (req, res) => {
 	try {

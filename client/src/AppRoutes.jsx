@@ -38,6 +38,8 @@ import StripeOnboardingComplete from "./components/Payments/StripeOnboardingComp
 import CourseInfo from "./components/Courses/CourseInfo";
 import StudyPage from "./components/Courses/StudyPage";
 import Wallet from "./components/Payments/Wallet";
+import BookedEvents from "./components/BookedEvents/BookedEvents";
+import Transactions from "./components/Payments/Transactions";
 
 const AppRoutes = () => (
   <Routes>
@@ -191,6 +193,14 @@ const AppRoutes = () => (
       }
     />
     <Route
+      path="/transactions-history"
+      element={
+        <Layout>
+          <Transactions />
+        </Layout>
+      }
+    />
+    <Route
       path="/subscribers"
       element={
         <Layout>
@@ -269,6 +279,15 @@ const AppRoutes = () => (
       element={
         <Layout>
           <EventCreate />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/my-events"
+      element={
+        <Layout>
+          <BookedEvents/>
         </Layout>
       }
     />

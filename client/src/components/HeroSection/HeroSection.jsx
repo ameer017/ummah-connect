@@ -312,7 +312,7 @@ const HeroSection = () => {
                 </div>
               ))
             ) : (
-              <p>No recent forum activity.</p>
+              <p>Nothing to display.</p>
             )}
           </div>
         </div>
