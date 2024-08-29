@@ -81,6 +81,7 @@ const completeStripeConnectOnboarding = async (req, res) => {
 
 const handleStripeWebhook = async (req, res) => {
 	try {
+        console.log("running...........")
 		const { body, headers } = req;
 		const signature = headers["stripe-signature"];
 
@@ -101,6 +102,7 @@ const handleStripeWebhook = async (req, res) => {
 		const courseId = session?.metadata?.courseId;
 
 		const user = await User.findById(userId);
+
 
 		if (event.type === "checkout.session.completed") {
 			const course = await Course.findById(courseId);

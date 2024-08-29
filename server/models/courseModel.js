@@ -8,8 +8,8 @@ const chapterSchema = new mongoose.Schema(
 		article: String,
 		video: String,
 		audio: String,
-    completed: { type: Boolean, default: false },
-
+		completed: { type: Boolean, default: false },
+		completedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 	},
 	{ _id: false }
 );

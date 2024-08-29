@@ -517,7 +517,8 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
-      bookedEvents
+      bookedEvents,
+      enrolledCourses
     } = user;
 
     res.status(200).json({
@@ -538,7 +539,8 @@ const getUser = asyncHandler(async (req, res) => {
       tag,
       expertise,
       availableTimes,
-      bookedEvents
+      bookedEvents,
+      enrolledCourses
     });
   } else {
     res.status(404); // Return 404 if the user is not found
