@@ -55,6 +55,7 @@ const Profile = ({ userId }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isLoading, setIsLoading] = useState(true)
   const [loading, setLoading] = useState(true);
+  const [enrolledCourses, setEnrolledCourses] = useState([])
 
 
   useEffect(() => {
@@ -139,16 +140,13 @@ const Profile = ({ userId }) => {
   })
 
   useEffect(() => {
-
     const fetchBookedEvents = async () => {
       try {
         const eventDetailsPromises = user.bookedEvents.map(eventId =>
           axios.get(`${URL}/events/${eventId}`)
         );
-
         const eventDetailsResponses = await Promise.all(eventDetailsPromises);
         const eventDetails = eventDetailsResponses.map(response => response.data);
-
         setBookedEventsDetails(eventDetails);
       } catch (error) {
         setError('Failed to fetch booked event details.');
@@ -156,13 +154,55 @@ const Profile = ({ userId }) => {
         setLoading(false);
       }
     };
-
     if (user?.bookedEvents?.length) {
       fetchBookedEvents();
     } else {
       setLoading(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    console.log(user)
+    const fetchEnrolledCourse = async () => {
+      try {
+        if (user?.enrolledCourses?.length) {
+          // Log the enrolledCourses to ensure it's populated
+          // console.log('Enrolled Courses:', user.enrolledCourses);
+
+          const enrolledCoursePromises = user.enrolledCourses.map((enrolledCourse) =>
+            axios.get(`${URL}/courses/${enrolledCourse.course}`)
+          );
+
+          const enrolledCourseResponses = await Promise.all(enrolledCoursePromises);
+          const enrolledCourseDetails = enrolledCourseResponses.map((response, index) => {
+            const courseDetails = response.data;
+            const { lastStudiedAt, progress, completedChapters, _id } = user.enrolledCourses[index];
+
+            return {
+              ...courseDetails,
+              lastStudiedAt,
+              progress,
+              completedChapters,
+              _id,
+            };
+          });
+
+          setEnrolledCourses(enrolledCourseDetails);
+          console.log('Fetched Enrolled Course Details:', enrolledCourseDetails); // Debugging log
+        } else {
+          setEnrolledCourses([]); // Ensure state is cleared if no courses
+        }
+      } catch (error) {
+        setError('Failed to fetch enrolled course details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnrolledCourse();
+  }, [user]);
+
+
 
   return (
     <>
@@ -308,33 +348,28 @@ const Profile = ({ userId }) => {
 
               <SubscriberLink>
 
-                <div className="p-4">
-
-                  <h1 className="text-[18px] md:text-[24px] font-[500] ">Enrolled Courses</h1>
-                  <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-
-                    {bookedEventsDetails.length > 0 ? (
-                      <div
-                        className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer"
-                      >
-                        {bookedEventsDetails.map(event => (
-                          <Link to={`/event/${event._id}`}>
-
-                            <div key={event._id} className="bg-white shadow-lg rounded-lg p-6">
-                              <h2 className="text-2xl font-semibold mb-4">{event.title}</h2>
-                              <p className="text-gray-700 mb-2">{event.subTitle}</p>
-                              <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
-                              <p className="text-gray-500">Location: {event.location}</p>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-center text-gray-500">You have no booked events.</p>
-                    )}
-                  </div>
+              <div className="p-4">
+                <h1 className="text-[18px] md:text-[24px] font-[500]">Enrolled Courses</h1>
+                <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+                  {enrolledCourses.length > 0 ? (
+                    <div className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer">
+                      {enrolledCourses.map(course => (
+                        <Link to={`/event/${course._id}`} key={course._id}>
+                          <div className="bg-white shadow-lg rounded-lg p-6">
+                            <h2 className="text-2xl font-semibold mb-4">{course.title}</h2>
+                            <p className="text-gray-700 mb-2">{course.description}</p>
+                            <p className="text-gray-700 mb-2">$&nbsp;{course.price}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500">You have not enrolled in any course yet.</p>
+                  )}
                 </div>
+              </div>
               </SubscriberLink>
+
 
               <AdminLink>
                 <div className="p-4">
