@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FiDownload, FiCheck } from "react-icons/fi";
 import axios from "axios";
 import { CourseProgress } from "../ui/CourseProgress";
+import { useSelector } from "react-redux";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -16,6 +17,9 @@ const StudyPage = () => {
 	const [currentChapter, setCurrentChapter] = useState(0);
 	const [progress, setProgress] = useState(0);
 	const [loading, setLoading] = useState(true);
+    const { user } = useSelector((state) => state.auth);
+    console.log(user)
+
 
 	useEffect(() => {
 		const fetchCourseData = async () => {
@@ -42,7 +46,7 @@ const StudyPage = () => {
 
 				// Calculate initial progress
 				const completedChapters = data?.chapters?.filter(
-					(chapter) => chapter.completed
+					(chapter) => chapter.completedBy.includes(user._id)
 				).length;
 				setProgress((completedChapters / data?.chapters?.length) * 100);
 
@@ -77,7 +81,7 @@ const StudyPage = () => {
 
 			// Update progress
 			const completedChapters = updatedCourse.chapters.filter(
-				(chapter) => chapter.completed
+				(chapter) => chapter.completedBy.includes(user._id)
 			).length;
 			setProgress((completedChapters / updatedCourse.chapters.length) * 100);
 		} catch (error) {
@@ -120,7 +124,7 @@ const StudyPage = () => {
 					{course?.chapters?.map((chapter, index) => (
 						<TabsTrigger key={index} value={index.toString()}>
 							Chapter {index + 1}
-							{chapter.completed && <FiCheck className="ml-2" />}
+							{chapter.completedBy.includes(user._id) && <FiCheck className="ml-2" />}
 						</TabsTrigger>
 					))}
 				</TabsList>
@@ -189,7 +193,7 @@ const StudyPage = () => {
 									</a>
 								)}
 
-								{!chapter.completed && (
+								{!chapter.completedBy.includes(user._id) && (
 									<Button onClick={handleChapterComplete}>
 										Mark as Complete
 									</Button>
