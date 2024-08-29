@@ -195,7 +195,50 @@ const Profile = ({ userId }) => {
           <div className="p-4">
             <p className="text-[18px] md:text-[24px] font-[500] ">Enrolled Courses</p>
 
-            <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border"></div>
+            <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+            {events?.length > 0 ? (
+                events.map((event) => (
+                  <div
+                    key={event._id}
+                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
+                  >
+                    <p>
+                      <MdEventNote size={15} />
+                    </p>
+                    <p className="mt-4">{event.title}</p>
+                    <p className="text-gray-700 border-b py-2">
+                      {event.description.length > 100
+                        ? `${event.description.substring(0, 100)}...`
+                        : event.description}
+                    </p>
+                    <div className="flex items-center justify-between my-3 border-b py-2">
+                      <p className="text-sm">
+                        {new Date(event.date).toLocaleDateString()}
+                      </p>
+                      <Link
+                        to={`/event/${event._id}`}
+                        className="text-sm underline"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+
+                    <AdminLink>
+                      <div className="flex justify-between mt-2">
+                        <button
+                          className="px-4 py-2 text-black flex items-center border rounded-lg"
+                          onClick={() => handleRSVP(event._id)}
+                        >
+                          Manage RSVP
+                        </button>
+                      </div>
+                    </AdminLink>
+                  </div>
+                ))
+              ) : (
+                <p>No events available.</p>
+              )}
+            </div>
           </div>
           <div className="p-4">
             <p className="text-[18px] md:text-[24px] font-[500] ">Upcoming Events</p>

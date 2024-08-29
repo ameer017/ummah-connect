@@ -161,11 +161,10 @@ const login = asyncHandler(async (req, res) => {
         location,
         profession,
         interests,
-        socialMediaLinks,
-        hasBooked
+        socialMediaLinks
       } = user;
 
-      console.log("User logged in successfully:", emailAddress);
+      console.log("User logged in successfully:", emailAddress, token);
 
       res.status(201).json({
         _id,
@@ -182,8 +181,7 @@ const login = asyncHandler(async (req, res) => {
         profession,
         interests,
         socialMediaLinks,
-        token,
-        hasBooked
+        token
       });
     } else {
       console.error("Unexpected error during login for user:", emailAddress);
