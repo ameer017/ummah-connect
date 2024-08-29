@@ -584,9 +584,6 @@ exports.enrollCourse = async (req, res) => {
 // 	}
 // };
 
-
-
-
 exports.getEnrolledCourses = async (req, res) => {
 	try {
 		const userId = req.user._id; // Assuming you have middleware that sets userId from the authenticated token
@@ -616,12 +613,14 @@ exports.getEnrolledCourses = async (req, res) => {
 				lastStudiedAt: enrollment.lastStudiedAt,
 				chapters: course.chapters,
 				progress:
-					(course.chapters.filter((chapter) => chapter.completed).length /
+					(course.chapters.filter((chapter) =>
+						chapter.completedBy.includes(userId)
+					).length /
 						course.chapters.length) *
 					100,
 				totalChapters: course.chapters.length,
-				completedChapters: course.chapters.filter(
-					(chapter) => chapter.completed
+				completedChapters: course.chapters.filter((chapter) =>
+					chapter.completedBy.includes(userId)
 				).length,
 			};
 		});
@@ -660,7 +659,10 @@ exports.completeChapter = async (req, res) => {
 
 		// Update the chapter completion status
 		if (chapterIndex >= 0 && chapterIndex < course.chapters.length) {
-			course.chapters[chapterIndex].completed = true;
+			if (course.chapters[chapterIndex].completedBy.includes(userId)){
+				return res.status(400).json({ message: "Chapter already completed" });
+			}
+				course.chapters[chapterIndex].completedBy.push(userId);
 			await course.save();
 
 			// Update user's enrollment progress
