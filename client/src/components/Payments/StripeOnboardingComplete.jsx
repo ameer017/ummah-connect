@@ -25,7 +25,7 @@ const StripeOnboardingComplete = () => {
                 };
     
                 const response = await axios.post(
-                    `${URL}/auth/complete-stripe-connect-onboarding`,
+                    `${URL}/payments/complete-stripe-connect-onboarding`,
                     config
                 );
 				console.log(response);

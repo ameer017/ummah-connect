@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FiDollarSign, FiCreditCard } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const Wallet = () => {
@@ -29,7 +30,7 @@ const Wallet = () => {
 					Authorization: `Bearer ${localStorage.getItem("token")}`,
 				},
 			};
-			const response = await axios.get(`${URL}/auth/payouts/get-payout-details`, config);
+			const response = await axios.get(`${URL}/payments/get-payout-details`, config);
 			const data = await response.data;
 			setBalance(data.availableBalance);
 			setBankAccount(data.bankAccount);
@@ -64,7 +65,7 @@ const Wallet = () => {
 				},
 			};
 			const response = await axios.post(
-				`${URL}/auth/payouts/initiate-payout`,
+				`${URL}/payments/initiate-payout`,
 				{ amount: parseFloat(withdrawAmount) },
 				config
 			);
@@ -103,6 +104,8 @@ const Wallet = () => {
 				</CardHeader>
 				<CardContent>
 					<div className="mb-4">
+
+						<Link  to={"/transactions-history"}><Button variant="link" className="text-sm float-right">Transactions</Button></Link>
 						<p className="text-lg font-semibold">Available Balance</p>
 						<p className="text-3xl font-bold text-green-600">
 							${balance.toFixed(2)}
