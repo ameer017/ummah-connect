@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { IoIosArrowForward, IoIosArrowBack,  } from "react-icons/io";
+import { IoIosArrowForward, IoIosArrowBack, } from "react-icons/io";
 import { GrOverview, GrNotes } from "react-icons/gr";
 import { IoBookOutline } from "react-icons/io5";
 import {
@@ -10,9 +10,8 @@ import {
 	MdOutlineUnsubscribe,
 } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
-import { CiSettings } from "react-icons/ci";
 import { AdminLink, InstructorLink } from "../../components/Protect/HiddenLink";
-import { Link2, LinkIcon, Wallet } from "lucide-react";
+import { LinkIcon, Wallet } from "lucide-react";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 	const location = useLocation();
@@ -62,25 +61,25 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 						<GrOverview size={25} /> <p className="text-[17px]">Overview</p>
 					</Link>
 					{/* <InstructorLink> */}
-						<Link
-							className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-								"/create-course"
-							)}`}
-							to="/create-course"
-						>
-							<IoBookOutline size={25} />{" "}
-							<p className="text-[17px]">Create Course</p>
-						</Link>
+					<Link
+						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
+							"/create-course"
+						)}`}
+						to="/create-course"
+					>
+						<IoBookOutline size={25} />{" "}
+						<p className="text-[17px]">Create Course</p>
+					</Link>
 					{/* </InstructorLink> */}
 
 					<Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-							"/event-list"
+							"/my-events"
 						)}`}
-						to="/event-list"
+						to="/my-events"
 					>
 						<MdOutlineEventAvailable size={25} />{" "}
-						<p className="text-[17px]">Events</p>
+						<p className="text-[17px]">Booked Events</p>
 					</Link>
 					<Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(

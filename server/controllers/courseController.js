@@ -88,28 +88,10 @@ exports.createCourse = async (req, res) => {
 			req.body;
 
 		const user = req.user;
-		// const files = req.files;
-		// console.log(req.files)
 
 		const parsedChapters = JSON.parse(chapters);
 
 		console.log(parsedChapters);
-
-		// const updatedChapters = await Promise.all(
-		// 	parsedChapters.map(async (chapter, index) => {
-		// 		const chapterFiles = files[`chapter${index}`] || {};
-		// 		// const uploadedFiles = await exports.uploadFilesToCloudinary(
-		// 		// 	chapterFiles
-		// 		// );
-
-		// 		return {
-		// 			...chapter,
-		// 			article: uploadedFiles.article || [],
-		// 			video: uploadedFiles.video || [],
-		// 			audio: uploadedFiles.audio || [],
-		// 		};
-		// 	})
-		// );
 
 		const course = new Course({
 			title,
@@ -118,7 +100,6 @@ exports.createCourse = async (req, res) => {
 			instructor: user._id,
 			duration,
 			coverImage,
-			// chapters: updatedChapters,
 			chapters: parsedChapters,
 		});
 
@@ -231,64 +212,6 @@ exports.addReview = async (req, res) => {
 	}
 };
 
-// exports.enrollCourse = async (req, res) => {
-// 	const enrollment = new Enrollment({
-// 		userId: req.body.userId,
-// 		courseId: req.body.courseId,
-// 	});
-
-// 	try {
-// 		const newEnrollment = await enrollment.save();
-
-// 		const user = await User.findById(req.body.userId);
-// 		const course = await Course.findById(req.body.courseId);
-
-// 		const transporter = nodemailer.createTransport({
-// 			host: process.env.EMAIL_HOST,
-// 			port: 587,
-// 			auth: {
-// 				user: process.env.EMAIL_USER,
-// 				pass: process.env.EMAIL_PASS,
-// 			},
-// 			tls: {
-// 				rejectUnauthorized: false,
-// 			},
-// 		});
-
-// 		const mailOptions = {
-// 			from: process.env.EMAIL_USER,
-// 			to: user.emailAddress,
-// 			subject: "Course Enrollment Confirmation",
-// 			text: `As salam 'alaekum Dear ${user.firstName} 🤗,
-
-//       Thank you for enrolling in the course "${course.title}".
-
-//       Course Details:
-//       ---------------
-//       Title: ${course.title}
-//       Description: ${course.description}
-//       Duration: ${course.duration}
-
-//       We appreciate your interest and are excited to have you in the course.
-
-//       Ma' salam,
-//       The UmmahConnect Education Team`,
-// 		};
-
-// 		// Send email
-// 		transporter.sendMail(mailOptions, (error, info) => {
-// 			if (error) {
-// 				return res.status(500).json({ message: error.message });
-// 			}
-// 			res.status(200).json({
-// 				message: "Enrollment successful and confirmation email sent",
-// 				newEnrollment,
-// 			});
-// 		});
-// 	} catch (err) {
-// 		res.status(400).json({ message: err.message });
-// 	}
-// };
 
 exports.enrollCourse = async (req, res) => {
 	try {
@@ -685,129 +608,6 @@ exports.completeChapter = async (req, res) => {
 	}
 };
 
-// exports.getAllEnrollments = async (req, res) => {
-// 	try {
-// 		const enrollments = await Enrollment.find().populate("userId courseId");
-// 		res.json(enrollments);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.getUserEnrollment = async (req, res) => {
-// 	try {
-// 		const enrollments = await Enrollment.find({
-// 			userId: req.params.userId,
-// 		}).populate("courseId");
-// 		res.json(enrollments);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.getEnrollmentById = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findById(req.params.id).populate(
-// 			"userId courseId"
-// 		);
-// 		if (!enrollment) {
-// 			return res.status(404).json({ message: "Enrollment not found" });
-// 		}
-// 		res.json(enrollment);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.updateEnrollment = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findById(req.params.id);
-// 		if (!enrollment) {
-// 			return res.status(404).json({ message: "Enrollment not found" });
-// 		}
-
-// 		enrollment.userId = req.body.userId || enrollment.userId;
-// 		enrollment.courseId = req.body.courseId || enrollment.courseId;
-
-// 		const updatedEnrollment = await enrollment.save();
-// 		res.json(updatedEnrollment);
-// 	} catch (err) {
-// 		res.status(400).json({ message: err.message });
-// 	}
-// };
-
-// exports.deleteEnrollment = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findById(req.params.id);
-// 		if (!enrollment) {
-// 			return res.status(404).json({ message: "Enrollment not found" });
-// 		}
-
-// 		await enrollment.remove();
-// 		res.json({ message: "Enrollment deleted" });
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.isUserEnrolled = async (req, res) => {
-// 	try {
-// 		const enrollment = await Enrollment.findOne({
-// 			userId: req.params.userId,
-// 			courseId: req.params.courseId,
-// 		});
-
-// 		if (enrollment) {
-// 			res.json({ enrolled: true });
-// 		} else {
-// 			res.json({ enrolled: false });
-// 		}
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.addProgress = async (req, res) => {
-// 	const progress = new Progress({
-// 		userId: req.body.userId,
-// 		courseId: req.body.courseId,
-// 		progress: 0,
-// 		completed: false,
-// 	});
-
-// 	console.log(req.body);
-
-// 	try {
-// 		const newProgress = await progress.save();
-// 		res.status(201).json(newProgress);
-// 	} catch (err) {
-// 		// console.log(err)
-// 		res.status(400).json({ message: err.message });
-// 	}
-// };
-
-// exports.getUserProgress = async (req, res) => {
-// 	try {
-// 		const progress = await Progress.findOne({
-// 			userId: req.params.userId,
-// 			courseId: req.params.courseId,
-// 		});
-// 		res.json(progress);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
-
-// exports.getAllUserProgress = async (req, res) => {
-// 	try {
-// 		const progress = await Progress.find({
-// 			userId: req.params.userId,
-// 		}).populate("courseId");
-// 		res.json(progress);
-// 	} catch (err) {
-// 		res.status(500).json({ message: err.message });
-// 	}
-// };
 
 exports.generateCertificate = async (req, res) => {
 	try {

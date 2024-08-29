@@ -61,3 +61,13 @@ export const AdminAuthorLink = ({ children }) => {
 	}
 	return null;
 };
+
+export const SubscriberLink = ({ children }) => {
+	const isLoggedIn = useSelector(selectIsLoggedIn);
+	const user = useSelector(selectUser);
+	if (isLoggedIn && user?.role === "subscriber") {
+		return <>{children}</>;
+	}
+	return null;
+
+}

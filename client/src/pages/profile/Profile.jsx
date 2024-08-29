@@ -12,8 +12,10 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { MdEventNote } from "react-icons/md";
 import useRedirectLoggedOutUser from "../../components/UseRedirect/UseRedirectLoggedOutUser";
 import Notification from "../../components/Notification/Notification";
-import { AdminLink } from "../../components/Protect/HiddenLink";
+import { AdminLink, SubscriberLink } from "../../components/Protect/HiddenLink";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import PageLoader from "@/components/Loader/PageLoader";
+import { HiAcademicCap } from "react-icons/hi";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
@@ -24,6 +26,7 @@ const Profile = ({ userId }) => {
   const { user } = useSelector((state) => state.auth);
   // console.log(user)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [bookedEventsDetails, setBookedEventsDetails] = useState([]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -48,8 +51,11 @@ const Profile = ({ userId }) => {
     x: user?.socialMediaLinks.twitter || "",
   };
   const [profile, setProfile] = useState(initialState);
-  const [profileImage, setProfileImage] = useState(null);
+  const [courses, setCourses] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     if (userId) {
@@ -114,170 +120,376 @@ const Profile = ({ userId }) => {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get(`${URL}/courses/get-all-course`);
+        setCourses(response.data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  })
+
+  useEffect(() => {
+
+    const fetchBookedEvents = async () => {
+      try {
+        const eventDetailsPromises = user.bookedEvents.map(eventId =>
+          axios.get(`${URL}/events/${eventId}`)
+        );
+
+        const eventDetailsResponses = await Promise.all(eventDetailsPromises);
+        const eventDetails = eventDetailsResponses.map(response => response.data);
+
+        setBookedEventsDetails(eventDetails);
+      } catch (error) {
+        setError('Failed to fetch booked event details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.bookedEvents?.length) {
+      fetchBookedEvents();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-        profile={profile}
-        user={user}
-      />
-      {!isSidebarOpen && (
-        <button
-          className="p-2 bg-white fixed top-40 left-0 z-10 mt-2 mr-2 border rounded-full"
-          onClick={toggleSidebar}
-        >
-          <IoIosArrowForward size={25} color="black" />
-        </button>
-      )}
-
-      <div
-        className={`w-full bg-white p-4 flex justify-center ${isSidebarOpen ? "md:ml-1/4" : ""
-          }`}
-      >
-        <div className="flex flex-col items-left justify-center w-full md:w-5/6 p-4">
-          {!profile.isVerified && <Notification />}
-          <div className="p-4">
-            <h1 className="font-normal text-[20px] md:text-[45px] ">General Overview</h1>
-            <p className="text-neutral-400 text-[14px] md:text-[18px] ">
-              General Overview: A Snapshot of Your Information, Activities, and
-              Achievements.
-            </p>
-          </div>
-          <div className="p-4">
-            <p className="text-[18px] md:text-[24px] font-[500] ">Profile Overview</p>
-            <div className="border p-6 rounded-lg">
-              <img
-                src={imagePreview === null ? user?.photo : imagePreview}
-                alt=""
-                style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-                loading="lazy"
-              />
-              <div>
-                <p className="text-[16px] ">Name and Basic Info</p>
-                <p className="text-[14px] text-neutral-400 mt-2">
-                  Name: {profile.firstName} {profile.lastName}
-                </p>
-                <p className="text-[14px] text-neutral-400">
-                  Email: {profile.emailAddress}
-                </p>
-                <p className="text-[14px] text-neutral-400">
-                  Interest: {profile.interests}
-                </p>
-              </div>
-              <div
-                className="flex items-center justify-center gap-2 rounded-lg border bg-neutral-100 w-[150px] my-4 p-3 cursor-pointer"
-                onClick={openModal}
-              >
-                <BiMessageSquareEdit
-                  size={15}
-                  color="black"
-                  title="Edit Profile"
-                />
-                <p>Edit Profile</p>
-              </div>
-              <div className="flex gap-4">
-                <a href={profile.facebook}>
-                  <FaFacebookF size={20} color="blue" />
-                </a>
-                <a href={profile.instagram}>
-                  <FaInstagram size={20} color="#d62976" />
-                </a>
-                <a href={profile.linkedIn}>
-                  <FaLinkedin size={20} color="#0077B5" />
-                </a>
-                <a href={profile.x}>
-                  <BsTwitterX size={20} color="#121212" />
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="p-4">
-            <p className="text-[18px] md:text-[24px] font-[500] ">Enrolled Courses</p>
-
-            <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border"></div>
-          </div>
-          <div className="p-4">
-            <p className="text-[18px] md:text-[24px] font-[500] ">Upcoming Events</p>
-            <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-              {events?.length > 0 ? (
-                events.map((event) => (
-                  <div
-                    key={event._id}
-                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
-                  >
-                    <p>
-                      <MdEventNote size={15} />
-                    </p>
-                    <p className="mt-4">{event.title}</p>
-                    <p className="text-gray-700 border-b py-2">
-                      {event.description.length > 100
-                        ? `${event.description.substring(0, 100)}...`
-                        : event.description}
-                    </p>
-                    <div className="flex items-center justify-between my-3 border-b py-2">
-                      <p className="text-sm">
-                        {new Date(event.date).toLocaleDateString()}
-                      </p>
-                      <Link
-                        to={`/event/${event._id}`}
-                        className="text-sm underline"
-                      >
-                        View Details
-                      </Link>
-                    </div>
-
-                    <AdminLink>
-                      <div className="flex justify-between mt-2">
-                        <button
-                          className="px-4 py-2 text-black flex items-center border rounded-lg"
-                          onClick={() => handleRSVP(event._id)}
-                        >
-                          Manage RSVP
-                        </button>
-                      </div>
-                    </AdminLink>
-                  </div>
-                ))
-              ) : (
-                <p>No events available.</p>
-              )}
-            </div>
-          </div>
-          <div className="p-4">
-            <h1 className="text-[18px] md:text-[24px] font-[500] ">Recent Forum Activity</h1>
-
-            <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-              {threads?.length > 0 ? (
-                threads.map((thread) => (
-                  <div
-                    key={thread._id}
-                    className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
-                  >
-                    <p className="mt-4 text-[16px] ">{thread.title}</p>
-                    <p className="text-[#656565] border-b py-2 text-[12px] ">
-                      {thread.content.length > 50
-                        ? `${thread.content.substring(0, 50)}...`
-                        : thread.content}
-                    </p>
-                    <Link
-                      to={`/threads/${thread._id}`}
-                      className="text-[12px] font-semibold text-black hover:underline flex items-center mt-4"
-                    >
-                      <IoIosArrowRoundForward size={14} /> View Thread
-                    </Link>
-                  </div>
-                ))
-              ) : (
-                <p>No recent forum activity.</p>
-              )}
-            </div>
-          </div>
+    <>
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-screen">
+          <PageLoader />
         </div>
-      </div>
+      ) :
 
-      <EditProfileModal isOpen={isModalOpen} onClose={closeModal} />
-    </div>
+        <div className="flex flex-col md:flex-row min-h-screen">
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+            profile={profile}
+            user={user}
+          />
+          {!isSidebarOpen && (
+            <button
+              className="p-2 bg-white fixed top-40 left-0 z-10 mt-2 mr-2 border rounded-full"
+              onClick={toggleSidebar}
+            >
+              <IoIosArrowForward size={25} color="black" />
+            </button>
+          )}
+
+          <div
+            className={`w-full bg-white p-4 flex justify-center ${isSidebarOpen ? "md:ml-1/4" : ""
+              }`}
+          >
+            <div className="flex flex-col items-left justify-center w-full md:w-5/6 p-4">
+              {!profile.isVerified && <Notification />}
+              <div className="p-4">
+                <h1 className="font-normal text-[20px] md:text-[45px] ">General Overview</h1>
+                <p className="text-neutral-400 text-[14px] md:text-[18px] ">
+                  General Overview: A Snapshot of Your Information, Activities, and
+                  Achievements.
+                </p>
+              </div>
+              <div className="p-4">
+                <p className="text-[18px] md:text-[24px] font-[500] ">Profile Overview</p>
+                <div className="border p-6 rounded-lg">
+                  <img
+                    src={imagePreview === null ? user?.photo : imagePreview}
+                    alt=""
+                    style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                    loading="lazy"
+                  />
+                  <div>
+                    <p className="text-[16px] ">Name and Basic Info</p>
+                    <p className="text-[14px] text-neutral-400 mt-2">
+                      Name: {profile.firstName} {profile.lastName}
+                    </p>
+                    <p className="text-[14px] text-neutral-400">
+                      Email: {profile.emailAddress}
+                    </p>
+                    <p className="text-[14px] text-neutral-400">
+                      Interest: {profile.interests}
+                    </p>
+                  </div>
+                  <div
+                    className="flex items-center justify-center gap-2 rounded-lg border bg-neutral-100 w-[150px] my-4 p-3 cursor-pointer"
+                    onClick={openModal}
+                  >
+                    <BiMessageSquareEdit
+                      size={15}
+                      color="black"
+                      title="Edit Profile"
+                    />
+                    <p>Edit Profile</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <a href={profile.facebook}>
+                      <FaFacebookF size={20} color="blue" />
+                    </a>
+                    <a href={profile.instagram}>
+                      <FaInstagram size={20} color="#d62976" />
+                    </a>
+                    <a href={profile.linkedIn}>
+                      <FaLinkedin size={20} color="#0077B5" />
+                    </a>
+                    <a href={profile.x}>
+                      <BsTwitterX size={20} color="#121212" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <AdminLink>
+                <div className="p-4">
+                  <p className="text-[18px] md:text-[24px] font-[500]">Courses</p>
+
+                  <div className="overflow-x-auto border rounded-lg">
+                    <table className="min-w-full bg-white rounded-lg border">
+                      <thead className="bg-gray-200">
+                        <tr>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Title
+                          </th>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Description
+                          </th>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Actions
+                          </th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {courses?.length > 0 ? (
+                          courses.map((course) => (
+                            <tr key={course._id} className="bg-neutral-100">
+                              <td className="px-6 py-4 border-b">
+                                <div className="flex items-center">
+                                  <HiAcademicCap size={15} className="mr-2" />
+                                  <span>{course.title}</span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 border-b text-gray-700">
+                                {course.description.length > 100
+                                  ? `${course.description.substring(0, 100)}...`
+                                  : course.description}
+                              </td>
+                              <td className="px-6 py-4 border-b">
+                                <Link to={`/event/${course._id}`} className="text-sm underline">
+                                  View Details
+                                </Link>
+                              </td>
+
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                              No courses available.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </AdminLink>
+
+              <SubscriberLink>
+
+                <div className="p-4">
+
+                  <h1 className="text-[18px] md:text-[24px] font-[500] ">Enrolled Courses</h1>
+                  <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+
+                    {bookedEventsDetails.length > 0 ? (
+                      <div
+                        className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer"
+                      >
+                        {bookedEventsDetails.map(event => (
+                          <Link to={`/event/${event._id}`}>
+
+                            <div key={event._id} className="bg-white shadow-lg rounded-lg p-6">
+                              <h2 className="text-2xl font-semibold mb-4">{event.title}</h2>
+                              <p className="text-gray-700 mb-2">{event.subTitle}</p>
+                              <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
+                              <p className="text-gray-500">Location: {event.location}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-center text-gray-500">You have no booked events.</p>
+                    )}
+                  </div>
+                </div>
+              </SubscriberLink>
+
+              <AdminLink>
+                <div className="p-4">
+                  <p className="text-[18px] md:text-[24px] font-[500]">Upcoming Events</p>
+
+                  <div className="overflow-x-auto rounded-lg border">
+                    <table className="min-w-full bg-white rounded-lg border">
+                      <thead className="bg-gray-200">
+                        <tr>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Title
+                          </th>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Description
+                          </th>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Date
+                          </th>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Actions
+                          </th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {events?.length > 0 ? (
+                          events.map((event) => (
+                            <tr key={event._id} className="bg-neutral-100">
+                              <td className="px-6 py-4 border-b">
+                                <div className="flex items-center">
+                                  <MdEventNote size={15} className="mr-2" />
+                                  <span>{event.title}</span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 border-b text-gray-700">
+                                {event.description.length > 100
+                                  ? `${event.description.substring(0, 100)}...`
+                                  : event.description}
+                              </td>
+                              <td className="px-6 py-4 border-b">
+                                {new Date(event.date).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 border-b">
+                                <Link to={`/event/${event._id}`} className="text-sm underline">
+                                  View Details
+                                </Link>
+                              </td>
+
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                              No events available.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </AdminLink>
+
+              <SubscriberLink>
+
+                <div className="p-4">
+
+                  <h1 className="text-[18px] md:text-[24px] font-[500] ">Booked Events</h1>
+                  <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+
+                    {bookedEventsDetails.length > 0 ? (
+                      <div
+                        className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer"
+                      >
+                        {bookedEventsDetails.map(event => (
+                          <Link to={`/event/${event._id}`}>
+
+                            <div key={event._id} className="bg-white shadow-lg rounded-lg p-6">
+                              <h2 className="text-2xl font-semibold mb-4">{event.title}</h2>
+                              <p className="text-gray-700 mb-2">{event.subTitle}</p>
+                              <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
+                              <p className="text-gray-500">Location: {event.location}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-center text-gray-500">You have no booked events.</p>
+                    )}
+                  </div>
+                </div>
+              </SubscriberLink>
+
+              <AdminLink>
+                <div className="p-4">
+                  <h1 className="text-[18px] md:text-[24px] font-[500]">Recent Forum Activity</h1>
+
+                  <div className="overflow-x-auto rounded-lg border">
+                    <table className="min-w-full bg-white rounded-lg border">
+                      <thead className="bg-gray-200">
+                        <tr>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Title
+                          </th>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Content
+                          </th>
+                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {threads?.length > 0 ? (
+                          threads.map((thread) => (
+                            <tr key={thread._id} className="bg-neutral-100">
+                              <td className="px-6 py-4 border-b">
+                                <span className="text-[16px]">{thread.title}</span>
+                              </td>
+                              <td className="px-6 py-4 border-b text-[#656565] text-[12px]">
+                                {thread.content.length > 50
+                                  ? `${thread.content.substring(0, 50)}...`
+                                  : thread.content}
+                              </td>
+                              <td className="px-6 py-4 border-b">
+                                <Link
+                                  to={`/threads/${thread._id}`}
+                                  className="text-[12px] font-semibold text-black hover:underline flex items-center transition-transform duration-300 ease-in-out transform hover:translate-x-1"
+                                >
+                                  <IoIosArrowRoundForward size={14} className="mr-1" />
+                                  View Thread
+                                </Link>
+
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
+                              No recent forum activity.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </AdminLink>
+            </div>
+          </div>
+
+          <EditProfileModal isOpen={isModalOpen} onClose={closeModal} />
+        </div>
+      }
+    </>
   );
 };
 
