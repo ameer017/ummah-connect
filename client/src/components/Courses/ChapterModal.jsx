@@ -71,8 +71,8 @@ const ChapterModal = ({ isOpen, savingChapter, onClose, onSave, chapter }) => {
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-			<div className="bg-white p-4 rounded shadow-lg w-[90%] max-w-[500px]">
+		<div className="fixed overflow-y-scroll p-4 inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+			<div className="bg-white p-4 m-auto rounded shadow-lg w-[90%] max-w-[500px]">
 				<h2 className="text-xl font-bold mb-4">
 					{chapter ? "Edit" : "Add"} Chapter
 				</h2>
