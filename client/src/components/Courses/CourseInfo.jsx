@@ -80,7 +80,7 @@ const CourseInfo = () => {
 				config
 			);
 			if (course.price === 0) {
-				return navigate(`/study/${courseId}/?success=1`);
+				return navigate(`${URL}/study/${courseId}/?success=1`);
 			}
 			window.location.assign(response.data.url);
 		} catch {
@@ -121,7 +121,7 @@ const CourseInfo = () => {
 						</div>
 						<div className="flex items-center">
 							<FiDollarSign className="mr-2" />
-							<span>{course.price === 0 ? "Free" : `$${course.price}`}</span>
+							<span>{course.price === 0 ? "Free" : `${course.price}`}</span>
 						</div>
 						<div className="flex items-center">
 							<FiBook className="mr-2" />

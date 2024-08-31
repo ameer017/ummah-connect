@@ -326,7 +326,7 @@ const Profile = ({ userId }) => {
                                   : course.description}
                               </td>
                               <td className="px-6 py-4 border-b">
-                                <Link to={`/event/${course._id}`} className="text-sm underline">
+                                <Link to={`/course-info/${course._id}`} className="text-sm underline">
                                   View Details
                                 </Link>
                               </td>
