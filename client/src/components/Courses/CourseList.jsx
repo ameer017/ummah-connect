@@ -73,7 +73,7 @@ const CourseList = () => {
                 </div>
                 <div className="flex items-center">
                   <FiDollarSign className="mr-2" />
-                  <span>{course.price === 0 ? 'Free' : `$${course.price}`}</span>
+                  <span>{course.price === 0 ? 'Free' : `${course.price}`}</span>
                 </div>
               </div>
             </CardContent>
