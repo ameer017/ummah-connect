@@ -2,17 +2,13 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const exphbs = require('express-handlebars');
 const connectDB = require("./config/DBConnect");
 const webhookRoute = require("./routes/webhookRoute");
 
 const app = express();
-
-//serve static files
-
-// app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -27,6 +23,13 @@ app.use((req, res, next) => {
 		express.json()(req, res, next);
 	}
 });
+app.set('views', path.join(__dirname, 'views'));
+
+// Set Handlebars as the view engine
+app.engine('handlebars', exphbs());
+app.set('view engine', 'handlebars');
+
+app.use(express.static(path.join(__dirname, "views")));
 
 // Use express.raw for the Stripe webhook route
 app.use("/api", express.raw({ type: "application/json" }));

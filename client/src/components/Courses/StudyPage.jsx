@@ -21,11 +21,88 @@ const StudyPage = () => {
     console.log(user)
 
 
+	// useEffect(() => {
+	// 	const fetchCourseData = async () => {
+	// 		try {
+	// 			// Replace with your API call
+	// 			// enrolled-courses
+	// 			const config = {
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 					Authorization: `Bearer ${localStorage.getItem("token")}`,
+	// 				},
+	// 			};
+	// 			const response = await axios.get(
+	// 				`${URL}/courses/enrolled-courses/all`,
+	// 				config
+	// 			);
+
+	// 			console.log(response.data);
+    //             console.log(courseId)
+	// 			// const response = await fetch(`/api/courses/${courseId}`);
+	// 			const courses = response.data;
+	// 			const data = courses.find((course) => course._id === courseId);
+	// 			setCourse(data);
+	// 			console.log(course)
+
+	// 			// Calculate initial progress
+	// 			const completedChapters = data?.chapters?.filter(
+	// 				(chapter) => chapter.completedBy.includes(user._id)
+	// 			).length;
+	// 			setProgress((completedChapters / data?.chapters?.length) * 100);
+
+	// 			setLoading(false);
+	// 		} catch (error) {
+	// 			console.error("Error fetching course data:", error);
+	// 			setLoading(false);
+	// 		}
+	// 	};
+
+	// 	fetchCourseData();
+	// }, [courseId]);
+
+	// useEffect(() => {
+	// 	const fetchCourseData = async () => {
+	// 		try {
+	// 			const config = {
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 					Authorization: `Bearer ${localStorage.getItem("token")}`,
+	// 				},
+	// 			};
+	// 			const response = await axios.get(
+	// 				`${URL}/courses/enrolled-courses/all`,
+	// 				config
+	// 			);
+
+	// 			console.log(response.data)
+	// 			console.log("Course ID from URL:", courseId);
+	
+	// 			const courses = response.data;
+	// 			const data = courses.find((course) => course._id === courseId);
+	// 			setCourse(data);
+    //         console.log("Found Course:", data);
+	// 			if (data) {
+	// 				const completedChapters = data.chapters?.filter(
+	// 					(chapter) => chapter.completedBy.includes(user._id)
+	// 				).length;
+	// 				setProgress((completedChapters / data.chapters.length) * 100);
+	// 			}
+	
+	// 			setLoading(false);
+	// 		} catch (error) {
+	// 			console.error("Error fetching course data:", error);
+	// 			setLoading(false);
+	// 		}
+	// 	};
+	
+	// 	fetchCourseData();
+	// }, [courseId]);
+	
+
 	useEffect(() => {
 		const fetchCourseData = async () => {
 			try {
-				// Replace with your API call
-				// enrolled-courses
 				const config = {
 					headers: {
 						"Content-Type": "application/json",
@@ -36,30 +113,33 @@ const StudyPage = () => {
 					`${URL}/courses/enrolled-courses/all`,
 					config
 				);
-
-				console.log(response.data);
-                console.log(courseId)
-				// const response = await fetch(`/api/courses/${courseId}`);
-				const courses = response.data;
-				const data = courses.find((course) => course._id === courseId);
-				setCourse(data);
-
-				// Calculate initial progress
-				const completedChapters = data?.chapters?.filter(
-					(chapter) => chapter.completedBy.includes(user._id)
-				).length;
-				setProgress((completedChapters / data?.chapters?.length) * 100);
-
+	
+				console.log("Course ID from URL:", courseId);
+				console.log("Response Data:", response.data);
+	
+				// Use map to iterate through the courses
+				response.data.map((course) => {
+					if (course._id === courseId) {
+						console.log("Found Course:", course);
+						setCourse(course);
+	
+						const completedChapters = course.chapters.filter(
+							(chapter) => chapter.completedBy.includes(user._id)
+						).length;
+						setProgress((completedChapters / course.chapters.length) * 100);
+					}
+				});
+	
 				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching course data:", error);
 				setLoading(false);
 			}
 		};
-
+	
 		fetchCourseData();
 	}, [courseId]);
-
+	
 	const handleChapterComplete = async () => {
 		try {
 			// Mark chapter as complete in the backend
