@@ -56,9 +56,9 @@ const Login = () => {
   }, [isLoggedIn, isSuccess, dispatch, navigate, isError, user]);
 
   return (
-    <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">
-      <div className="flex flex-col items-center justify-center h-screen ">
-        <div className="w-[300px] md:w-[500px] bg-white rounded-lg shadow-md p-6">
+    <div className="min-h-screen border bg-[#ececec] flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center w-full px-4">
+        <div className="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
           <form className="flex flex-col" onSubmit={loginUser}>
             <input
@@ -69,18 +69,18 @@ const Login = () => {
               value={emailAddress}
               onChange={handleInputChange}
             />
-
+  
             <PasswordInput
               placeholder="Password"
               name="password"
               value={password}
               onChange={handleInputChange}
             />
-
-            <Link to="/forgot-password" className="underline text-right">
+  
+            <Link to="/forgot-password" className="underline text-right text-sm mb-4">
               Forgot Password
             </Link>
-
+  
             <button
               className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
               type="submit"
@@ -88,7 +88,7 @@ const Login = () => {
               {isLoading ? "Signing you in ..." : "Sign In"}
             </button>
           </form>
-
+  
           <div className="flex justify-between mt-4">
             <p>
               <Link
@@ -101,7 +101,7 @@ const Login = () => {
             <p>
               Don&apos;t have an account? &nbsp;
               <Link
-                className=" hover:text-[#35d7ff] text-black hover:underline mt-4"
+                className="hover:text-[#35d7ff] text-black hover:underline"
                 to="/register"
               >
                 - Register
@@ -112,6 +112,7 @@ const Login = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Login;

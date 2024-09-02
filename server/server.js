@@ -7,55 +7,47 @@ const mongoose = require("mongoose");
 const exphbs = require('express-handlebars');
 const connectDB = require("./config/DBConnect");
 const webhookRoute = require("./routes/webhookRoute");
+const path = require('path');
 
 const app = express();
 
-app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "*");
-	next();
-});
+// Configure CORS
+app.use(cors({
+	origin: [
+		"http://localhost:5173",
+		"https://console.cloudinary.com",
+		"https://api.cloudinary.com",
+		"https://ummah-connect.vercel.app"
+	],
+	credentials: true,
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	optionSuccessStatus: 200,
+}));
 
 // Stripe webhook parsing middleware
 app.use((req, res, next) => {
 	if (req.originalUrl === "/api/webhook") {
-		next();
+		express.raw({ type: "application/json" })(req, res, next);
 	} else {
 		express.json()(req, res, next);
 	}
 });
-app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded form data
+app.use(cookieParser());
 
 // Set Handlebars as the view engine
-app.engine('handlebars', exphbs());
+app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', exphbs.create().engine);
 app.set('view engine', 'handlebars');
 
 app.use(express.static(path.join(__dirname, "views")));
-
-// Use express.raw for the Stripe webhook route
-app.use("/api", express.raw({ type: "application/json" }));
-
-app.use(express.urlencoded({ extended: true })); // parse form data inside the req body
-
-app.use(
-	cors({
-		origin: [
-			"*",
-			"http://localhost:5173",
-			"https://console.cloudinary.com",
-			"https://api.cloudinary.com",
-			"https://ummah-connect.vercel.app"
-		],
-		credentials: true,
-		optionSuccessStatus: 200,
-		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	})
-);
-app.use(cookieParser());
 
 app.get("/", (req, res) => {
 	res.send("UmmahConnect Page");
 });
 
+// Define routes
 app.use("/auth", require("./routes/authRoute"));
 app.use("/content", require("./routes/contentRoute"));
 app.use("/api", webhookRoute);
@@ -65,15 +57,14 @@ app.use("/mentorship", require("./routes/mentorship"));
 app.use("/subscribe", require("./routes/subscriptionRoute"));
 app.use("/courses", require("./routes/courseRoute"));
 app.use("/payments", require("./routes/paymentRoute"));
-
 // app.use("/enrollments", require("./routes/enrollmentRoute"));
 // app.use("/progress", require("./routes/progressRoute"));
 app.use("/webinars", require("./routes/webinarRoute"));
 
+// Connect to the database and start the server
 const PORT = process.env.PORT || 5000;
-
 connectDB();
 mongoose.connection.once("open", () => {
 	console.log("Connected to MongoDB");
-	app.listen(PORT, console.log(`Server up and running on port ${PORT}`));
+	app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));
 });
