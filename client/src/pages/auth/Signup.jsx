@@ -94,15 +94,15 @@ const Signup = () => {
   }, [isLoggedIn, isSuccess, dispatch, navigate]);
 
   return (
-    <div className="h-[100vh] border bg-[#ececec] flex items-center justify-center">
-      <div className="flex flex-col items-center justify-center h-screen dark">
-        <div className="w-[300px] md:w-[500px] bg-white rounded-lg shadow-md p-6">
+    <div className="min-h-screen border bg-[#ececec] flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center w-full px-4">
+        <div className="w-full max-w-[350px] sm:max-w-[450px] md:max-w-[600px] bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
           <form className="flex flex-col" onSubmit={registerUser}>
-            <div className="flex space-x-4 mb-4">
+            <div className="flex flex-col sm:flex-row sm:space-x-4 mb-4">
               <input
                 placeholder="First Name"
-                className="border rounded-md p-2 w-1/2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                className="border rounded-md p-2 w-full sm:w-1/2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 mb-4 sm:mb-0"
                 type="text"
                 name="firstName"
                 value={firstName}
@@ -110,17 +110,17 @@ const Signup = () => {
               />
               <input
                 placeholder="Last Name"
-                className="border rounded-md p-2 w-1/2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                className="border rounded-md p-2 w-full sm:w-1/2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                 type="text"
                 name="lastName"
                 value={lastName}
                 onChange={handleInputChange}
               />
             </div>
-            <div className="flex space-x-4 mb-4">
+            <div className="flex flex-col sm:flex-row sm:space-x-4 mb-4">
               <input
                 placeholder="Username"
-                className="border rounded-md p-2 w-1/2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                className="border rounded-md p-2 w-full sm:w-1/2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 mb-4 sm:mb-0"
                 type="text"
                 name="username"
                 value={username}
@@ -128,7 +128,7 @@ const Signup = () => {
               />
               <input
                 placeholder="Email"
-                className="border rounded-md p-2 w-1/2 mb-4 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                className="border rounded-md p-2 w-full sm:w-1/2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                 type="email"
                 name="emailAddress"
                 value={emailAddress}
@@ -143,7 +143,7 @@ const Signup = () => {
               value={phone}
               onChange={handleInputChange}
             />
-
+  
             <label className="text-sm mb-2 cursor-pointer" htmlFor="gender">
               Gender
             </label>
@@ -158,14 +158,14 @@ const Signup = () => {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-
+  
             <PasswordInput
               placeholder="Password"
               name="password"
               value={password}
               onChange={handleInputChange}
             />
-
+  
             <PasswordInput
               placeholder="Confirm Password"
               name="password2"
@@ -181,10 +181,10 @@ const Signup = () => {
               className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
               type="submit"
             >
-              {isLoading ? "Signing you up" : "Sign Up"}{" "}
+              {isLoading ? "Signing you up" : "Sign Up"}
             </button>
           </form>
-
+  
           <div className="flex justify-between mt-4">
             <p>
               <Link
@@ -208,6 +208,7 @@ const Signup = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Signup;

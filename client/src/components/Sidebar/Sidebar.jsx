@@ -24,7 +24,13 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 	return (
 		<>
 			{isSidebarOpen && (
-				<div className="fixed inset-0 md:relative md:w-1/4 bg-white p-4 flex flex-col space-y-2 z-20 border-r border-t">
+				<div className="fixed left-0 top-0 h-full w-[400px] bg-white p-4 flex flex-col space-y-2 z-20 border-r">
+					<Link
+						to="/"
+						className="block  w-30 text-2xl font-serif font-bold text-[#000]  my-2"
+					>
+						Ummah Connect
+					</Link>
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-[20px] my-3">
 							<img
@@ -42,9 +48,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 								</p>
 							</div>
 						</div>
-						<div className="-mr-[40px] ">
+						<div className="-mr-[40px]   mt-20 ">
 							<button
-								className="p-2 bg-white text-white border rounded-full"
+								className="p-2 bg-white border rounded-full"
 								onClick={toggleSidebar}
 							>
 								<IoIosArrowBack size={25} color="black" />
@@ -60,7 +66,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 					>
 						<GrOverview size={25} /> <p className="text-[17px]">Overview</p>
 					</Link>
-					{/* <InstructorLink> */}
+
 					<Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
 							"/create-course"
@@ -70,17 +76,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 						<IoBookOutline size={25} />{" "}
 						<p className="text-[17px]">Create Course</p>
 					</Link>
-					{/* </InstructorLink> */}
 
-					{/* <Link
-						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
-							"/my-events"
-						)}`}
-						to="/my-events"
-					>
-						<MdOutlineEventAvailable size={25} />{" "}
-						<p className="text-[17px]">Booked Events</p>
-					</Link> */}
 					<Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
 							"/forum"
@@ -89,6 +85,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 					>
 						<MdForum size={25} /> <p className="text-[17px]">Forum</p>
 					</Link>
+
 					<Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
 							"/content-categories"
@@ -97,6 +94,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 					>
 						<GrNotes size={25} /> <p className="text-[17px]">Content</p>
 					</Link>
+
 					<AdminLink>
 						<Link
 							className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
@@ -117,7 +115,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 						</Link>
 					</AdminLink>
 
-					{/* <InstructorLink> */}
 					<Link
 						to={"/generate-stripe-link"}
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
@@ -125,10 +122,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 						)}`}
 					>
 						<LinkIcon size={25} />
-						{"Stripe Connect"}
+						<p className="text-[17px]">Stripe Connect</p>
 					</Link>
-					{/* </InstructorLink> */}
-					{/* <InstructorLink> */}
+
 					<Link
 						to={"/wallet"}
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
@@ -136,10 +132,10 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 						)}`}
 					>
 						<Wallet size={25} />
+						<p className="text-[17px]">Wallet</p>
 
-						{"Wallet"}
 					</Link>
-					{/* </InstructorLink> */}
+
 					<Link
 						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
 							"/change-password"
@@ -153,9 +149,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 			)}
 
 			{!isSidebarOpen && (
-				<div className="">
+				<div>
 					<button
-						className="p-2 bg-white fixed top-40 left-0 z-10 mt-2 mr-2 border rounded-full"
+						className="p-2 bg-white fixed top-[12.1rem] left-0 z-20 border rounded-full transform -translate-y-1/2"
 						onClick={toggleSidebar}
 					>
 						<IoIosArrowForward size={25} color="black" />
@@ -164,6 +160,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 			)}
 		</>
 	);
+
 };
 
 export default Sidebar;

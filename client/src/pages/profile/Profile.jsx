@@ -193,7 +193,7 @@ const Profile = ({ userId }) => {
           setEnrolledCourses([]); // Ensure state is cleared if no courses
         }
       } catch (error) {
-        setError('Failed to fetch enrolled course details.');
+        console.log('Failed to fetch enrolled course details.');
       } finally {
         setLoading(false);
       }
