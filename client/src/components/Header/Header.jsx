@@ -137,11 +137,11 @@ const Header = ({ userId }) => {
 									Logout
 								</button>
 							</ShowOnLogin>
-							<RiMenuUnfold2Line
+							{/* <RiMenuUnfold2Line
 								name={menuIcon}
 								onClick={onMenuToggle}
 								className="text-[30px] text-[#000] cursor-pointer md:hidden"
-							/>
+							/> */}
 						</div>
 
 					

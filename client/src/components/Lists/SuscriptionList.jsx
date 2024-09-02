@@ -99,9 +99,8 @@ const SuscriptionList = ({ userId }) => {
       />
 
       <div
-        className={`w-full bg-white p-4 flex justify-center ${
-          isSidebarOpen ? "md:ml-1/4" : ""
-        }`}
+        className={`w-full bg-white p-4 flex justify-center ${isSidebarOpen ? "md:ml-1/4" : ""
+          }`}
       >
         <div className="container mx-auto p-6 ">
           {!loading && subscriber.length === 0 ? (
@@ -114,7 +113,6 @@ const SuscriptionList = ({ userId }) => {
                     <th className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
                       s/n
                     </th>
-
                     <th className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
                       Email
                     </th>
@@ -123,11 +121,9 @@ const SuscriptionList = ({ userId }) => {
                     </th>
                   </tr>
                 </thead>
-
                 <tbody className="bg-white divide-y divide-gray-200">
                   {currentItems.map((subscribe, index) => {
                     const { _id, email, dateSubscribed } = subscribe;
-
                     return (
                       <tr key={_id} className="hover:bg-gray-100">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -145,6 +141,7 @@ const SuscriptionList = ({ userId }) => {
                 </tbody>
               </table>
             </div>
+
           )}
 
           <div className="mt-6">
