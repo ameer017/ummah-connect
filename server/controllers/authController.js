@@ -3,8 +3,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/authModel");
 const Token = require("../models/tokenModel");
 const { OAuth2Client } = require("google-auth-library");
-const { generateToken, hashToken } = require("../utils");
-const sendEmail = require("../utils/sendEmail");
+const { generateToken, hashToken, sendEmail } = require("../utils");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
