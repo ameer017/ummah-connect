@@ -321,7 +321,7 @@ const HeroSection = () => {
       {/* Mentorship section */}
       <section className="py-10 bg-[#0a66c2] ">
         <div className="flex items-center text-white p-2 justify-center  flex-col py-6">
-          <p className="text-center text-[20px] w-full md:w-3/4  ">
+          <p className="text-center text-[15px] md:text-[20px] w-full md:w-3/4  ">
             Discover our Mentorship Program offering guidance in career,
             personal development, and spiritual growth. Our mentors are here to
             support your journey.

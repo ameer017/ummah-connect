@@ -106,16 +106,17 @@ const ForumList = ({ userId }) => {
       >
         <div className="flex flex-col items-left  w-full md:w-5/6 p-4">
           <div className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-left justify-between flex-col md:flex-row md:items-center">
               <h1 className="font-bold text-3xl">Forum Overview</h1>
-              <AdminLink>
-                <button className="bg-blue-800 rounded-full py-2 px-4 text-white ">
-                  <Link to="/create-event" className="flex items-center gap-2">
-                    <HiOutlineViewGridAdd size={20} />
-                    Create New
-                  </Link>
-                </button>
-              </AdminLink>
+
+              {/* <AdminLink> */}
+              <button className="bg-blue-800 rounded-full py-2 px-4 text-white w-[120px] md:w-[120px] ">
+                <Link to="/create-event" className="flex items-center gap-2">
+                  <HiOutlineViewGridAdd size={20} />
+                  Create New
+                </Link>
+              </button>
+              {/* </AdminLink> */}
             </div>
             <div className="border my-4 rounded-lg">
               <input
@@ -129,7 +130,7 @@ const ForumList = ({ userId }) => {
               />
             </div>
 
-            <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="p-2 md:p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredData.length > 0 ? (
                 filteredData.map((thread) => (
                   <Link
@@ -142,7 +143,7 @@ const ForumList = ({ userId }) => {
                         ? `${thread.content.substring(0, 150)}...`
                         : thread.content}
                     </p>
-                    <div className="border-y mt-2 flex items-center justify-between">
+                    <div className="border-y mt-2 flex items-left justify-between flex-col md:flex-row md:items-center">
                       <p className=" py-2 mt-2">
                         Author: {thread.createdBy.username}{" "}
                       </p>
