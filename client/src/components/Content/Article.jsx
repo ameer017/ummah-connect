@@ -71,7 +71,7 @@ const Article = ({ userId }) => {
               lastName: submitter.lastName,
             };
           });
-          console.log(names)
+          // console.log(names)
           setSubmitted(allSubmitted);
         }
   
@@ -159,8 +159,8 @@ const Article = ({ userId }) => {
               </div>
             </div>
 
-            <div className="border p-4 rounded-lg">
-              <div className="p-6 rounded-lg space-y-4">
+            <div className="border p-2 md:p-4 rounded-lg">
+              <div className="md:p-6 rounded-lg space-y-4">
                 {filteredData.length > 0 ? (
                   filteredData.map((item) => (
                     <div className="border-b pb-4 mb-4" key={item._id}>
@@ -178,8 +178,9 @@ const Article = ({ userId }) => {
                                 {submitted.firstName} {submitted.lastName}
                               </p>
                             </div>
+
                             <div className="p-2">
-                              <p className="text-[20px]">{item.title}</p>
+                              <p className="text-[20px] mb-2">{item.title}</p>
                               <p className="text-[15px]">{item.description}</p>
                               <div className="mt-4">
                                 <p>{formatDate(item.createdAt)}</p>
@@ -199,7 +200,7 @@ const Article = ({ userId }) => {
                                 {item.type === "audio" && (
                                   <audio
                                     controls
-                                    className="w-[400px]"
+                                    className="w-[250px] md:w-[400px]"
                                     autoPlay
                                   >
                                     <source src={item.fileUrl} type="audio/mpeg" />
@@ -224,7 +225,7 @@ const Article = ({ userId }) => {
                     </div>
                   ))
                 ) : (
-                  <p>Oops! No threads found.</p>
+                  <p>Oops! No content found.</p>
                 )}
               </div>
             </div>
