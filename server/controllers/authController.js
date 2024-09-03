@@ -3,8 +3,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/authModel");
 const Token = require("../models/tokenModel");
 const { OAuth2Client } = require("google-auth-library");
-const { generateToken, hashToken } = require("../utils");
-const sendEmail = require("../utils/sendEmail");
+const { generateToken, hashToken, sendEmail } = require("../utils");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
@@ -192,8 +191,6 @@ const login = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-
 const forgotPassword = asyncHandler(async (req, res) => {
   const { emailAddress } = req.body;
 
@@ -210,7 +207,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     await token.deleteOne();
   }
 
-  //   Create Verification Token and Save
+  // Create Verification Token and Save
   const resetToken = crypto.randomBytes(32).toString("hex") + user._id;
   console.log(resetToken);
 
@@ -226,25 +223,126 @@ const forgotPassword = asyncHandler(async (req, res) => {
   // Construct Reset URL
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-  // Send Email
-  const subject = "Password Reset Request - UmmahConnect";
-  const send_to = user.emailAddress;
-  const sent_from = process.env.EMAIL_USER;
-  const reply_to = "noreply@ummahconnect.com";
-  const template = "forgotPassword";
-  const name = user.firstName;
-  const link = resetUrl;
+  // Construct email HTML template
+  const emailHtml = `
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Password Reset Request</title>
+        <style>
+          body {
+            background-color: #0a1930;
+            padding: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+          }
 
+          .container {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 3px;
+          }
+
+          .color-primary {
+            color: #007bff;
+          }
+
+          .color-danger {
+            color: orangered;
+          }
+
+          .color-success {
+            color: #28a745;
+          }
+
+          .color-white {
+            color: #fff;
+          }
+
+          .color-blue {
+            color: #0a1930;
+          }
+
+          a {
+            font-size: 1.4rem;
+            text-decoration: none;
+          }
+
+          .btn {
+            font-size: 1.4rem;
+            font-weight: 400;
+            padding: 6px 8px;
+            margin: 0 5px 0 0;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+          }
+
+          .btn-primary {
+            color: #fff;
+            background: #007bff;
+          }
+
+          .btn-secondary {
+            color: #fff;
+            border: 1px solid #fff;
+            background: transparent;
+          }
+
+          .btn-danger {
+            color: #fff;
+            background: orangered;
+          }
+
+          .btn-success {
+            color: #fff;
+            background: #28a745;
+          }
+
+          .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .logo {
+            padding: 5px;
+            background-color: #1f93ff;
+          }
+
+          .my {
+            margin: 2rem 0;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="logo flex-center">
+            <h2 class="color-white">UmmahConnect</h2>
+          </div>
+          <h2>As Salam Alaekum Wa Rahmatullahi Wa Barokatuhu <span class="color-danger">${user.firstName}</span></h2>
+          <p>Please use the URL below to reset your password:</p>
+          <p>This link is valid for 1 hour.</p>
+          <a href="${resetUrl}" class="btn btn-success">Reset Password</a>
+          <div class="my">
+            <p>Regards...</p>
+            <p><b class="color-danger">UmmahConnect</b> Team</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  // Send Email
   try {
-    await sendEmail(
-      subject,
-      send_to,
-      sent_from,
-      reply_to,
-      template,
-      name,
-      link
-    );
+    await sendEmail({
+      subject: "Password Reset Request - UmmahConnect",
+      send_to: user.emailAddress,
+      sent_from: process.env.EMAIL_USER,
+      reply_to: "noreply@ummahconnect.com",
+      html: emailHtml,
+    });
     res.status(200).json({ message: "Password Reset Email Sent" });
   } catch (error) {
     res.status(500);
@@ -424,9 +522,8 @@ const sendVerificationEmail = asyncHandler(async (req, res) => {
     await token.deleteOne();
   }
 
-  //   Create Verification Token and Save
+  // Create Verification Token and Save
   const verificationToken = crypto.randomBytes(32).toString("hex") + user._id;
-  console.log(verificationToken);
 
   // Hash token and save
   const hashedToken = hashToken(verificationToken);
@@ -440,31 +537,67 @@ const sendVerificationEmail = asyncHandler(async (req, res) => {
   // Construct Verification URL
   const verificationUrl = `${process.env.FRONTEND_URL}/verify/${verificationToken}`;
 
-  // Send Email
-  const subject = "Verify Your Account - UmmahConnect";
-  const send_to = user.emailAddress;
-  const sent_from = process.env.EMAIL_USER;
-  const reply_to = "noreply@ummahconnect.com";
-  const template = "verifyEmail";
-  const name = user.name;
-  const link = verificationUrl;
+  // Prepare the HTML email content
+  const emailTemplate = `
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Verify Your Account</title>
+      <style>
+        body { background-color: #0a1930; padding: 30px; font-family: Arial, Helvetica, sans-serif; }
+        .container { background-color: #eee; padding: 10px; border-radius: 3px; }
+        .color-primary { color: #007bff; }
+        .color-danger { color: orangered; }
+        .color-success { color: #28a745; }
+        .color-white { color: #fff; }
+        .color-blue { color: #0a1930; }
+        a { font-size: 1.4rem; text-decoration: none; }
+        .btn { font-size: 1.4rem; font-weight: 400; padding: 6px 8px; margin: 0 5px 0 0; border: 1px solid transparent; border-radius: 3px; cursor: pointer; }
+        .btn-primary { color: #fff; background: #007bff; }
+        .btn-secondary { color: #fff; border: 1px solid #fff; background: transparent; }
+        .btn-danger { color: #fff; background: orangered; }
+        .btn-success { color: #fff; background: #28a745; }
+        .flex-center { display: flex; justify-content: center; align-items: center; }
+        .logo { padding: 5px; background-color: #1f93ff; }
+        .my { margin: 2rem 0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="logo flex-center">
+          <h2 class="color-white">UmmahConnect</h2>
+        </div>
+        <h2>Dear <span class="color-danger">${user.firstName}</span>,</h2>
+        <p>As Salam Alaekum Wa Rahmatullahi Wa Barokatuhu </p>
+        <p>Please use the URL below to verify your account. This link is valid for 60 minutes.</p>
+        <a href="${verificationUrl}" class="btn btn-success">Verify Account</a>
+        <div class="my">
+          <p>Regards,</p>
+          <p><strong class="color-danger">UmmahConnect</strong> Team</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
 
   try {
-    await sendEmail(
-      subject,
-      send_to,
-      sent_from,
-      reply_to,
-      template,
-      name,
-      link
-    );
+    await sendEmail({
+      to: user.emailAddress,
+      from: process.env.EMAIL_USER,
+      subject: "Verify Your Account - UmmahConnect",
+      html: emailTemplate,
+      replyTo: "noreply@ummahconnect.com"
+    });
+
     res.status(200).json({ message: "Verification Email Sent" });
   } catch (error) {
     res.status(500);
     throw new Error("Email not sent, please try again");
   }
 });
+
 
 const logoutUser = asyncHandler(async (req, res) => {
   res.cookie("token", "", {
@@ -490,10 +623,123 @@ const upgradeUser = asyncHandler(async (req, res) => {
   user.role = role;
   await user.save();
 
-  res.status(200).json({
-    message: `User role upgraded to ${role}`,
-  });
+  // Construct email content
+  const subject = "Your Account Role Updated - UmmahConnect";
+  const send_to = user.emailAddress;
+  const sent_from = process.env.EMAIL_USER;
+  const reply_to = "noreply@ummahconnect.com";
+  const name = user.name;
+  const link = `${process.env.FRONTEND_URL}/login`;
+
+  const emailContent = `
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Role Update</title>
+    <style>
+      body {
+        background-color: #0a1930;
+        padding: 30px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .container {
+        background-color: #eee;
+        padding: 10px;
+        border-radius: 3px;
+      }
+      .color-primary {
+        color: #007bff;
+      }
+      .color-danger {
+        color: orangered;
+      }
+      .color-success {
+        color: #28a745;
+      }
+      .color-white {
+        color: #fff;
+      }
+      .color-blue {
+        color: #0a1930;
+      }
+      a {
+        font-size: 1.4rem;
+        text-decoration: none;
+      }
+      .btn {
+        font-size: 1.4rem;
+        font-weight: 400;
+        padding: 6px 8px;
+        margin: 0 5px 0 0;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .btn-primary {
+        color: #fff;
+        background: #007bff;
+      }
+      .btn-secondary {
+        color: #fff;
+        border: 1px solid #fff;
+        background: transparent;
+      }
+      .btn-danger {
+        color: #fff;
+        background: orangered;
+      }
+      .btn-success {
+        color: #fff;
+        background: #28a745;
+      }
+      .flex-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .logo {
+        padding: 5px;
+        background-color: #1f93ff;
+      }
+      .my {
+        margin: 2rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo flex-center">
+        <h2 class="color-white">UmmahConnect</h2>
+      </div>
+      <h2>Dear <span class="color-danger">${name}</span>,</h2>
+      <p>This is to notify you that your account role was changed to <strong>${role}</strong>.</p>
+      <p>Please login for confirmation.</p>
+      <a href="${link}" class="btn btn-success">Login</a>
+      <div class="my">
+        <p>Regards,</p>
+        <p><b class="color-danger">UmmahConnect</b> Team</p>
+      </div>
+    </div>
+  </body>
+  </html>`;
+
+  try {
+    await sendEmail({
+      subject,
+      send_to,
+      sent_from,
+      reply_to,
+      html: emailContent
+    });
+    res.status(200).json({ message: `User role upgraded to ${role}` });
+  } catch (error) {
+    res.status(500);
+    throw new Error("Email not sent, please try again");
+  }
 });
+
 //GET
 const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
@@ -547,8 +793,6 @@ const getUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 });
-
-
 
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find().sort("-createdAt").select("-password");
@@ -713,8 +957,6 @@ const deleteUser = asyncHandler(async (req, res) => {
     message: "User deleted successfully",
   });
 });
-
-
 
 const sendAutomatedEmail = asyncHandler(async (req, res) => {
 
