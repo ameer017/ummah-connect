@@ -117,7 +117,7 @@ const EventDetails = ({ userId }) => {
         BACK
       </button>
 
-      <div className=" p-8 rounded w-[350px] md:w-[800px] mt-[2rem]">
+      <div className="p-2 md:p-8 rounded w-[350px] md:w-[800px] mt-[4rem]">
         <img
           src={event.photo}
           alt={event.title}
@@ -131,7 +131,7 @@ const EventDetails = ({ userId }) => {
               <strong>Date:</strong> {new Date(event.date).toLocaleString()}
             </p>
             <div>
-              <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
+              <h1 className="text-xl md:text-3xl font-bold mb-4">{event.title}</h1>
               <p className="text-gray-700 mb-4 w-[90%]">{event.subTitle}</p>
             </div>
           </div>
@@ -154,7 +154,7 @@ const EventDetails = ({ userId }) => {
 
               <button
                 onClick={bookTicketHandler}
-                className="w-[100%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
+                className="w-[100%] bg-blue-500 text-white py-2 px-2 md:px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
                 disabled={loading || ticketDetails.quantity <= 0}
               >
                 {loading ? "Processing..." : `Book Ticket`}

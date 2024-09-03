@@ -162,7 +162,7 @@ const Profile = ({ userId }) => {
   }, [user]);
 
   useEffect(() => {
-    console.log(user)
+    // console.log(user)
     const fetchEnrolledCourse = async () => {
       try {
         if (user?.enrolledCourses?.length) {
@@ -188,7 +188,7 @@ const Profile = ({ userId }) => {
           });
 
           setEnrolledCourses(enrolledCourseDetails);
-          console.log('Fetched Enrolled Course Details:', enrolledCourseDetails); // Debugging log
+          // console.log('Fetched Enrolled Course Details:', enrolledCourseDetails); // Debugging log
         } else {
           setEnrolledCourses([]); // Ensure state is cleared if no courses
         }
@@ -296,7 +296,6 @@ const Profile = ({ userId }) => {
                   <AdminLink>
                     <div className="p-4">
                       <p className="text-[18px] md:text-[24px] font-[500]">Courses</p>
-
                       <div className="overflow-x-auto border rounded-lg">
                         <table className="min-w-full bg-white rounded-lg border">
                           <thead className="bg-gray-200">
@@ -305,12 +304,8 @@ const Profile = ({ userId }) => {
                                 Title
                               </th>
                               <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                                Description
-                              </th>
-                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
                                 Actions
                               </th>
-
                             </tr>
                           </thead>
                           <tbody>
@@ -323,17 +318,11 @@ const Profile = ({ userId }) => {
                                       <span>{course.title}</span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 border-b text-gray-700">
-                                    {course.description.length > 100
-                                      ? `${course.description.substring(0, 100)}...`
-                                      : course.description}
-                                  </td>
                                   <td className="px-6 py-4 border-b">
                                     <Link to={`/course-info/${course._id}`} className="text-sm underline">
                                       View Details
                                     </Link>
                                   </td>
-
                                 </tr>
                               ))
                             ) : (
@@ -348,6 +337,7 @@ const Profile = ({ userId }) => {
                       </div>
                     </div>
                   </AdminLink>
+
 
                   <SubscriberLink>
 
@@ -385,12 +375,7 @@ const Profile = ({ userId }) => {
                               <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
                                 Title
                               </th>
-                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                                Description
-                              </th>
-                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                                Date
-                              </th>
+                             
                               <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
                                 Actions
                               </th>
@@ -407,14 +392,7 @@ const Profile = ({ userId }) => {
                                       <span>{event.title}</span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 border-b text-gray-700">
-                                    {event.description.length > 100
-                                      ? `${event.description.substring(0, 100)}...`
-                                      : event.description}
-                                  </td>
-                                  <td className="px-6 py-4 border-b">
-                                    {new Date(event.date).toLocaleDateString()}
-                                  </td>
+                                 
                                   <td className="px-6 py-4 border-b">
                                     <Link to={`/event/${event._id}`} className="text-sm underline">
                                       View Details
@@ -466,7 +444,6 @@ const Profile = ({ userId }) => {
                     </div>
                   </SubscriberLink>
 
-                  <AdminLink>
                     <div className="p-4">
                       <h1 className="text-[18px] md:text-[24px] font-[500]">Recent Forum Activity</h1>
 
@@ -477,9 +454,7 @@ const Profile = ({ userId }) => {
                               <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
                                 Title
                               </th>
-                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                                Content
-                              </th>
+                             
                               <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
                                 Actions
                               </th>
@@ -490,13 +465,9 @@ const Profile = ({ userId }) => {
                               threads.map((thread) => (
                                 <tr key={thread._id} className="bg-neutral-100">
                                   <td className="px-6 py-4 border-b">
-                                    <span className="text-[16px]">{thread.title}</span>
+                                    <span >{thread.title}</span>
                                   </td>
-                                  <td className="px-6 py-4 border-b text-[#656565] text-[12px]">
-                                    {thread.content.length > 50
-                                      ? `${thread.content.substring(0, 50)}...`
-                                      : thread.content}
-                                  </td>
+                                 
                                   <td className="px-6 py-4 border-b">
                                     <Link
                                       to={`/threads/${thread._id}`}
@@ -520,7 +491,6 @@ const Profile = ({ userId }) => {
                         </table>
                       </div>
                     </div>
-                  </AdminLink>
                 </>
               )}
             </div>
