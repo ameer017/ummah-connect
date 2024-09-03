@@ -50,13 +50,17 @@ const EventDetails = ({ userId }) => {
         setOrganizer(organizerData);
 
         // Fetch ticket details
-        const { data: ticketData } = await axios.get(`${URL}/events/${id}/ticket`);
+        const { data: ticketData } = await axios.get(
+          `${URL}/events/${id}/ticket`
+        );
         setTicketDetails(ticketData.tickets);
 
         // Check if user has already booked this event
         if (user && user.bookedEvents && Array.isArray(user.bookedEvents)) {
           const eventId = String(eventData._id);
-          const isBooked = user.bookedEvents.some(evId => String(evId) === eventId);
+          const isBooked = user.bookedEvents.some(
+            (evId) => String(evId) === eventId
+          );
           setHasBooked(isBooked);
         } else {
           setHasBooked(false);
@@ -75,16 +79,21 @@ const EventDetails = ({ userId }) => {
     setLoading(true);
     setError("");
 
-    try {
-      await axios.post(
-        `${URL}/events/buy-ticket/${id}`,
-        {
-          quantity,
-          userId: userID, // Add userId to the request body
+    // Log the quantity and other data before making the request
+    console.log("Booking Details:", {
+      quantity,
+      userId: userID,
+    });
 
-        },);
+    try {
+      await axios.post(`${URL}/events/buy-ticket/${id}`, {
+        quantity,
+        userId: userID, // Add userId to the request body
+      });
       navigate("/event-list");
-      toast.success("Ticket booked successfully! Check your mailbox for the event details");
+      toast.success(
+        "Ticket booked successfully! Check your mailbox for the event details"
+      );
     } catch (error) {
       setError(
         error.response?.data?.message || error.message || "An error occurred"

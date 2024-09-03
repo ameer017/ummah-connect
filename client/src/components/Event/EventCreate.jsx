@@ -82,7 +82,7 @@ const EventCreate = () => {
       const eventPayload = {
         ...formData,
         photo: imageUrl,
-        tickets
+        tickets: formData.limit
       };
 
       const { data } = await axios.post(`${URL}/events`, eventPayload, config);
