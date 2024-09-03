@@ -290,234 +290,239 @@ const Profile = ({ userId }) => {
                 </div>
               </div>
 
-              <AdminLink>
-                <div className="p-4">
-                  <p className="text-[18px] md:text-[24px] font-[500]">Courses</p>
+              {user.isVerified && (
+                <>
 
-                  <div className="overflow-x-auto border rounded-lg">
-                    <table className="min-w-full bg-white rounded-lg border">
-                      <thead className="bg-gray-200">
-                        <tr>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Title
-                          </th>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Description
-                          </th>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Actions
-                          </th>
+                  <AdminLink>
+                    <div className="p-4">
+                      <p className="text-[18px] md:text-[24px] font-[500]">Courses</p>
 
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {courses?.length > 0 ? (
-                          courses.map((course) => (
-                            <tr key={course._id} className="bg-neutral-100">
-                              <td className="px-6 py-4 border-b">
-                                <div className="flex items-center">
-                                  <HiAcademicCap size={15} className="mr-2" />
-                                  <span>{course.title}</span>
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 border-b text-gray-700">
-                                {course.description.length > 100
-                                  ? `${course.description.substring(0, 100)}...`
-                                  : course.description}
-                              </td>
-                              <td className="px-6 py-4 border-b">
-                                <Link to={`/course-info/${course._id}`} className="text-sm underline">
-                                  View Details
-                                </Link>
-                              </td>
+                      <div className="overflow-x-auto border rounded-lg">
+                        <table className="min-w-full bg-white rounded-lg border">
+                          <thead className="bg-gray-200">
+                            <tr>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Title
+                              </th>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Description
+                              </th>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Actions
+                              </th>
 
                             </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
-                              No courses available.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </AdminLink>
+                          </thead>
+                          <tbody>
+                            {courses?.length > 0 ? (
+                              courses.map((course) => (
+                                <tr key={course._id} className="bg-neutral-100">
+                                  <td className="px-6 py-4 border-b">
+                                    <div className="flex items-center">
+                                      <HiAcademicCap size={15} className="mr-2" />
+                                      <span>{course.title}</span>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 border-b text-gray-700">
+                                    {course.description.length > 100
+                                      ? `${course.description.substring(0, 100)}...`
+                                      : course.description}
+                                  </td>
+                                  <td className="px-6 py-4 border-b">
+                                    <Link to={`/course-info/${course._id}`} className="text-sm underline">
+                                      View Details
+                                    </Link>
+                                  </td>
 
-              <SubscriberLink>
-
-              <div className="p-4">
-                <h1 className="text-[18px] md:text-[24px] font-[500]">Enrolled Courses</h1>
-                <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-                  {enrolledCourses.length > 0 ? (
-                    <div className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer">
-                      {enrolledCourses.map(course => (
-                        <Link to={`/event/${course._id}`} key={course._id}>
-                          <div className="bg-white shadow-lg rounded-lg p-6">
-                            <h2 className="text-2xl font-semibold mb-4">{course.title}</h2>
-                            <p className="text-gray-700 mb-2">{course.description}</p>
-                            <p className="text-gray-700 mb-2">$&nbsp;{course.price}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-center text-gray-500">You have not enrolled in any course yet.</p>
-                  )}
-                </div>
-              </div>
-              </SubscriberLink>
-
-
-              <AdminLink>
-                <div className="p-4">
-                  <p className="text-[18px] md:text-[24px] font-[500]">Upcoming Events</p>
-
-                  <div className="overflow-x-auto rounded-lg border">
-                    <table className="min-w-full bg-white rounded-lg border">
-                      <thead className="bg-gray-200">
-                        <tr>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Title
-                          </th>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Description
-                          </th>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Date
-                          </th>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Actions
-                          </th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {events?.length > 0 ? (
-                          events.map((event) => (
-                            <tr key={event._id} className="bg-neutral-100">
-                              <td className="px-6 py-4 border-b">
-                                <div className="flex items-center">
-                                  <MdEventNote size={15} className="mr-2" />
-                                  <span>{event.title}</span>
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 border-b text-gray-700">
-                                {event.description.length > 100
-                                  ? `${event.description.substring(0, 100)}...`
-                                  : event.description}
-                              </td>
-                              <td className="px-6 py-4 border-b">
-                                {new Date(event.date).toLocaleDateString()}
-                              </td>
-                              <td className="px-6 py-4 border-b">
-                                <Link to={`/event/${event._id}`} className="text-sm underline">
-                                  View Details
-                                </Link>
-                              </td>
-
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                              No events available.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </AdminLink>
-
-              <SubscriberLink>
-
-                <div className="p-4">
-
-                  <h1 className="text-[18px] md:text-[24px] font-[500] ">Booked Events</h1>
-                  <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-
-                    {bookedEventsDetails.length > 0 ? (
-                      <div
-                        className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer"
-                      >
-                        {bookedEventsDetails.map(event => (
-                          <Link to={`/event/${event._id}`}>
-
-                            <div key={event._id} className="bg-white shadow-lg rounded-lg p-6">
-                              <h2 className="text-2xl font-semibold mb-4">{event.title}</h2>
-                              <p className="text-gray-700 mb-2">{event.subTitle}</p>
-                              <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
-                              <p className="text-gray-500">Location: {event.location}</p>
-                            </div>
-                          </Link>
-                        ))}
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                                  No courses available.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
                       </div>
-                    ) : (
-                      <p className="text-center text-gray-500">You have no booked events.</p>
-                    )}
-                  </div>
-                </div>
-              </SubscriberLink>
+                    </div>
+                  </AdminLink>
 
-              <AdminLink>
-                <div className="p-4">
-                  <h1 className="text-[18px] md:text-[24px] font-[500]">Recent Forum Activity</h1>
+                  <SubscriberLink>
 
-                  <div className="overflow-x-auto rounded-lg border">
-                    <table className="min-w-full bg-white rounded-lg border">
-                      <thead className="bg-gray-200">
-                        <tr>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Title
-                          </th>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Content
-                          </th>
-                          <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {threads?.length > 0 ? (
-                          threads.map((thread) => (
-                            <tr key={thread._id} className="bg-neutral-100">
-                              <td className="px-6 py-4 border-b">
-                                <span className="text-[16px]">{thread.title}</span>
-                              </td>
-                              <td className="px-6 py-4 border-b text-[#656565] text-[12px]">
-                                {thread.content.length > 50
-                                  ? `${thread.content.substring(0, 50)}...`
-                                  : thread.content}
-                              </td>
-                              <td className="px-6 py-4 border-b">
-                                <Link
-                                  to={`/threads/${thread._id}`}
-                                  className="text-[12px] font-semibold text-black hover:underline flex items-center transition-transform duration-300 ease-in-out transform hover:translate-x-1"
-                                >
-                                  <IoIosArrowRoundForward size={14} className="mr-1" />
-                                  View Thread
-                                </Link>
-
-                              </td>
-                            </tr>
-                          ))
+                    <div className="p-4">
+                      <h1 className="text-[18px] md:text-[24px] font-[500]">Enrolled Courses</h1>
+                      <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+                        {enrolledCourses.length > 0 ? (
+                          <div className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer">
+                            {enrolledCourses.map(course => (
+                              <Link to={`/event/${course._id}`} key={course._id}>
+                                <div className="bg-white shadow-lg rounded-lg p-6">
+                                  <h2 className="text-2xl font-semibold mb-4">{course.title}</h2>
+                                  <p className="text-gray-700 mb-2">{course.description}</p>
+                                  <p className="text-gray-700 mb-2">$&nbsp;{course.price}</p>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
                         ) : (
-                          <tr>
-                            <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
-                              No recent forum activity.
-                            </td>
-                          </tr>
+                          <p className="text-center text-gray-500">You have not enrolled in any course yet.</p>
                         )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </AdminLink>
+                      </div>
+                    </div>
+                  </SubscriberLink>
+
+
+                  <AdminLink>
+                    <div className="p-4">
+                      <p className="text-[18px] md:text-[24px] font-[500]">Upcoming Events</p>
+
+                      <div className="overflow-x-auto rounded-lg border">
+                        <table className="min-w-full bg-white rounded-lg border">
+                          <thead className="bg-gray-200">
+                            <tr>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Title
+                              </th>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Description
+                              </th>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Date
+                              </th>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Actions
+                              </th>
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {events?.length > 0 ? (
+                              events.map((event) => (
+                                <tr key={event._id} className="bg-neutral-100">
+                                  <td className="px-6 py-4 border-b">
+                                    <div className="flex items-center">
+                                      <MdEventNote size={15} className="mr-2" />
+                                      <span>{event.title}</span>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 border-b text-gray-700">
+                                    {event.description.length > 100
+                                      ? `${event.description.substring(0, 100)}...`
+                                      : event.description}
+                                  </td>
+                                  <td className="px-6 py-4 border-b">
+                                    {new Date(event.date).toLocaleDateString()}
+                                  </td>
+                                  <td className="px-6 py-4 border-b">
+                                    <Link to={`/event/${event._id}`} className="text-sm underline">
+                                      View Details
+                                    </Link>
+                                  </td>
+
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                                  No events available.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </AdminLink>
+
+                  <SubscriberLink>
+
+                    <div className="p-4">
+
+                      <h1 className="text-[18px] md:text-[24px] font-[500] ">Booked Events</h1>
+                      <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+
+                        {bookedEventsDetails.length > 0 ? (
+                          <div
+                            className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer"
+                          >
+                            {bookedEventsDetails.map(event => (
+                              <Link to={`/event/${event._id}`}>
+
+                                <div key={event._id} className="bg-white shadow-lg rounded-lg p-6">
+                                  <h2 className="text-2xl font-semibold mb-4">{event.title}</h2>
+                                  <p className="text-gray-700 mb-2">{event.subTitle}</p>
+                                  <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
+                                  <p className="text-gray-500">Location: {event.location}</p>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-center text-gray-500">You have no booked events.</p>
+                        )}
+                      </div>
+                    </div>
+                  </SubscriberLink>
+
+                  <AdminLink>
+                    <div className="p-4">
+                      <h1 className="text-[18px] md:text-[24px] font-[500]">Recent Forum Activity</h1>
+
+                      <div className="overflow-x-auto rounded-lg border">
+                        <table className="min-w-full bg-white rounded-lg border">
+                          <thead className="bg-gray-200">
+                            <tr>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Title
+                              </th>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Content
+                              </th>
+                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                                Actions
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {threads?.length > 0 ? (
+                              threads.map((thread) => (
+                                <tr key={thread._id} className="bg-neutral-100">
+                                  <td className="px-6 py-4 border-b">
+                                    <span className="text-[16px]">{thread.title}</span>
+                                  </td>
+                                  <td className="px-6 py-4 border-b text-[#656565] text-[12px]">
+                                    {thread.content.length > 50
+                                      ? `${thread.content.substring(0, 50)}...`
+                                      : thread.content}
+                                  </td>
+                                  <td className="px-6 py-4 border-b">
+                                    <Link
+                                      to={`/threads/${thread._id}`}
+                                      className="text-[12px] font-semibold text-black hover:underline flex items-center transition-transform duration-300 ease-in-out transform hover:translate-x-1"
+                                    >
+                                      <IoIosArrowRoundForward size={14} className="mr-1" />
+                                      View Thread
+                                    </Link>
+
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
+                                  No recent forum activity.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </AdminLink>
+                </>
+              )}
             </div>
           </div>
 
