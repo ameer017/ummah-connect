@@ -50,13 +50,17 @@ const EventDetails = ({ userId }) => {
         setOrganizer(organizerData);
 
         // Fetch ticket details
-        const { data: ticketData } = await axios.get(`${URL}/events/${id}/ticket`);
+        const { data: ticketData } = await axios.get(
+          `${URL}/events/${id}/ticket`
+        );
         setTicketDetails(ticketData.tickets);
 
         // Check if user has already booked this event
         if (user && user.bookedEvents && Array.isArray(user.bookedEvents)) {
           const eventId = String(eventData._id);
-          const isBooked = user.bookedEvents.some(evId => String(evId) === eventId);
+          const isBooked = user.bookedEvents.some(
+            (evId) => String(evId) === eventId
+          );
           setHasBooked(isBooked);
         } else {
           setHasBooked(false);
@@ -75,16 +79,21 @@ const EventDetails = ({ userId }) => {
     setLoading(true);
     setError("");
 
-    try {
-      await axios.post(
-        `${URL}/events/buy-ticket/${id}`,
-        {
-          quantity,
-          userId: userID, // Add userId to the request body
+    // Log the quantity and other data before making the request
+    console.log("Booking Details:", {
+      quantity,
+      userId: userID,
+    });
 
-        },);
+    try {
+      await axios.post(`${URL}/events/buy-ticket/${id}`, {
+        quantity,
+        userId: userID, // Add userId to the request body
+      });
       navigate("/event-list");
-      toast.success("Ticket booked successfully! Check your mailbox for the event details");
+      toast.success(
+        "Ticket booked successfully! Check your mailbox for the event details"
+      );
     } catch (error) {
       setError(
         error.response?.data?.message || error.message || "An error occurred"
@@ -101,6 +110,35 @@ const EventDetails = ({ userId }) => {
       </div>
     );
   }
+
+  // deleting an event in the case of the event not happening anymore
+  const deleteEventHandler = async () => {
+    if (!window.confirm("Are you sure you want to delete this event?")) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
+
+      await axios.delete(`${URL}/events/${id}`, config);
+
+      toast.success("Event deleted successfully");
+      navigate("/event-list"); // Redirect to the event list page after deletion
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to delete the event"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const isOrganizer = organizer && userID === organizer._id;
   const isNotOrganizer = !isOrganizer;
@@ -157,9 +195,18 @@ const EventDetails = ({ userId }) => {
                 className="w-[100%] bg-blue-500 text-white py-2 px-2 md:px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
                 disabled={loading || ticketDetails.quantity <= 0}
               >
-                {loading ? "Processing..." : `Book Ticket`}
+                {loading ? "Processing..." : `Book Ticket ${event.ticketPrice}`}
               </button>
             </div>
+          )}
+
+          {!isNotOrganizer && (
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded flex items-center gap-2"
+              onClick={deleteEventHandler}
+            >
+              {loading ? "Deleting..." : "Delete"}
+            </button>
           )}
 
           {isNotOrganizer && hasBooked && (

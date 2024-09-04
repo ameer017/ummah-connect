@@ -12,6 +12,7 @@ const initialState = {
   date: "",
   location: "",
   limit: "",
+  ticketPrice: "",
   photo: "",
   trending: false,
 };
@@ -33,14 +34,13 @@ const EventCreate = () => {
       };
 
       // Reset paymentLink only if ticketPrice is set to "0"
-      if (name === "ticketPrice" && value === "0") {
-        updatedFormData.paymentLink = "";
-      }
+      // if (name === "ticketPrice" && value === "0") {
+      //   updatedFormData.paymentLink = "";
+      // }
 
       return updatedFormData;
     });
   };
-
 
   const handleFileChange = (e) => {
     setEventImage(e.target.files[0]);
@@ -82,8 +82,12 @@ const EventCreate = () => {
       const eventPayload = {
         ...formData,
         photo: imageUrl,
-        tickets
+        tickets: formData.limit,
+        ticketPrice: Number(formData.ticketPrice),
       };
+
+      // to be removed later
+      console.log("Event Payload:", eventPayload);
 
       const { data } = await axios.post(`${URL}/events`, eventPayload, config);
 
@@ -174,6 +178,20 @@ const EventCreate = () => {
               />
             </div>
           </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Ticket Price
+            </label>
+            <input
+              type="text"
+              name="ticketPrice"
+              value={formData.ticketPrice}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+            />
+          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Photo
