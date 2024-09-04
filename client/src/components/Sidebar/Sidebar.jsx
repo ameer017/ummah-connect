@@ -4,7 +4,6 @@ import { IoIosArrowForward, IoIosArrowBack, } from "react-icons/io";
 import { GrOverview, GrNotes } from "react-icons/gr";
 import { IoBookOutline } from "react-icons/io5";
 import {
-	MdOutlineEventAvailable,
 	MdForum,
 	MdOutlinePassword,
 	MdOutlineUnsubscribe,
@@ -24,7 +23,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 	return (
 		<>
 			{isSidebarOpen && (
-				<div className="fixed left-0 top-0 h-full w-[400px] bg-white p-4 flex flex-col space-y-2 z-20 border-r">
+				<div className="fixed left-0 top-0 h-full w-[350px] md:w-[400px] bg-white p-4 flex flex-col space-y-2 z-20 border-r">
 					<Link
 						to="/"
 						className="block  w-30 text-2xl font-serif font-bold text-[#000]  my-2"
@@ -151,7 +150,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 			{!isSidebarOpen && (
 				<div>
 					<button
-						className="p-2 bg-white fixed top-[12.1rem] left-0 z-20 border rounded-full transform -translate-y-1/2"
+						className="p-2 bg-white fixed top-[12rem] left-0 z-20 border rounded-full transform -translate-y-1/2"
 						onClick={toggleSidebar}
 					>
 						<IoIosArrowForward size={25} color="black" />

@@ -123,7 +123,7 @@ const Header = ({ userId }) => {
 									className="bg-blue-600  font-bold text-[#fff] px-5 py-2 rounded-lg"
 									title="Registration Port"
 								>
-									Register / Login
+									Sign Up
 								</Link>
 							</ShowOnLogout>
 
