@@ -156,8 +156,8 @@ const CreateContent = () => {
               />
             </div>
 
-            <div className="flex gap-2">
-              <div className="mb-4">
+            <div className="flex gap-2 flex-col md:flex-row">
+              <div className="mb-4 w-full md:w-[48%]  ">
                 <label className="block text-gray-700">Topics</label>
                 <select
                   name="topics"
@@ -174,7 +174,7 @@ const CreateContent = () => {
                   ))}
                 </select>
               </div>
-              <div className="mb-4">
+              <div className="mb-4 w-full md:w-[48%]  ">
                 <label className="block text-gray-700">Type</label>
                 <select
                   name="type"

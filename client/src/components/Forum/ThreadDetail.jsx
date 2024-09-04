@@ -156,7 +156,7 @@ const ThreadDetail = ({ userId }) => {
   const isReplyer = replyerID && userID === replyerID._id;
 
   return (
-    <div className="min-h-screen border flex items-center justify-center bg-white relative">
+    <div className="min-h-screen border flex items-center justify-center  relative">
       <button
         className="absolute top-4 left-16 underline text-black px-4 py-2 rounded"
         onClick={() => navigate(-1)}

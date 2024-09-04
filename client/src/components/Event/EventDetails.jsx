@@ -7,8 +7,11 @@ import { getUser } from "../../redux/feature/auth/authSlice";
 import { toast } from "react-toastify";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import PageLoader from "../Loader/PageLoader";
+import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
+
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
+const PK = import.meta.env.VITE_APP_FLUTTER_PK
 
 const EventDetails = ({ userId }) => {
   useRedirectLoggedOutUser("/login");
@@ -25,9 +28,10 @@ const EventDetails = ({ userId }) => {
   const [ticketDetails, setTicketDetails] = useState({});
   const [userID, setUserID] = useState("");
   const [hasBooked, setHasBooked] = useState(false);
+  const [price, setPrice] = useState(0)
 
   const { user } = useSelector((state) => state.auth);
-
+  // console.log(user)
   useEffect(() => {
     if (user) {
       dispatch(getUser(userId));
@@ -52,6 +56,8 @@ const EventDetails = ({ userId }) => {
         // Fetch ticket details
         const { data: ticketData } = await axios.get(`${URL}/events/${id}/ticket`);
         setTicketDetails(ticketData.tickets);
+        // console.log(ticketData.tickets.price)
+        setPrice(ticketData.tickets.price)
 
         // Check if user has already booked this event
         if (user && user.bookedEvents && Array.isArray(user.bookedEvents)) {
@@ -71,28 +77,7 @@ const EventDetails = ({ userId }) => {
     fetchEventDetails();
   }, [id, user, dispatch]);
 
-  const bookTicketHandler = async () => {
-    setLoading(true);
-    setError("");
 
-    try {
-      await axios.post(
-        `${URL}/events/buy-ticket/${id}`,
-        {
-          quantity,
-          userId: userID, // Add userId to the request body
-
-        },);
-      navigate("/event-list");
-      toast.success("Ticket booked successfully! Check your mailbox for the event details");
-    } catch (error) {
-      setError(
-        error.response?.data?.message || error.message || "An error occurred"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (fetching) {
     return (
@@ -107,6 +92,64 @@ const EventDetails = ({ userId }) => {
 
   // Ensure tickets are available and the user has not booked already
   const ticketsAvailable = ticketDetails.quantity > 0 && !hasBooked;
+  const bookTicketHandler = async () => {
+    setLoading(true);
+    setError("");
+    toast.info("Processing...")
+    try {
+      await axios.post(
+        `${URL}/events/buy-ticket/${id}`,
+        {
+          quantity,
+          userId: userID,
+        }
+      );
+      navigate("/profile");
+      toast.success("Ticket booked successfully! Check your mailbox for the event details");
+    } catch (error) {
+      setError(
+        error.response?.data?.message || error.message || "An error occurred"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const config = {
+    public_key: PK,
+    tx_ref: Date.now(),
+    amount: price * quantity,
+    currency: 'NGN',
+    payment_options: 'card,mobilemoney,ussd',
+    customer: {
+      email: user.emailAddress,
+      phone_number: user.phone,
+      name: user.firstName,
+    },
+    customizations: {
+      title: 'Ummah Connect',
+      description: 'Payment for event',
+      logo: '/logo-white.png',
+    },
+  };
+
+
+  const fwConfig = {
+    ...config,
+    text: `Book ticket  #${price * quantity}`,
+    callback: (response) => {
+      console.log(response);
+      // console.log(response.status)
+      if (response.status === "successful") {
+        bookTicketHandler()
+      } else {
+        toast.error("Payment was not successful. Please try again.");
+      }
+      closePaymentModal()
+    },
+    onClose: () => { },
+  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center  relative">
@@ -117,7 +160,7 @@ const EventDetails = ({ userId }) => {
         BACK
       </button>
 
-      <div className="p-2 md:p-8 rounded w-[350px] md:w-[800px] mt-[4rem]">
+      <div className="p-2 md:p-8 rounded w-[90%] md:w-[800px] mt-[4rem]">
         <img
           src={event.photo}
           alt={event.title}
@@ -152,13 +195,15 @@ const EventDetails = ({ userId }) => {
                 />
               </div>
 
-              <button
-                onClick={bookTicketHandler}
-                className="w-[100%] bg-blue-500 text-white py-2 px-2 md:px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
-                disabled={loading || ticketDetails.quantity <= 0}
-              >
-                {loading ? "Processing..." : `Book Ticket`}
-              </button>
+              {loading ? "Processing..." : (
+                <FlutterWaveButton
+                  {...fwConfig}
+                  amount={price * quantity}
+                  className="w-[100%] bg-blue-500 text-white py-2 px-2 md:px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
+                  disabled={loading || ticketDetails.quantity <= 0}
+                />
+              )}
+
             </div>
           )}
 
@@ -183,7 +228,7 @@ const EventDetails = ({ userId }) => {
 
         {error && <p className="text-red-500 mt-2">{error}</p>}
 
-        <div className="flex justify-between border rounded-lg items-center px-2 py-6">
+        <div className="flex justify-between flex-col  gap-2 md:flex-row md:items-center border rounded-lg items-left px-2 py-6">
           <div className="flex flex-col">
             <p className="mb-2 font-bold">Date and Time:</p>
             {new Date(event.date).toLocaleString()}

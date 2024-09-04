@@ -144,7 +144,7 @@ if(loading){
                       <img
                         src={event.photo}
                         alt={event.title}
-                        className="rounded-lg  "
+                        className="rounded-lg  h-[160px] w-full "
                       />
                       <p className="mt-4">{event.title}</p>
                       <p className="text-gray-700 border-b py-2">
