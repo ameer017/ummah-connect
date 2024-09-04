@@ -39,9 +39,8 @@ const createEvent = async (req, res) => {
     const ticket = new Ticket({
       price: tickets.price,
       quantity: limit,
-      sold: tickets.sold || 0,
-      paymentLink: tickets.paymentLink,
-    });
+      sold: tickets.sold || 0
+        });
     const createdTicket = await ticket.save();
 
     const event = new Event({

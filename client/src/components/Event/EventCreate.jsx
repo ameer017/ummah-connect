@@ -12,9 +12,12 @@ const initialState = {
   date: "",
   location: "",
   limit: "",
-  ticketPrice: "",
   photo: "",
   trending: false,
+  tickets: {
+    price: "",
+    sold: 0,
+  },
 };
 
 const EventCreate = () => {
@@ -28,19 +31,24 @@ const EventCreate = () => {
     const { name, value, type, checked } = e.target;
 
     setFormData((prevState) => {
-      const updatedFormData = {
+      if (name === "price") {
+        return {
+          ...prevState,
+          tickets: {
+            ...prevState.tickets,
+            price: value,
+          },
+        };
+      }
+
+      return {
         ...prevState,
         [name]: type === "checkbox" ? checked : value,
       };
-
-      // Reset paymentLink only if ticketPrice is set to "0"
-      // if (name === "ticketPrice" && value === "0") {
-      //   updatedFormData.paymentLink = "";
-      // }
-
-      return updatedFormData;
     });
   };
+
+
 
   const handleFileChange = (e) => {
     setEventImage(e.target.files[0]);
@@ -82,12 +90,11 @@ const EventCreate = () => {
       const eventPayload = {
         ...formData,
         photo: imageUrl,
-        tickets: formData.limit,
-        ticketPrice: Number(formData.ticketPrice),
+        tickets: {
+          price: formData.tickets.price,
+          sold: formData.tickets.sold,
+        },
       };
-
-      // to be removed later
-      console.log("Event Payload:", eventPayload);
 
       const { data } = await axios.post(`${URL}/events`, eventPayload, config);
 
@@ -139,20 +146,38 @@ const EventCreate = () => {
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Location
-            </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-            />
+
+          <div className="flex justify-between flex-col md:flex-row">
+            <div className="mb-4 md:w-[48%]">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Location
+              </label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+              />
+            </div>
+            <div className="mb-4 md:w-[48%]">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Ticket Price
+              </label>
+              <input
+                type="number"
+                name="price"
+                value={formData.tickets.price}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+                min="0"
+              />
+            </div>
+
+
           </div>
-          <div className="flex justify-between">
-            <div className="mb-4 w-[48%]">
+          <div className="flex justify-between flex-col md:flex-row">
+            <div className="mb-4 md:w-[48%]">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Date
               </label>
@@ -164,7 +189,7 @@ const EventCreate = () => {
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
               />
             </div>
-            <div className="mb-4 w-[48%]">
+            <div className="mb-4 md:w-[48%]">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Limit
               </label>
@@ -178,20 +203,6 @@ const EventCreate = () => {
               />
             </div>
           </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Ticket Price
-            </label>
-            <input
-              type="text"
-              name="ticketPrice"
-              value={formData.ticketPrice}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-            />
-          </div>
-
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Photo
