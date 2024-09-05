@@ -2,24 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import CertificateCanvas from "./CertificateCanvas";
 import Confetti from "react-confetti";
 import { useParams } from "react-router-dom";
-// import {
-// 	useCreateCertificateMutation,
-// 	usePrepareCertificateMutation,
-// } from "@/features/courses/coursesApiSlice";
-// import {
-// 	getStorage,
-// 	ref,
-// 	deleteObject,
-// 	getDownloadURL,
-// 	uploadBytesResumable,
-// } from "firebase/storage";
-// import app from "@/firebase";
-// import toast from "react-hot-toast";
+
 import { Button } from "@/components/ui/button";
 import Web3Modal from "web3modal";
-
-// import { useCertificate } from "@/hooks/useCertificate";
-// import { useWaitForTransactionReceipt } from "wagmi";
 import { format } from "date-fns";
 import generateCertID from "@/lib/generateCertID";
 import ConnectionModal from "@/lib/ConnectionModal";
@@ -35,6 +20,7 @@ const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
 const upload_preset = import.meta.env.VITE_APP_UPLOAD_PRESET;
 
 const CertificateGenerator = ({
+	instructor,
 	courseCompleted,
 	courseTitle,
 	certificate,
@@ -52,21 +38,9 @@ const CertificateGenerator = ({
 	console.log(user);
 
 	console.log(isAlreadyCompleted);
-	// const [createCertificate] = useCreateCertificateMutation();
-	// const [prepareCertificate, { data }] = usePrepareCertificateMutation();
 	const [isConnected, setIsConnected] = useState(true);
 	const [certUploadPerc, setCertUploadPerc] = useState(0);
-	// const {
-	// 	mintCertificate,
-	// 	mintCertificateHash,
-	// 	isMintCertificatePending,
-	// 	mintCertificateError,
-	// } = useCertificate();
-	// const { isLoading: isConfirming, isSuccess: isConfirmed } =
-	// 	useWaitForTransactionReceipt({
-	// 		hash: mintCertificateHash,
-	// 	});
-	// const [toastId, setToastId] = useState(null);
+	
 
 	const [showConfetti, setShowConfetti] = useState(false);
 	console.log(certificate);
@@ -86,35 +60,6 @@ const CertificateGenerator = ({
 		window?.ethereum?.on("accountsChanged", () => resetParams());
 	}, []);
 
-	// useEffect(() => {
-	// 	if (isMintCertificatePending) {
-	// 		const newToastId = toast.loading("Waiting for approval from wallet...");
-	// 		// console.log(toastId)
-	// 		setToastId(newToastId);
-	// 		console.log("Transaction is pending...");
-	// 	}
-	// 	if (isConfirming) {
-	// 		if (toastId) toast.dismiss(toastId);
-	// 		const newToastId = toast.loading(
-	// 			"Waiting for confirmation on the blockchain..."
-	// 		);
-	// 		setToastId(newToastId);
-	// 		console.log("Waiting for confirmation...");
-	// 	}
-	// 	if (isConfirmed) {
-	// 		console.log("Transaction confirmed!");
-	// 		toast.success("Certificate minted successfully!", { id: toastId });
-	// 	}
-	// 	// toast.dismiss(toastId);
-	// 	if (mintCertificateError) {
-	// 		toast.error(mintCertificateError, { id: toastId });
-	// 	}
-	// }, [
-	// 	isMintCertificatePending,
-	// 	isConfirming,
-	// 	isConfirmed,
-	// 	mintCertificateError,
-	// ]);
 
 	useEffect(() => {
 		generateCertID(user._id).then((id) => setCertId(id));
@@ -207,11 +152,7 @@ const CertificateGenerator = ({
 								config
 							);
 							console.log(response.data);
-							// await createCertificate({
-							// 	courseId,
-							// 	certificateId: certId,
-							// 	cloudinaryUrl: url,
-							// }).unwrap();
+							
 							console.log("Certificate generated successfully");
 							setOpen(true);
 							setShowConfetti(true);
@@ -280,16 +221,7 @@ const CertificateGenerator = ({
 			);
 			await tx.wait();
 			console.log(tx);
-			// const result = await prepareCertificate({
-			// 	courseId,
-			// 	courseTitle,
-			// 	studentName: fullName,
-			// }).unwrap();
-			// console.log(result);
-			// result.tokenURI && mintCertificate(userId, courseId, result.tokenURI);
-
-			// console.log(result.tokenURI);
-			// console.log(result.apiEndpoint);
+			
 		} catch (error) {
 			console.log(error);
 			toast.error(
@@ -316,10 +248,10 @@ const CertificateGenerator = ({
 			<Button onClick={mintAsNFT}>{isMinting ? "MInting" : "Mint certificate now"}</Button>
 			<div className="hidden">
 				<CertificateCanvas
+				instructor={instructor}
 					ref={certificateRef}
 					certId={certId}
 					userId={user._id}
-					// courseTitle={courseTitle}
 					studentName={`${user.firstName} ${user.lastName}`}
 					description={description}
 				/>
