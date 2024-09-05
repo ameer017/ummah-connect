@@ -212,7 +212,6 @@ exports.addReview = async (req, res) => {
 	}
 };
 
-
 exports.enrollCourse = async (req, res) => {
 	try {
 		const userId = req.user._id;
@@ -342,170 +341,6 @@ exports.enrollCourse = async (req, res) => {
 	}
 };
 
-// exports.handleStripeWebhook = async (req, res) => {
-// 	try {
-// 		const { body, headers } = req;
-// 		const signature = headers["stripe-signature"];
-
-// 		let event;
-// 		try {
-// 			event = stripe.webhooks.constructEvent(
-// 				body,
-// 				signature,
-// 				process.env.STRIPE_WEBHOOK_SECRET
-// 			);
-// 		} catch (error) {
-// 			console.log(error);
-// 			return res.status(400).send(`Webhook Error: ${error.message}`);
-// 		}
-
-// 		const session = event.data.object;
-// 		const userId = session?.metadata?.userId;
-// 		const courseId = session?.metadata?.courseId;
-
-// 		const user = await User.findById(userId);
-
-// 		if (event.type === "checkout.session.completed") {
-// 			const course = await Course.findById(courseId);
-// 			const instructor = await User.findById(course.instructor);
-
-// 			if (!instructor.stripeAccountId) {
-// 				console.error("Instructor has no connected Stripe account");
-// 				return res
-// 					.status(400)
-// 					.send("Instructor has no connected Stripe account");
-// 			}
-
-// 			const totalAmountCents = session.amount_total;
-// 			const totalAmountDollars = totalAmountCents / 100;
-// 			const platformFeeCents = Math.round(totalAmountCents * 0.1); // 10% platform fee
-// 			const instructorAmountCents = totalAmountCents - platformFeeCents;
-// 			const instructorAmountDollars = instructorAmountCents / 100;
-
-// 			// Transfer funds to instructor's Stripe account
-// 			try {
-// 				const transfer = await stripe.transfers.create({
-// 					amount: instructorAmountCents,
-// 					currency: session.currency,
-// 					destination: instructor.stripeAccountId,
-// 					transfer_group: session.id,
-// 				});
-
-// 				// Record the transaction for the instructor (payout)
-// 				instructor.transactions.push({
-// 					type: "balanceTransfer",
-// 					amount: instructorAmountDollars,
-// 					courseId: course._id,
-// 					stripeTransactionId: transfer.id,
-// 					status: "success",
-// 				});
-// 				await instructor.save();
-// 			} catch (error) {
-// 				console.error("Failed to transfer funds to instructor:", error);
-// 				return res.status(500).send("Failed to transfer funds to instructor");
-// 			}
-
-// 			// Record the transaction for the student (purchase)
-// 			user.transactions.push({
-// 				type: "purchase",
-// 				amount: totalAmountDollars,
-// 				courseId: course._id,
-// 				stripeTransactionId: session.id,
-// 				status: "completed",
-// 			});
-
-// 			// Update course and user
-// 			course.purchasedBy.push({ user: userId, amount: totalAmountDollars });
-// 			await course.save();
-
-// 			user.enrolledCourses.push({
-// 				course: courseId,
-// 				lastStudiedAt: new Date(),
-// 			});
-// 			await user.save();
-
-// 			const transporter = nodemailer.createTransport({
-// 				host: process.env.EMAIL_HOST,
-// 				port: 587,
-// 				auth: {
-// 					user: process.env.EMAIL_USER,
-// 					pass: process.env.EMAIL_PASS,
-// 				},
-// 				tls: {
-// 					rejectUnauthorized: false,
-// 				},
-// 			});
-// 			const mailOptions = {
-// 				from: process.env.EMAIL_USER,
-// 				to: user.emailAddress,
-// 				subject: "Course Enrollment Confirmation",
-// 				text: `As salam 'alaekum Dear ${user.firstName} 🤗,
-
-//       Thank you for enrolling in the course "${course.title}".
-
-//       Course Details:
-//       ---------------
-//       Title: ${course.title}
-//       Description: ${course.description}
-//       Duration: ${course.duration}
-
-//       We appreciate your interest and are excited to have you in the course.
-
-//       Ma' salam,
-//       The UmmahConnect Education Team`,
-// 			};
-
-// 			// Send email
-// 			transporter.sendMail(mailOptions, (error, info) => {
-// 				if (error) {
-// 					return res.status(500).json({ message: error.message });
-// 				}
-// 			});
-
-// 		} else if (
-// 			event.type === "payout.paid" ||
-// 			event.type === "payout.failed" ||
-// 			event.type === "payout.pending" ||
-// 			event.type === "payout.updated"
-// 		) {
-// 			const payout = event.data.object;
-// 			const status = payout.status;
-// 			const payoutId = payout.id;
-
-// 			// Find the user with the transaction that has the payout ID
-// 			const user = await User.findOne({
-// 				"transactions.stripeTransactionId": payoutId,
-// 			});
-
-// 			if (user) {
-// 				// Find the existing transaction
-// 				const existingTransaction = user.transactions.find(
-// 					(transaction) => transaction.stripeTransactionId === payoutId
-// 				);
-
-// 				if (existingTransaction) {
-// 					// Update the existing transaction
-// 					existingTransaction.status = status;
-// 				} else {
-// 					console.log("No existing transaction found, this shouldn't happen.");
-// 				}
-
-// 				await user.save();
-// 			} else {
-// 				console.log(`No user found with payout ID: ${payoutId}`);
-// 			}
-// 		} else {
-// 			return res
-// 				.status(200)
-// 				.send(`Webhook Error: Unhandled event type ${event.type}`);
-// 		}
-
-// 		res.status(200).send();
-// 	} catch (error) {
-// 		console.error("[HANDLE_STRIPE_WEBHOOK]", error);
-// 		res.status(500).send("Internal server error");
-// 	}
-// };
 
 exports.getEnrolledCourses = async (req, res) => {
 	try {
@@ -519,6 +354,7 @@ exports.getEnrolledCourses = async (req, res) => {
 				select: "firstName lastName photo", // Select instructor details you want to include
 			},
 		});
+		// console.log(user)
 
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
@@ -526,6 +362,7 @@ exports.getEnrolledCourses = async (req, res) => {
 
 		const enrolledCourses = user.enrolledCourses.map((enrollment) => {
 			const course = enrollment.course;
+			// console.log(course)
 			return {
 				_id: course._id,
 				title: course.title,
@@ -582,10 +419,10 @@ exports.completeChapter = async (req, res) => {
 
 		// Update the chapter completion status
 		if (chapterIndex >= 0 && chapterIndex < course.chapters.length) {
-			if (course.chapters[chapterIndex].completedBy.includes(userId)){
+			if (course.chapters[chapterIndex].completedBy.includes(userId)) {
 				return res.status(400).json({ message: "Chapter already completed" });
 			}
-				course.chapters[chapterIndex].completedBy.push(userId);
+			course.chapters[chapterIndex].completedBy.push(userId);
 			await course.save();
 
 			// Update user's enrollment progress
@@ -595,6 +432,16 @@ exports.completeChapter = async (req, res) => {
 					(enrollment.completedChapters.length / course.chapters.length) * 100;
 				enrollment.lastStudiedAt = new Date();
 				await user.save();
+			}
+
+			if (enrollment.progress === 100) {
+				const purchasedByIndex = course.purchasedBy.findIndex(
+					(purchase) => purchase.user.toString() === userId
+				);
+				if (purchasedByIndex !== -1) {
+					course.purchasedBy[purchasedByIndex].completedCourseAt = new Date();
+				}
+				await course.save();
 			}
 
 			res.json({
@@ -609,7 +456,6 @@ exports.completeChapter = async (req, res) => {
 		res.status(500).json({ message: "Internal server error" });
 	}
 };
-
 
 exports.generateCertificate = async (req, res) => {
 	try {
@@ -628,43 +474,6 @@ exports.generateCertificate = async (req, res) => {
 	}
 };
 
-exports.deleteProgress = async (req, res) => {
-	try {
-		await Progress.findOneAndDelete({
-			userId: req.params.userId,
-			courseId: req.params.courseId,
-		});
-		res.json({ message: "Progress deleted" });
-	} catch (err) {
-		res.status(500).json({ message: err.message });
-	}
-};
-
-exports.getAllCourseProgress = async (req, res) => {
-	try {
-		const progress = await Progress.find({
-			courseId: req.params.courseId,
-		}).populate("userId");
-		res.json(progress);
-	} catch (err) {
-		res.status(500).json({ message: err.message });
-	}
-};
-
-exports.updateProgress = async (req, res) => {
-	try {
-		const progress = await Progress.findOneAndUpdate(
-			{ userId: req.params.userId, courseId: req.params.courseId },
-			{ progress: req.body.progress, completed: req.body.completed },
-			{ new: true }
-		);
-		if (!progress)
-			return res.status(404).json({ message: "Progress not found" });
-		res.json(progress);
-	} catch (err) {
-		res.status(500).json({ message: err.message });
-	}
-};
 
 exports.getAllWebinar = async (req, res) => {
 	try {

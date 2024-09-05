@@ -8,6 +8,7 @@ const exphbs = require('express-handlebars');
 const connectDB = require("./config/DBConnect");
 const webhookRoute = require("./routes/webhookRoute");
 const path = require('path');
+const CertEventsController = require("./controllers/contractEventsController");
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.get("/", (req, res) => {
 // Define routes
 app.use("/auth", require("./routes/authRoute"));
 app.use("/content", require("./routes/contentRoute"));
+app.use("/certificates", require("./routes/certificateRoute"));
 app.use("/api", webhookRoute);
 app.use("/discussion", require("./routes/forumRoute"));
 app.use("/events", require("./routes/eventRoute"));
@@ -65,6 +67,7 @@ app.use("/payments", require("./routes/paymentRoute"));
 // app.use("/progress", require("./routes/progressRoute"));
 app.use("/webinars", require("./routes/webinarRoute"));
 
+CertEventsController.initializeWebSocket()
 
 // Connect to the database and start the server
 const PORT = process.env.PORT || 5000;
