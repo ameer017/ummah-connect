@@ -180,7 +180,7 @@ const CertificatesVerify = () => {
 													</Badge>
 													<a
 														// href={`https://explorer.celo.org/alfajores/token/${CERTIFICATE_CA}/instance/${certificate.NFTId}/token-transfers`}
-														href={`https://sepolia.arbiscan.io/token/${CERTIFICATE_CA}?a=${certificate.NFTId}`}
+														href={`https://testnets.opensea.io/assets/arbitrum-sepolia/${CERTIFICATE_CA}/${certificate.NFTId}`}
 														target="_blank"
 														rel="noopener noreferrer"
 													>
@@ -188,7 +188,7 @@ const CertificatesVerify = () => {
 															className="text-blue-500 text-xs"
 															variant="link"
 														>
-															View on block explorer
+															View on OpenSea
 														</Button>
 													</a>
 												</div>
