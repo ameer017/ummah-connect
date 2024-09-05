@@ -18,7 +18,11 @@ app.use(cors({
 		"http://localhost:5173",
 		"https://console.cloudinary.com",
 		"https://api.cloudinary.com",
-		"https://ummah-connect.vercel.app"
+		"https://ummah-connect.vercel.app",
+		"https://checkout-v3-ui-prod.f4b-flutterwave.com",
+		"https://flw-events-ge.myflutterwave.com/event/create",
+		"https:pexels.com"
+
 	],
 	credentials: true,
 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -64,6 +68,7 @@ app.use("/payments", require("./routes/paymentRoute"));
 app.use("/webinars", require("./routes/webinarRoute"));
 
 CertEventsController.initializeWebSocket()
+
 // Connect to the database and start the server
 const PORT = process.env.PORT || 5000;
 connectDB();

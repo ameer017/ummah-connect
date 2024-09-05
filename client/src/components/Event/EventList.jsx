@@ -52,27 +52,27 @@ const EventList = ({ userId }) => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      setLoading(true);
+      setLoading(true)
       const response = await fetch(`${URL}/events/upcoming`);
       const data = await response.json();
-      setEvents(data);
+      setEvents(data)
       setLoading(false);
     };
     const fetchTrendingEvents = async () => {
-      setLoading(true);
+      setLoading(true)
       const response = await fetch(`${URL}/events/trending-events`);
       const data = await response.json();
       // console.log(data);
       setTrending(data);
-      setLoading(false);
+      setLoading(false)
     };
     const fetchPastEvents = async () => {
-      setLoading(true);
+      setLoading(true)
       const response = await fetch(`${URL}/events/past`);
       const data = await response.json();
       // console.log(data);
       setPast(data);
-      setLoading(false);
+      setLoading(false)
     };
 
     fetchEvents();
@@ -100,13 +100,13 @@ const EventList = ({ userId }) => {
       alert("An error occurred. Please try again.");
     }
   };
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <PageLoader />
-      </div>
-    );
-  }
+if(loading){
+  return (
+    <div className="flex justify-center items-center min-h-screen">
+      <PageLoader />
+    </div>
+  );
+}
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <Sidebar
@@ -144,7 +144,7 @@ const EventList = ({ userId }) => {
                       <img
                         src={event.photo}
                         alt={event.title}
-                        className="rounded-lg"
+                        className="rounded-lg  h-[160px] w-full "
                       />
                       <p className="mt-4">{event.title}</p>
                       <p className="text-gray-700 border-b py-2">
@@ -164,20 +164,7 @@ const EventList = ({ userId }) => {
                         </Link>
                       </div>
 
-                      {/* <div className="flex justify-between mt-2">
-                        <button
-                          className="px-4 py-2 text-black flex items-center"
-                          onClick={() => handleRSVP(event._id)}
-                        >
-                          <IoIosArrowRoundForward size={20} /> RSVP Now
-                        </button>
-                        <button
-                          className="px-4 py-2 text-black underline"
-                          onClick={() => handleRSVP(event._id)}
-                        >
-                          Cancel RSVP
-                        </button>
-                      </div> */}
+                      
                     </div>
                   ))
                 ) : (
@@ -194,6 +181,7 @@ const EventList = ({ userId }) => {
                     <div
                       key={event._id}
                       className="w-full p-4 border rounded-lg cursor-pointer bg-green-100 "
+                     
                     >
                       <p>
                         <MdEventNote size={15} />

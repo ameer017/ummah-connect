@@ -28,7 +28,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 						to="/"
 						className="block  w-30 text-2xl font-serif font-bold text-[#000]  my-2"
 					>
-						Ummah Connect
+						<img src="/logo-no-background.png" className="w-[90px]" />
 					</Link>
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-[20px] my-3">
@@ -157,12 +157,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 
 			{!isSidebarOpen && (
 				<div>
-					<button
+					{/* <button
 						className="p-2 bg-white fixed top-[12rem] left-0 z-20 border rounded-full transform -translate-y-1/2"
 						onClick={toggleSidebar}
 					>
 						<IoIosArrowForward size={25} color="black" />
-					</button>
+					</button> */}
 				</div>
 			)}
 		</>

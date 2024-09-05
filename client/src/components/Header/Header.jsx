@@ -43,7 +43,7 @@ const Header = ({ userId }) => {
 		navigate("/login");
 	};
 
-	const { isLoading, isLoggedIn, isSuccess, message, user } = useSelector(
+	const { user } = useSelector(
 		(state) => state.auth
 	);
 
@@ -76,7 +76,8 @@ const Header = ({ userId }) => {
 						to="/"
 						className="block  w-30 text-2xl font-serif font-bold text-[#000]"
 					>
-						Ummah Connect
+					<img src="/logo-no-background.png" className="w-[70px]"
+					/>
 					</Link>
 					<div className="flex items-center gap-3">
 						<div className="navLinks duration-500 absolute md:static md:w-auto w-full md:h-auto h-[85vh] flex md:items-center bg-white md:bg-transparent gap-[1.5vw] top-[100%] left-[-100%] px-5 md:py-0 py-5">
@@ -95,7 +96,7 @@ const Header = ({ userId }) => {
 													{title}
 												</button>
 												{dropdownVisible && (
-													<ul className="absolute left-0 mt-2 w-48 bg-white  rounded shadow-lg">
+													<ul className="absolute left-0 mt-2 w-48 bg-white  rounded shadow-lg z-20 ">
 														{contentDropdownItems.map(({ id, title, url }) => (
 															<li key={id} onClick={onDropdownToggle}>
 																<Link
@@ -145,7 +146,7 @@ const Header = ({ userId }) => {
 							/> */}
 						</div>
 
-					
+
 
 						<ShowOnLogin>
 							<Link to="/profile">

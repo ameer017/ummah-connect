@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { getUser, updateUser } from "../../redux/feature/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 
 const cloud_name = import.meta.env.VITE_APP_CLOUD_NAME;
 const upload_preset = import.meta.env.VITE_APP_UPLOAD_PRESET;
@@ -112,11 +112,11 @@ const EditProfileModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+      <div className="bg-white p-6 rounded-lg shadow-lg md:w-2/4 w-4/5 border">
         <h2 className="text-2xl mb-4">Update Profile</h2>
         <form onSubmit={saveProfile}>
-          <div className="flex justify-between">
-            <div className="mb-4 w-[48%]">
+          <div className="flex justify-between flex-col md:flex-row">
+            <div className="mb-4 md:w-[48%] w-full ">
               <label className="block text-gray-700">Profession</label>
               <input
                 type="text"
@@ -126,7 +126,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="mb-4 w-[48%]">
+            <div className="mb-4 md:w-[48%] w-full ">
               <label className="block text-gray-700">Location</label>
               <input
                 type="text"
@@ -148,8 +148,8 @@ const EditProfileModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          <div className="flex justify-between">
-            <div className="mb-4 w-[48%] ">
+          <div className="flex justify-between flex-col md:flex-row">
+            <div className="mb-4 md:w-[48%] w-full  ">
               <label className="block text-gray-700">Facebook</label>
               <input
                 type="text"
@@ -160,7 +160,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 placeholder="Facebook profile link"
               />
             </div>
-            <div className="mb-4 w-[48%]">
+            <div className="mb-4 md:w-[48%] w-full ">
               <label className="block text-gray-700">Instagram</label>
               <input
                 type="text"
@@ -173,8 +173,8 @@ const EditProfileModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="flex justify-between">
-            <div className="mb-4 w-[48%]">
+          <div className="flex justify-between flex-col md:flex-row">
+            <div className="mb-4 md:w-[48%] w-full ">
               <label className="block text-gray-700">LinkedIn</label>
               <input
                 type="text"
@@ -185,7 +185,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 placeholder="LinkedIn profile link"
               />
             </div>
-            <div className="mb-4 w-[48%]">
+            <div className="mb-4 md:w-[48%] w-full ">
               <label className="block text-gray-700">Twitter</label>
               <input
                 type="text"

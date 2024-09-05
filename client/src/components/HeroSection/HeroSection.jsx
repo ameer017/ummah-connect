@@ -29,6 +29,7 @@ const HeroSection = () => {
   const [threads, setThreads] = useState([]);
   const [events, setEvents] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [instructor, setInstructor] = useState({ firstName: "", lastName: "" });
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -60,13 +61,35 @@ const HeroSection = () => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(`${URL}/courses/get-all-course`);
-        setCourses(response.data.slice(0, 3));
+        const coursesData = response.data.slice(0, 3);
+
+        // Map through each course to fetch the instructor details
+        const coursesWithInstructors = await Promise.all(
+          coursesData.map(async (course) => {
+            let instructorId = course.instructor;
+            // console.log(`Instructor ID for course ${course.title}: ${instructorId}`);
+
+            const fetchInstructor = await axios.get(`${URL}/auth/get-user/${instructorId}`);
+            const { firstName, lastName } = fetchInstructor.data;
+            // console.log(fetchInstructor.data)
+
+            return {
+              ...course,
+              instructorName: `${firstName} ${lastName}`,
+            };
+          })
+        );
+
+        setCourses(coursesWithInstructors);
+        
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
     };
+
     fetchCourses();
-  }, []);
+}, []);
+
 
   const [spotlight, setSpotlight] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -238,7 +261,7 @@ const HeroSection = () => {
       {/* Event SECTION */}
       <section className="flex text-center py-10">
         <div className="container mx-auto p-4 ">
-          <h2 className="text-3xl font-bold mb-8 text-center font-Guminert ">
+          <h2 className="text-3xl font-bold mb-8 text-center font-Guminert  my-2">
             Upcoming Events: Discover <br /> What's Next on Our Calendar
           </h2>
 
@@ -308,8 +331,8 @@ const HeroSection = () => {
                       ? `${course.description.substring(0, 150)}...`
                       : course.description}
                   </p>
-                  <p className="my-2">Instructor: {course.instructor}</p>
-                </div>
+                  {/* <p className="my-2">Instructor: {course.instructorName}</p> */}
+                  </div>
               ))
             ) : (
               <p>Nothing to display.</p>
