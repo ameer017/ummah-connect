@@ -19,7 +19,7 @@ const PADDING_Y = 100;
 
 const CertificateCanvas = forwardRef(
 	(
-		{ courseTitle, userId, studentName, description,  certId },
+		{ courseTitle, instructor, studentName, description,  certId },
 		ref
 	) => {
 		const [background] = useImage(
@@ -122,7 +122,7 @@ const CertificateCanvas = forwardRef(
 					/>
 
 					<Text
-						text={`YUSUF ROQIB OLASUNKANMI`}
+						text={instructor}
 						x={CANVAS_WIDTH - 580}
 						y={CANVAS_HEIGHT - PADDING_Y - 260}
 						fontSize={25}

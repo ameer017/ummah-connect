@@ -215,12 +215,9 @@ const StudyPage = () => {
 	}
 
 	const isAlreadyCompleted = course?.completedChapters === course.totalChapters;
-	console.log(isAlreadyCompleted);
-
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="text-3xl font-bold mb-4">{course.title}</h1>
-			{/* <Progress value={progress} className="mb-4 " /> */}
 			<CourseProgress variant="success" value={progress} />
 
 			<Tabs
@@ -241,6 +238,7 @@ const StudyPage = () => {
 				{/* {(isCourseJustCompleted || isAlreadyCompleted) && ( */}
 				{(isCourseJustCompleted || (!certificate && isAlreadyCompleted)) && (
 					<CertificateGenerator
+						instructor={`${course.instructor.firstName} ${course.instructor.lastName}`}
 						isAlreadyCompleted={isAlreadyCompleted}
 						courseTitle={course.title}
 						courseCompleted={isCourseJustCompleted}
@@ -271,15 +269,7 @@ const StudyPage = () => {
 
 								{chapter.article && (
 									<a href={chapter.article}>
-										<Button
-											// onClick={() =>
-											// 	handleDownload(
-											// 		chapter.audio,
-											// 		`${chapter.title} - Audio.mp3`
-											// 	)
-											// }
-											className="mr-2 mb-2"
-										>
+										<Button className="mr-2 mb-2">
 											<FiDownload className="mr-2" /> Download Chapter Article
 										</Button>
 									</a>
@@ -298,15 +288,7 @@ const StudyPage = () => {
 
 								{chapter.audio && (
 									<a href={chapter.audio}>
-										<Button
-											// onClick={() =>
-											// 	handleDownload(
-											// 		chapter.audio,
-											// 		`${chapter.title} - Audio.mp3`
-											// 	)
-											// }
-											className="mr-2 mb-2"
-										>
+										<Button className="mr-2 mb-2">
 											<FiDownload className="mr-2" /> Download Chapter Audio
 										</Button>
 									</a>
@@ -322,16 +304,6 @@ const StudyPage = () => {
 					</TabsContent>
 				))}
 			</Tabs>
-
-			{/* {(isCourseJustCompleted || isAlreadyCompleted) && (
-				// {(isCourseJustCompleted || (!certificate && isAlreadyCompleted)) && (
-				<CertificateGenerator
-					isAlreadyCompleted={isAlreadyCompleted}
-					courseTitle={course.title}
-					courseCompleted={isCourseJustCompleted}
-					certificate={certificate}
-				/>
-			)} */}
 		</div>
 	);
 };
