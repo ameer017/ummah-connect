@@ -11,6 +11,7 @@ const navItems = [
 	{ id: 3, title: "Forum", url: "/forum" },
 	{ id: 4, title: "Events", url: "/event-list" },
 	{ id: 5, title: "Courses", url: "/course-list" },
+	{ id: 6, title: "Verify Certificate", url: "/verify-certificate" },
 ];
 
 const contentDropdownItems = [

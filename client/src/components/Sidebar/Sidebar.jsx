@@ -10,7 +10,7 @@ import {
 } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import { AdminLink, InstructorLink } from "../../components/Protect/HiddenLink";
-import { LinkIcon, Wallet } from "lucide-react";
+import { Award, LinkIcon, Wallet } from "lucide-react";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 	const location = useLocation();
@@ -64,6 +64,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, profile, user }) => {
 						to="/profile"
 					>
 						<GrOverview size={25} /> <p className="text-[17px]">Overview</p>
+					</Link>
+					<Link
+						className={`flex gap-[10px] p-3 mt-3 items-center text-gray-400 ${isActive(
+							"/certificates"
+						)}`}
+						to="/certificates"
+					>
+						<Award size={25} /> <p className="text-[17px]">Certificates</p>
 					</Link>
 
 					<Link

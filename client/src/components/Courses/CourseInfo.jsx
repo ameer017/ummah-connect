@@ -80,7 +80,7 @@ const CourseInfo = () => {
 				config
 			);
 			if (course.price === 0) {
-				return navigate(`${URL}/study/${courseId}/?success=1`);
+				return navigate(`/study/${courseId}/?success=1`);
 			}
 			window.location.assign(response.data.url);
 		} catch {
