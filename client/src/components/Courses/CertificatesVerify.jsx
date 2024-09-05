@@ -62,7 +62,6 @@ const CertificatesVerify = () => {
 	};
 
 	const fetchCertificate = async (id) => {
-		console.log(id);
 		setIsLoading(true);
 		setError("");
 		try {
@@ -85,7 +84,6 @@ const CertificatesVerify = () => {
 			setIsLoading(false);
 		}
 	};
-	console.log(certificate);
 
 	const handleVerify = async (e) => {
 		e.preventDefault();
