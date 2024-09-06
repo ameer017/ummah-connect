@@ -164,20 +164,7 @@ if(loading){
                         </Link>
                       </div>
 
-                      {/* <div className="flex justify-between mt-2">
-                        <button
-                          className="px-4 py-2 text-black flex items-center"
-                          onClick={() => handleRSVP(event._id)}
-                        >
-                          <IoIosArrowRoundForward size={20} /> RSVP Now
-                        </button>
-                        <button
-                          className="px-4 py-2 text-black underline"
-                          onClick={() => handleRSVP(event._id)}
-                        >
-                          Cancel RSVP
-                        </button>
-                      </div> */}
+                      
                     </div>
                   ))
                 ) : (
