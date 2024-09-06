@@ -37,6 +37,7 @@ const createEvent = async (req, res) => {
     limit,
     tickets,
   } = req.body;
+
   try {
     const ticket = new Ticket({
       price: tickets.price,
@@ -82,6 +83,7 @@ const getEvent = async (req, res) => {
     const event = await Event.findById(req.params.id)
       .populate("organizer", "name")
       .populate("attendees", "name");
+
     if (event) {
       res.json(event);
     } else {
@@ -314,8 +316,9 @@ const buyTicket = async (req, res) => {
       subject: "Ticket Purchase Confirmation",
       text: `As salam 'alaekum Dear ${user.firstName} 🤗,
     
-      Thank you for purchasing ${quantity} ticket(s) for the event "${event.title
-        }".
+      Thank you for purchasing ${quantity} ticket(s) for the event "${
+        event.title
+      }".
     
       Event Details:
       ---------------
@@ -376,8 +379,6 @@ const getTicketsSold = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 module.exports = {
   createEvent,

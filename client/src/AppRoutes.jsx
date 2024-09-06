@@ -41,6 +41,8 @@ import BookedEvents from "./components/BookedEvents/BookedEvents";
 import Transactions from "./components/Payments/Transactions";
 import PaymentSuccess from "./components/Event/Success";
 import Failed from "./components/Event/Failed";
+import CertificateCollection from "./components/Courses/CertificateCollection";
+import CertificatesVerify from "./components/Courses/CertificatesVerify";
 
 const AppRoutes = () => (
   <Routes>
@@ -132,6 +134,22 @@ const AppRoutes = () => (
       element={
         <Layout>
           <Failed />
+        </Layout>
+      }
+    />
+    <Route
+      path="/certificates"
+      element={
+        <Layout>
+          <CertificateCollection />
+        </Layout>
+      }
+    />
+    <Route
+      path="/verify-certificate"
+      element={
+        <Layout>
+          <CertificatesVerify />
         </Layout>
       }
     />

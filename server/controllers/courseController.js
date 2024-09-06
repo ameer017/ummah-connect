@@ -211,7 +211,6 @@ exports.addReview = async (req, res) => {
 	}
 };
 
-
 exports.enrollCourse = async (req, res) => {
 	try {
 		const userId = req.user._id;
@@ -353,6 +352,7 @@ exports.getEnrolledCourses = async (req, res) => {
 				select: "firstName lastName photo", // Select instructor details you want to include
 			},
 		});
+		// console.log(user)
 
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
@@ -360,6 +360,7 @@ exports.getEnrolledCourses = async (req, res) => {
 
 		const enrolledCourses = user.enrolledCourses.map((enrollment) => {
 			const course = enrollment.course;
+			// console.log(course)
 			return {
 				_id: course._id,
 				title: course.title,
@@ -416,10 +417,10 @@ exports.completeChapter = async (req, res) => {
 
 		// Update the chapter completion status
 		if (chapterIndex >= 0 && chapterIndex < course.chapters.length) {
-			if (course.chapters[chapterIndex].completedBy.includes(userId)){
+			if (course.chapters[chapterIndex].completedBy.includes(userId)) {
 				return res.status(400).json({ message: "Chapter already completed" });
 			}
-				course.chapters[chapterIndex].completedBy.push(userId);
+			course.chapters[chapterIndex].completedBy.push(userId);
 			await course.save();
 
 			// Update user's enrollment progress
@@ -429,6 +430,16 @@ exports.completeChapter = async (req, res) => {
 					(enrollment.completedChapters.length / course.chapters.length) * 100;
 				enrollment.lastStudiedAt = new Date();
 				await user.save();
+			}
+
+			if (enrollment.progress === 100) {
+				const purchasedByIndex = course.purchasedBy.findIndex(
+					(purchase) => purchase.user.toString() === userId
+				);
+				if (purchasedByIndex !== -1) {
+					course.purchasedBy[purchasedByIndex].completedCourseAt = new Date();
+				}
+				await course.save();
 			}
 
 			res.json({
@@ -443,7 +454,6 @@ exports.completeChapter = async (req, res) => {
 		res.status(500).json({ message: "Internal server error" });
 	}
 };
-
 
 exports.generateCertificate = async (req, res) => {
 	try {
@@ -462,43 +472,6 @@ exports.generateCertificate = async (req, res) => {
 	}
 };
 
-exports.deleteProgress = async (req, res) => {
-	try {
-		await Progress.findOneAndDelete({
-			userId: req.params.userId,
-			courseId: req.params.courseId,
-		});
-		res.json({ message: "Progress deleted" });
-	} catch (err) {
-		res.status(500).json({ message: err.message });
-	}
-};
-
-exports.getAllCourseProgress = async (req, res) => {
-	try {
-		const progress = await Progress.find({
-			courseId: req.params.courseId,
-		}).populate("userId");
-		res.json(progress);
-	} catch (err) {
-		res.status(500).json({ message: err.message });
-	}
-};
-
-exports.updateProgress = async (req, res) => {
-	try {
-		const progress = await Progress.findOneAndUpdate(
-			{ userId: req.params.userId, courseId: req.params.courseId },
-			{ progress: req.body.progress, completed: req.body.completed },
-			{ new: true }
-		);
-		if (!progress)
-			return res.status(404).json({ message: "Progress not found" });
-		res.json(progress);
-	} catch (err) {
-		res.status(500).json({ message: err.message });
-	}
-};
 
 exports.getAllWebinar = async (req, res) => {
 	try {
