@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { ShowOnLogin, ShowOnLogout } from "../Protect/HiddenLink";
+
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const companies = [
@@ -35,7 +37,7 @@ const HeroSection = () => {
     const fetchThreads = async () => {
       try {
         const response = await axios.get(`${URL}/discussion/all-threads`);
-        setThreads(response.data);
+        setThreads(response.data.slice(0, 3));
         // console.log(response.data)
       } catch (error) {
         console.error("Error fetching threads:", error);
@@ -81,14 +83,14 @@ const HeroSection = () => {
         );
 
         setCourses(coursesWithInstructors);
-        
+
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
     };
 
     fetchCourses();
-}, []);
+  }, []);
 
 
   const [spotlight, setSpotlight] = useState([]);
@@ -143,7 +145,7 @@ const HeroSection = () => {
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
-  if(!events) return <p>No upcoming events at the moment</p>
+  if (!events) return <p>No upcoming events at the moment</p>
 
   return (
     <main className="bg-[#fff]">
@@ -161,12 +163,15 @@ const HeroSection = () => {
             <b>Ummah</b> and start your journey today.
           </p>
 
-          <Link
-            to="/register"
-            className="bg-[#0a66c2] text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 "
-          >
-            Get Started <TbRocket />
-          </Link>
+          <ShowOnLogout>
+
+            <Link
+              to="/register"
+              className="bg-[#0a66c2] text-[#fff] py-2 px-[20px] rounded-full flex items-center gap-1 my-2  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 "
+            >
+              Get Started <TbRocket />
+            </Link>
+          </ShowOnLogout>
         </div>
       </section>
 
@@ -332,7 +337,7 @@ const HeroSection = () => {
                       : course.description}
                   </p>
                   {/* <p className="my-2">Instructor: {course.instructorName}</p> */}
-                  </div>
+                </div>
               ))
             ) : (
               <p>Nothing to display.</p>
