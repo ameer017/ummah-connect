@@ -207,7 +207,7 @@ const CertificatesVerify = () => {
 													<strong>NFT ID:</strong> {certificate.NFTId}
 												</p>
 												<p className="break-all ">
-													<strong>Minted Address:</strong>{" "}
+													<strong>Minter Address:</strong>{" "}
 													{certificate.mintedAddress}
 												</p>
 												<p>
