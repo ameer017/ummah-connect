@@ -32,7 +32,6 @@ import ScheduleSession from "./components/Mentorship/ScheduleSession";
 import AcceptSession from "./components/Mentorship/AcceptSession";
 import CreateCourseForm from "./components/Courses/CreateCourseForm";
 import CourseDetail from "./components/Courses/CourseDetail";
-import PaymentSuccess from "./components/Event/PaymentSuccess";
 import StripeOnboardingRefresh from "./components/Payments/StripeOnboardingRefresh";
 import StripeOnboardingComplete from "./components/Payments/StripeOnboardingComplete";
 import CourseInfo from "./components/Courses/CourseInfo";
@@ -40,6 +39,10 @@ import StudyPage from "./components/Courses/StudyPage";
 import Wallet from "./components/Payments/Wallet";
 import BookedEvents from "./components/BookedEvents/BookedEvents";
 import Transactions from "./components/Payments/Transactions";
+import PaymentSuccess from "./components/Event/Success";
+import Failed from "./components/Event/Failed";
+import CertificateCollection from "./components/Courses/CertificateCollection";
+import CertificatesVerify from "./components/Courses/CertificatesVerify";
 
 const AppRoutes = () => (
   <Routes>
@@ -53,15 +56,6 @@ const AppRoutes = () => (
       element={
         <Layout>
           <CreateContent />
-        </Layout>
-      }
-    />
-
-    <Route
-      path="/payment-success"
-      element={
-        <Layout>
-          <PaymentSuccess />
         </Layout>
       }
     />
@@ -116,11 +110,46 @@ const AppRoutes = () => (
         </Layout>
       }
     />
+
     <Route
       path="/study/:courseId"
       element={
         <Layout>
           <StudyPage />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/success"
+      element={
+        <Layout>
+          <PaymentSuccess />
+        </Layout>
+      }
+    />
+
+    <Route
+      path="/cancel"
+      element={
+        <Layout>
+          <Failed />
+        </Layout>
+      }
+    />
+    <Route
+      path="/certificates"
+      element={
+        <Layout>
+          <CertificateCollection />
+        </Layout>
+      }
+    />
+    <Route
+      path="/verify-certificate"
+      element={
+        <Layout>
+          <CertificatesVerify />
         </Layout>
       }
     />
@@ -287,7 +316,7 @@ const AppRoutes = () => (
       path="/my-events"
       element={
         <Layout>
-          <BookedEvents/>
+          <BookedEvents />
         </Layout>
       }
     />

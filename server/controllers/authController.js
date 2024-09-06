@@ -209,7 +209,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
   // Create Verification Token and Save
   const resetToken = crypto.randomBytes(32).toString("hex") + user._id;
-  console.log(resetToken);
+  // console.log(resetToken);
 
   // Hash token and save
   const hashedToken = hashToken(resetToken);
@@ -353,8 +353,8 @@ const forgotPassword = asyncHandler(async (req, res) => {
 const resetPassword = asyncHandler(async (req, res) => {
   const { resetToken } = req.params;
   const { password } = req.body;
-  console.log(resetToken);
-  console.log(password);
+  // console.log(resetToken);
+  // console.log(password);
 
   const hashedToken = hashToken(resetToken);
 
@@ -380,7 +380,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 
 const loginWithGoogle = asyncHandler(async (req, res) => {
   const { userToken } = req.body;
-  console.log(userToken);
+  // console.log(userToken);
 
   const ticket = await client.verifyIdToken({
     idToken: userToken,

@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import useRedirectLoggedOutUser from "../UseRedirect/UseRedirectLoggedOutUser";
 import PageLoader from "../Loader/PageLoader";
 import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
+import PaymentOptionModal from "./PaymentOptionModal";
 
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
@@ -18,6 +19,7 @@ const EventDetails = ({ userId }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [paymentOption, setPaymentOption] = useState("flutterwave"); 
 
   const [event, setEvent] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -28,7 +30,9 @@ const EventDetails = ({ userId }) => {
   const [ticketDetails, setTicketDetails] = useState({});
   const [userID, setUserID] = useState("");
   const [hasBooked, setHasBooked] = useState(false);
-  const [price, setPrice] = useState(0)
+  const [price, setPrice] = useState(0);
+  const [showModal, setShowModal] = useState(false); 
+
 
   const { user } = useSelector((state) => state.auth);
   // console.log(user)
@@ -92,6 +96,7 @@ const EventDetails = ({ userId }) => {
 
   // Ensure tickets are available and the user has not booked already
   const ticketsAvailable = ticketDetails.quantity > 0 && !hasBooked;
+  
   const bookTicketHandler = async () => {
     setLoading(true);
     setError("");
@@ -102,6 +107,7 @@ const EventDetails = ({ userId }) => {
         {
           quantity,
           userId: userID,
+          paymentOption
         }
       );
       navigate("/profile");
@@ -133,7 +139,6 @@ const EventDetails = ({ userId }) => {
     },
   };
 
-
   const fwConfig = {
     ...config,
     text: `Book ticket  #${price * quantity}`,
@@ -148,6 +153,10 @@ const EventDetails = ({ userId }) => {
       closePaymentModal()
     },
     onClose: () => { },
+  };
+
+  const handleBookClick = () => {
+    setShowModal(true);
   };
 
 
@@ -195,14 +204,15 @@ const EventDetails = ({ userId }) => {
                 />
               </div>
 
-              {loading ? "Processing..." : (
-                <FlutterWaveButton
-                  {...fwConfig}
-                  amount={price * quantity}
-                  className="w-[100%] bg-blue-500 text-white py-2 px-2 md:px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
-                  disabled={loading || ticketDetails.quantity <= 0}
-                />
-              )}
+              <button
+                onClick={handleBookClick}
+                className="w-[100%] bg-blue-500 text-white py-2 px-2 md:px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
+                disabled={loading || ticketDetails.quantity <= 0}
+              >
+                Book ticket  #{price * quantity}
+              </button>
+
+           
 
             </div>
           )}
@@ -226,6 +236,16 @@ const EventDetails = ({ userId }) => {
           )}
         </div>
 
+        {showModal && (
+          <PaymentOptionModal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            fwConfig={fwConfig}
+            price={price}
+            quantity={quantity}
+          />
+        )}
+        
         {error && <p className="text-red-500 mt-2">{error}</p>}
 
         <div className="flex justify-between flex-col  gap-2 md:flex-row md:items-center border rounded-lg items-left px-2 py-6">

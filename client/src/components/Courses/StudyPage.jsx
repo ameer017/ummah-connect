@@ -8,18 +8,28 @@ import { FiDownload, FiCheck } from "react-icons/fi";
 import axios from "axios";
 import { CourseProgress } from "../ui/CourseProgress";
 import { useSelector } from "react-redux";
+import CertificateGenerator from "./CertificateGenerator";
 
 const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const StudyPage = () => {
 	const { courseId } = useParams();
 	const [course, setCourse] = useState(null);
+	const [certificate, setCertificate] = useState("");
 	const [currentChapter, setCurrentChapter] = useState(0);
 	const [progress, setProgress] = useState(0);
 	const [loading, setLoading] = useState(true);
-    const { user } = useSelector((state) => state.auth);
-    console.log(user)
+	const { user } = useSelector((state) => state.auth);
+	const [isCourseJustCompleted, setIsCourseJustCompleted] = useState(false);
 
+	console.log(user);
+
+	// useEffect(() => {
+	// 	const isAlreadyCompleted = course?.purchasedBy?.some(
+	// 		(item) => item.user === user._id && item?.completedCourseAt
+	// 	);
+
+	// }, [course])
 
 	// useEffect(() => {
 	// 	const fetchCourseData = async () => {
@@ -38,7 +48,7 @@ const StudyPage = () => {
 	// 			);
 
 	// 			console.log(response.data);
-    //             console.log(courseId)
+	//             console.log(courseId)
 	// 			// const response = await fetch(`/api/courses/${courseId}`);
 	// 			const courses = response.data;
 	// 			const data = courses.find((course) => course._id === courseId);
@@ -77,28 +87,27 @@ const StudyPage = () => {
 
 	// 			console.log(response.data)
 	// 			console.log("Course ID from URL:", courseId);
-	
+
 	// 			const courses = response.data;
 	// 			const data = courses.find((course) => course._id === courseId);
 	// 			setCourse(data);
-    //         console.log("Found Course:", data);
+	//         console.log("Found Course:", data);
 	// 			if (data) {
 	// 				const completedChapters = data.chapters?.filter(
 	// 					(chapter) => chapter.completedBy.includes(user._id)
 	// 				).length;
 	// 				setProgress((completedChapters / data.chapters.length) * 100);
 	// 			}
-	
+
 	// 			setLoading(false);
 	// 		} catch (error) {
 	// 			console.error("Error fetching course data:", error);
 	// 			setLoading(false);
 	// 		}
 	// 	};
-	
+
 	// 	fetchCourseData();
 	// }, [courseId]);
-	
 
 	useEffect(() => {
 		const fetchCourseData = async () => {
@@ -113,33 +122,42 @@ const StudyPage = () => {
 					`${URL}/courses/enrolled-courses/all`,
 					config
 				);
-	
+
+				//To get certificate for course
+				const certResponse = await axios.get(
+					`${URL}/certificates/${courseId}`,
+					config
+				);
+				const data = certResponse.data;
+				setCertificate(data.certificate);
+				console.log(data);
+
 				console.log("Course ID from URL:", courseId);
 				console.log("Response Data:", response.data);
-	
+
 				// Use map to iterate through the courses
 				response.data.map((course) => {
 					if (course._id === courseId) {
 						console.log("Found Course:", course);
 						setCourse(course);
-	
-						const completedChapters = course.chapters.filter(
-							(chapter) => chapter.completedBy.includes(user._id)
+
+						const completedChapters = course.chapters.filter((chapter) =>
+							chapter.completedBy.includes(user._id)
 						).length;
 						setProgress((completedChapters / course.chapters.length) * 100);
 					}
 				});
-	
+
 				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching course data:", error);
 				setLoading(false);
 			}
 		};
-	
+
 		fetchCourseData();
-	}, [courseId]);
-	
+	}, [courseId, user]);
+
 	const handleChapterComplete = async () => {
 		try {
 			// Mark chapter as complete in the backend
@@ -156,13 +174,21 @@ const StudyPage = () => {
 			console.log(response.data);
 			// Update local state
 			const updatedCourse = { ...course };
-			updatedCourse.chapters[currentChapter].completed = true;
+			const completedBy = updatedCourse.chapters[currentChapter].completedBy;
+			updatedCourse.chapters[currentChapter].completedBy = [
+				...completedBy,
+				user._id,
+			];
 			setCourse(updatedCourse);
 
 			// Update progress
-			const completedChapters = updatedCourse.chapters.filter(
-				(chapter) => chapter.completedBy.includes(user._id)
+			const completedChapters = updatedCourse.chapters.filter((chapter) =>
+				chapter.completedBy.includes(user._id)
 			).length;
+			const courseJustCompleted =
+				completedChapters === updatedCourse.chapters.length &&
+				!isAlreadyCompleted;
+			setIsCourseJustCompleted(courseJustCompleted);
 			setProgress((completedChapters / updatedCourse.chapters.length) * 100);
 		} catch (error) {
 			console.error("Error marking chapter as complete:", error);
@@ -170,7 +196,7 @@ const StudyPage = () => {
 	};
 
 	const handleVideoEnd = () => {
-		if (!course.chapters[currentChapter].completed) {
+		if (!course.chapters[currentChapter].completedBy.includes(user._id)) {
 			handleChapterComplete();
 		}
 	};
@@ -188,15 +214,14 @@ const StudyPage = () => {
 		return <div>Course not found or not Enrolled for the course</div>;
 	}
 
+	const isAlreadyCompleted = course?.completedChapters === course.totalChapters;
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="text-3xl font-bold mb-4">{course.title}</h1>
-			{/* <Progress value={progress} className="mb-4 " /> */}
-            <CourseProgress variant="success" value={progress} />
-
+			<CourseProgress variant="success" value={progress} />
 
 			<Tabs
-            className="mt-4"
+				className="mt-4"
 				defaultValue={currentChapter.toString()}
 				onValueChange={(value) => setCurrentChapter(parseInt(value))}
 			>
@@ -204,10 +229,22 @@ const StudyPage = () => {
 					{course?.chapters?.map((chapter, index) => (
 						<TabsTrigger key={index} value={index.toString()}>
 							Chapter {index + 1}
-							{chapter.completedBy.includes(user._id) && <FiCheck className="ml-2" />}
+							{chapter.completedBy.includes(user._id) && (
+								<FiCheck className="ml-2" />
+							)}
 						</TabsTrigger>
 					))}
 				</TabsList>
+				{/* {(isCourseJustCompleted || isAlreadyCompleted) && ( */}
+				{(isCourseJustCompleted || (!certificate && isAlreadyCompleted)) && (
+					<CertificateGenerator
+						instructor={`${course.instructor.firstName} ${course.instructor.lastName}`}
+						isAlreadyCompleted={isAlreadyCompleted}
+						courseTitle={course.title}
+						courseCompleted={isCourseJustCompleted}
+						certificate={certificate}
+					/>
+				)}
 
 				{course?.chapters?.map((chapter, index) => (
 					<TabsContent key={index} value={index.toString()}>
@@ -232,15 +269,7 @@ const StudyPage = () => {
 
 								{chapter.article && (
 									<a href={chapter.article}>
-										<Button
-											// onClick={() =>
-											// 	handleDownload(
-											// 		chapter.audio,
-											// 		`${chapter.title} - Audio.mp3`
-											// 	)
-											// }
-											className="mr-2 mb-2"
-										>
+										<Button className="mr-2 mb-2">
 											<FiDownload className="mr-2" /> Download Chapter Article
 										</Button>
 									</a>
@@ -259,15 +288,7 @@ const StudyPage = () => {
 
 								{chapter.audio && (
 									<a href={chapter.audio}>
-										<Button
-											// onClick={() =>
-											// 	handleDownload(
-											// 		chapter.audio,
-											// 		`${chapter.title} - Audio.mp3`
-											// 	)
-											// }
-											className="mr-2 mb-2"
-										>
+										<Button className="mr-2 mb-2">
 											<FiDownload className="mr-2" /> Download Chapter Audio
 										</Button>
 									</a>
