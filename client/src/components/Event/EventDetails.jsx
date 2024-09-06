@@ -19,7 +19,7 @@ const EventDetails = ({ userId }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [paymentOption, setPaymentOption] = useState("flutterwave"); 
+  const [paymentOption, setPaymentOption] = useState("flutterwave");
 
   const [event, setEvent] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -31,7 +31,7 @@ const EventDetails = ({ userId }) => {
   const [userID, setUserID] = useState("");
   const [hasBooked, setHasBooked] = useState(false);
   const [price, setPrice] = useState(0);
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
 
 
   const { user } = useSelector((state) => state.auth);
@@ -96,7 +96,7 @@ const EventDetails = ({ userId }) => {
 
   // Ensure tickets are available and the user has not booked already
   const ticketsAvailable = ticketDetails.quantity > 0 && !hasBooked;
-  
+
   const bookTicketHandler = async () => {
     setLoading(true);
     setError("");
@@ -128,9 +128,9 @@ const EventDetails = ({ userId }) => {
     currency: 'NGN',
     payment_options: 'card,mobilemoney,ussd',
     customer: {
-      email: user.emailAddress,
-      phone_number: user.phone,
-      name: user.firstName,
+      email: user?.emailAddress,
+      phone_number: user?.phone,
+      name: user?.firstName,
     },
     customizations: {
       title: 'Ummah Connect',
@@ -212,7 +212,7 @@ const EventDetails = ({ userId }) => {
                 Book ticket  #{price * quantity}
               </button>
 
-           
+
 
             </div>
           )}
@@ -245,7 +245,7 @@ const EventDetails = ({ userId }) => {
             quantity={quantity}
           />
         )}
-        
+
         {error && <p className="text-red-500 mt-2">{error}</p>}
 
         <div className="flex justify-between flex-col  gap-2 md:flex-row md:items-center border rounded-lg items-left px-2 py-6">

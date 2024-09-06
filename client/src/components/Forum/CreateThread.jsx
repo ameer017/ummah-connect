@@ -6,19 +6,19 @@ const URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const CreateThread = () => {
   useRedirectLoggedOutUser("/login");
+
   const [formData, setFormData] = useState({
     title: "",
     content: "",
   });
 
-  const [formValidMessage, setFormValidMessage] = useState();
+  const [formValidMessage, setFormValidMessage] = useState("");
   const [formCompleted, setFormCompleted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormValidMessage("");
     const { name, value } = e.target;
-    console.log(e.target.value);
 
     setFormData({
       ...formData,
@@ -37,39 +37,36 @@ const CreateThread = () => {
       setFormValidMessage("Oops! All fields are required!");
       return;
     }
+
     setIsSubmitting(true);
 
     axios
       .post(`${URL}/discussion/thread`, formData)
       .then(function (response) {
-        console.log(response.data);
-        console.log(formData);
         setIsSubmitting(false);
         setFormCompleted(true);
         navigate("/forum");
       })
       .catch(function (error) {
         setIsSubmitting(false);
-        if (error.response && error.response.status == 400) {
-          setFormValidMessage("Not! created!");
+        if (error.response && error.response.status === 400) {
+          setFormValidMessage("Thread creation failed.");
         } else {
-          setFormValidMessage(
-            "Server error, unable to process"
-          );
+          setFormValidMessage("Server error, unable to process.");
         }
       });
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h1 className="text-2xl font-bold mb-4">Create New Thread</h1>
+    <div className="max-w-lg mx-auto  p-8   rounded-lg">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Create New Thread</h1>
       {formValidMessage && (
-        <p className="mb-4 text-red-500">{formValidMessage}</p>
+        <p className="mb-4 text-red-600 text-sm font-medium">{formValidMessage}</p>
       )}
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+        <div className="mb-5">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 font-medium mb-2"
             htmlFor="title"
           >
             Title
@@ -80,13 +77,14 @@ const CreateThread = () => {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:border-blue-400"
+            placeholder="Enter the title here"
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-5">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 font-medium mb-2"
             htmlFor="content"
           >
             Content
@@ -96,17 +94,21 @@ const CreateThread = () => {
             name="content"
             value={formData.content}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            rows="5"
+            className="w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:outline-none focus:border-blue-400"
+            rows="6"
+            placeholder="Write your content here..."
             required
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            disabled={isSubmitting}
+            className={`${
+              isSubmitting ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-600"
+            } text-white font-bold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:shadow-outline transition ease-in-out duration-200`}
           >
-            Create Thread
+            {isSubmitting ? "Creating..." : "Create Thread"}
           </button>
         </div>
       </form>
