@@ -1,5 +1,4 @@
 const Course = require("../models/courseModel");
-const Enrollment = require("../models/enrollmentModel");
 const Progress = require("../models/progressModel");
 const Webinar = require("../models/webinarModel");
 const nodemailer = require("nodemailer");
@@ -340,7 +339,6 @@ exports.enrollCourse = async (req, res) => {
 		res.status(500).json({ message: "Internal server error" });
 	}
 };
-
 
 exports.getEnrolledCourses = async (req, res) => {
 	try {

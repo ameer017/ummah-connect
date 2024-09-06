@@ -290,7 +290,7 @@ const Profile = ({ userId }) => {
                 </div>
               </div>
 
-              {user.isVerified && (
+              {user?.isVerified && (
                 <>
 
                   <AdminLink>
@@ -375,7 +375,7 @@ const Profile = ({ userId }) => {
                               <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
                                 Title
                               </th>
-                             
+
                               <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
                                 Actions
                               </th>
@@ -392,7 +392,7 @@ const Profile = ({ userId }) => {
                                       <span>{event.title}</span>
                                     </div>
                                   </td>
-                                 
+
                                   <td className="px-6 py-4 border-b">
                                     <Link to={`/event/${event._id}`} className="text-sm underline">
                                       View Details
@@ -417,80 +417,74 @@ const Profile = ({ userId }) => {
                   <SubscriberLink>
 
                     <div className="p-4">
-
-                      <h1 className="text-[18px] md:text-[24px] font-[500] ">Booked Events</h1>
-                      <div className=" p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-
+                      <h1 className="text-[18px] md:text-[24px] font-[500]">Booked Events</h1>
+                      <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
                         {bookedEventsDetails.length > 0 ? (
-                          <div
-                            className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer"
-                          >
-                            {bookedEventsDetails.map(event => (
-                              <Link to={`/event/${event._id}`}>
-
-                                <div key={event._id} className="bg-white shadow-lg rounded-lg p-6">
-                                  <h2 className="text-2xl font-semibold mb-4">{event.title}</h2>
-                                  <p className="text-gray-700 mb-2">{event.subTitle}</p>
-                                  <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
-                                  <p className="text-gray-500">Location: {event.location}</p>
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
+                          bookedEventsDetails.map(event => (
+                            <Link to={`/event/${event._id}`} key={event._id}>
+                              <div className="bg-blue-100 shadow-lg rounded-lg p-6 cursor-pointer hover:shadow-xl transition-shadow duration-300 ">
+                                <h2 className="text font-semibold mb-4">{event.title}</h2>
+                                <p className="text-gray-700 mb-2">{event.subTitle}</p>
+                                <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
+                                <p className="text-gray-500">Location: {event.location}</p>
+                              </div>
+                            </Link>
+                          ))
                         ) : (
-                          <p className="text-center text-gray-500">You have no booked events.</p>
+                          <p className="text-center text-gray-500 col-span-full">You have no booked events.</p>
                         )}
                       </div>
                     </div>
+
                   </SubscriberLink>
 
-                    <div className="p-4">
-                      <h1 className="text-[18px] md:text-[24px] font-[500]">Recent Forum Activity</h1>
+                  <div className="p-4">
+                    <h1 className="text-[18px] md:text-[24px] font-[500]">Recent Forum Activity</h1>
 
-                      <div className="overflow-x-auto rounded-lg border">
-                        <table className="min-w-full bg-white rounded-lg border">
-                          <thead className="bg-gray-200">
-                            <tr>
-                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                                Title
-                              </th>
-                             
-                              <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
-                                Actions
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {threads?.length > 0 ? (
-                              threads.map((thread) => (
-                                <tr key={thread._id} className="bg-neutral-100">
-                                  <td className="px-6 py-4 border-b">
-                                    <span >{thread.title}</span>
-                                  </td>
-                                 
-                                  <td className="px-6 py-4 border-b">
-                                    <Link
-                                      to={`/threads/${thread._id}`}
-                                      className="text-[12px] font-semibold text-black hover:underline flex items-center transition-transform duration-300 ease-in-out transform hover:translate-x-1"
-                                    >
-                                      <IoIosArrowRoundForward size={14} className="mr-1" />
-                                      View Thread
-                                    </Link>
+                    <div className="overflow-x-auto rounded-lg border">
+                      <table className="min-w-full bg-white rounded-lg border">
+                        <thead className="bg-gray-200">
+                          <tr>
+                            <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                              Title
+                            </th>
 
-                                  </td>
-                                </tr>
-                              ))
-                            ) : (
-                              <tr>
-                                <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
-                                  No recent forum activity.
+                            <th className="px-6 py-3 border-b text-left text-sm font-medium text-gray-700">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {threads?.length > 0 ? (
+                            threads.map((thread) => (
+                              <tr key={thread._id} className="bg-neutral-100">
+                                <td className="px-6 py-4 border-b">
+                                  <span >{thread.title}</span>
+                                </td>
+
+                                <td className="px-6 py-4 border-b">
+                                  <Link
+                                    to={`/threads/${thread._id}`}
+                                    className="text-[12px] font-semibold text-black hover:underline flex items-center transition-transform duration-300 ease-in-out transform hover:translate-x-1"
+                                  >
+                                    <IoIosArrowRoundForward size={14} className="mr-1" />
+                                    View Thread
+                                  </Link>
+
                                 </td>
                               </tr>
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
+                                No recent forum activity.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
+                  </div>
                 </>
               )}
             </div>

@@ -2,6 +2,9 @@ const User = require("../models/authModel");
 const { Event, Ticket } = require("../models/eventModel");
 const { check, validationResult } = require("express-validator");
 const nodemailer = require("nodemailer");
+const StripeCustomer = require("../models/StripeCustomerModel");
+const clientUrl = process.env.FRONTEND_URL;
+
 
 const validateCreateEvent = [
   check("title").not().isEmpty().withMessage("Title is required"),
@@ -40,7 +43,7 @@ const createEvent = async (req, res) => {
       price: tickets.price,
       quantity: limit,
       sold: tickets.sold || 0
-        });
+    });
     const createdTicket = await ticket.save();
 
     const event = new Event({
@@ -209,7 +212,7 @@ const getEventWithTicketById = async (req, res) => {
 
 const buyTicket = async (req, res) => {
   const { eventId } = req.params;
-  const { quantity } = req.body;
+  const { quantity, paymentOption } = req.body;
   const userId = req.user._id;
 
   try {
@@ -246,6 +249,53 @@ const buyTicket = async (req, res) => {
 
     event.attendees.push(userId);
     await event.save();
+
+    if (paymentOption === "stripe") {
+      try {
+
+
+        const line_items = [
+          {
+            price_data: {
+              currency: "USD",
+              product_data: {
+                name: event.title,
+              },
+              unit_amount: Math.round(course.price * 100),
+            },
+            quantity,
+          },
+        ];
+
+        let stripeCustomer = await StripeCustomer.findOne({ userId });
+        if (!stripeCustomer) {
+          const customer = await stripe.customers.create({
+            email: user.emailAddress,
+          });
+          stripeCustomer = await StripeCustomer.create({
+            userId,
+            stripeCustomerId: customer.id,
+          });
+        }
+
+        const session = await stripe.checkout.sessions.create({
+          customer: stripeCustomer.stripeCustomerId,
+          line_items,
+          mode: "payment",
+          success_url: `$clientUrl}/success`,
+          cancel_url: `${clientUrl}/cancel`,
+          metadata: {
+            courseId,
+            userId: userId.toString(),
+          },
+        });
+
+        res.json({ url: session.url });
+      } catch (error) {
+        console.error("[PURCHASE_COURSE]", error);
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
 
     // Send confirmation email
     const transporter = nodemailer.createTransport({

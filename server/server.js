@@ -31,7 +31,7 @@ app.use(cors({
 
 // Stripe webhook parsing middleware
 app.use((req, res, next) => {
-	if (req.originalUrl === "/api/webhook") {
+	if (req.originalUrl === "/api/webhook" || req.originalUrl === "/api/webhook/event") {
 		express.raw({ type: "application/json" })(req, res, next);
 	} else {
 		express.json()(req, res, next);
@@ -63,8 +63,6 @@ app.use("/mentorship", require("./routes/mentorship"));
 app.use("/subscribe", require("./routes/subscriptionRoute"));
 app.use("/courses", require("./routes/courseRoute"));
 app.use("/payments", require("./routes/paymentRoute"));
-// app.use("/enrollments", require("./routes/enrollmentRoute"));
-// app.use("/progress", require("./routes/progressRoute"));
 app.use("/webinars", require("./routes/webinarRoute"));
 
 CertEventsController.initializeWebSocket()
