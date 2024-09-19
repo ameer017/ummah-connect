@@ -159,7 +159,9 @@ const CertificatesVerify = () => {
 											{certificate?.certificateId}
 										</p>
 										<p>
-											<strong>Student:</strong> {certificate?.student?.name}
+											<strong>Student:</strong>{" "}
+											{certificate?.student?.firstName}{" "}
+											{certificate?.student?.lastName}
 										</p>
 										<p>
 											<strong>Course:</strong> {certificate?.course?.title}
