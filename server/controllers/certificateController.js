@@ -174,7 +174,10 @@ const verifyCertificate = async (req, res) => {
 		}
 
 		let certificate = await Certificate.findOne(query)
-			.populate("student", "name")
+			.populate({
+				path: "student",
+				select: "firstName lastName", 
+			})
 			.populate("course", "title");
 
 		if (!certificate) {
