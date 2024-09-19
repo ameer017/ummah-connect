@@ -232,6 +232,9 @@ const CertificateGenerator = ({
 				data.tokenURI
 			);
 			await tx.wait();
+			setOpen(false);
+			toast.dismiss();
+			toast.success("Certificate minted successfully");
 			console.log(tx);
 		} catch (error) {
 			console.log(error);
@@ -241,7 +244,7 @@ const CertificateGenerator = ({
 					: "Failed to mint certificate"
 			);
 		} finally {
-			toast.dismiss(newToastId);
+			toast.dismiss();
 			setIsMinting(false);
 		}
 	};
