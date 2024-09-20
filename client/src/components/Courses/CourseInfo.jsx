@@ -34,9 +34,14 @@ const CourseInfo = () => {
 		// Fetch course data and check enrollment status
 		const fetchCourseData = async () => {
 			try {
-
+				const config = {
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localStorage.getItem("token")}`,
+					},
+				};
 				// Replace with your API call
-				const response = await axios.get(`${URL}/courses/${courseId}`, user._id);
+				const response = await axios.get(`${URL}/courses/${courseId}`, config);
 				setCourse(response.data);
 
 				const isPurchased = response.data.purchasedBy.some(
@@ -150,8 +155,8 @@ const CourseInfo = () => {
 							{course.price === 0
 								? "Enroll for Free"
 								: enrolling
-									? "Enrolling"
-									: "Enroll Now"}
+								? "Enrolling"
+								: "Enroll Now"}
 						</Button>
 					)}
 				</CardContent>
