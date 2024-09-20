@@ -22,7 +22,7 @@ const About = () => {
 
           <section className="mb-8">
             <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-              Our Goals
+              Our Goals.
             </h2>
             <ul className="list-disc list-inside text-gray-700 leading-relaxed">
               <li>
