@@ -63,7 +63,7 @@ const HeroSection = () => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(`${URL}/courses/get-all-course`);
-        const coursesData = response.data.slice(0, 3);
+        const coursesData = response.data.slice(0, 2);
 
         // Map through each course to fetch the instructor details
         const coursesWithInstructors = await Promise.all(
@@ -157,7 +157,7 @@ const HeroSection = () => {
             Your gateway to the Muslim Community
           </h1>
 
-          <p className="mt-10 font-medium text-[15px] px-4 ">
+          <p className="mt-10 font-medium text-xl px-4 ">
             Join a community of learners. Explore courses, engage in
             discussions, and join inspiring events. Connect with the{" "}
             <b>Ummah</b> and start your journey today.
@@ -312,7 +312,7 @@ const HeroSection = () => {
       <section className="py-10">
         <div className="container mx-auto p-4">
           <div className="flex items-center justify-between p-2">
-            <h1 className="text-3xl font-bold md:w-[20%] w-full ">
+            <h1 className="text-3xl font-bold md:w-[20%] w-[60%]  ">
               Ecplore Our Popular Courses
             </h1>
 
@@ -329,14 +329,13 @@ const HeroSection = () => {
                   key={course._id}
                   className="w-full bg-neutral-100 p-4 border rounded-lg cursor-pointer"
                 >
-                  <img src={course.coverImage} alt="cover image" />
+                  <img src={course.coverImage} alt="cover image"    />
                   <p className="mt-4 font-bold">{course.title}</p>
                   <p className="text-gray-700 border-b py-2">
                     {course.description.length > 150
                       ? `${course.description.substring(0, 150)}...`
                       : course.description}
                   </p>
-                  {/* <p className="my-2">Instructor: {course.instructorName}</p> */}
                 </div>
               ))
             ) : (
