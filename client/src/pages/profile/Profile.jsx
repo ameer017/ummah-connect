@@ -163,6 +163,7 @@ const Profile = ({ userId }) => {
 
   useEffect(() => {
     // console.log(user)
+
     const fetchEnrolledCourse = async () => {
       try {
         if (user?.enrolledCourses?.length) {
@@ -172,23 +173,15 @@ const Profile = ({ userId }) => {
           const enrolledCoursePromises = user.enrolledCourses.map((enrolledCourse) =>
             axios.get(`${URL}/courses/${enrolledCourse.course}`)
           );
-
           const enrolledCourseResponses = await Promise.all(enrolledCoursePromises);
-          const enrolledCourseDetails = enrolledCourseResponses.map((response, index) => {
-            const courseDetails = response.data;
-            const { lastStudiedAt, progress, completedChapters, _id } = user.enrolledCourses[index];
 
-            return {
-              ...courseDetails,
-              lastStudiedAt,
-              progress,
-              completedChapters,
-              _id,
-            };
-          });
+          const enrolledCourseDetails = enrolledCourseResponses.map((response) => response.data);
+
 
           setEnrolledCourses(enrolledCourseDetails);
           // console.log('Fetched Enrolled Course Details:', enrolledCourseDetails); // Debugging log
+          console.log(enrolledCourses)
+
         } else {
           setEnrolledCourses([]); // Ensure state is cleared if no courses
         }
@@ -341,26 +334,26 @@ const Profile = ({ userId }) => {
 
                   {/* <SubscriberLink> */}
 
-                    <div className="p-4">
-                      <h1 className="text-[18px] md:text-[24px] font-[500]">Enrolled Courses</h1>
-                      <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-                        {enrolledCourses.length > 0 ? (
-                          <div className="w-full bg-blue-100 p-4 border rounded-lg cursor-pointer">
-                            {enrolledCourses.map(course => (
-                              <Link to={`/course-info/${course._id}`} key={course._id}>
-                                <div className="bg-white shadow-lg rounded-lg p-6">
-                                  <h2 className="text-2xl font-semibold mb-4">{course.title}</h2>
-                                  <p className="text-gray-700 mb-2">{course.description}</p>
-                                  <p className="text-gray-700 mb-2">$&nbsp;{course.price}</p>
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-center text-gray-500">You have not enrolled in any course yet.</p>
-                        )}
-                      </div>
+                  <div className="p-4">
+                    <h1 className="text-[18px] md:text-[24px] font-[500]">Enrolled Courses</h1>
+                    <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+                      {enrolledCourses.length > 0 ? (
+                        <div className="w-full bg-blue-100  border rounded-lg cursor-pointer">
+                          {enrolledCourses.map(course => (
+                            <Link to={`/course-info/${course._id}`} key={course._id}>
+                              <div className="bg-white shadow-lg rounded-lg p-6">
+                                <h2 className="text-2xl font-semibold mb-4">{course.title}</h2>
+                                <p className="text-gray-700 mb-2">{course.description.length > 100 ? `${course.description.substring(0, 100)}...` : course.description}</p>
+                                <p className="text-gray-700 mb-2">$&nbsp;{course.price}</p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-center text-gray-500">You have not enrolled in any course yet.</p>
+                      )}
                     </div>
+                  </div>
                   {/* </SubscriberLink> */}
 
 
@@ -416,25 +409,25 @@ const Profile = ({ userId }) => {
 
                   {/* <SubscriberLink> */}
 
-                    <div className="p-4">
-                      <h1 className="text-[18px] md:text-[24px] font-[500]">Booked Events</h1>
-                      <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
-                        {bookedEventsDetails.length > 0 ? (
-                          bookedEventsDetails.map(event => (
-                            <Link to={`/event/${event._id}`} key={event._id}>
-                              <div className="bg-blue-100 shadow-lg rounded-lg p-6 cursor-pointer hover:shadow-xl transition-shadow duration-300 ">
-                                <h2 className="text font-semibold mb-4">{event.title}</h2>
-                                <p className="text-gray-700 mb-2">{event.subTitle}</p>
-                                <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
-                                <p className="text-gray-500">Location: {event.location}</p>
-                              </div>
-                            </Link>
-                          ))
-                        ) : (
-                          <p className="text-center text-gray-500 col-span-full">You have no booked events.</p>
-                        )}
-                      </div>
+                  <div className="p-4">
+                    <h1 className="text-[18px] md:text-[24px] font-[500]">Booked Events</h1>
+                    <div className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border">
+                      {bookedEventsDetails.length > 0 ? (
+                        bookedEventsDetails.map(event => (
+                          <Link to={`/event/${event._id}`} key={event._id}>
+                            <div className="bg-blue-100 shadow-lg rounded-lg p-6 cursor-pointer hover:shadow-xl transition-shadow duration-300 ">
+                              <h2 className="text font-semibold mb-4">{event.title}</h2>
+                              <p className="text-gray-700 mb-2">{event.subTitle}</p>
+                              <p className="text-gray-500">Date: {new Date(event.date).toLocaleString()}</p>
+                              <p className="text-gray-500">Location: {event.location}</p>
+                            </div>
+                          </Link>
+                        ))
+                      ) : (
+                        <p className="text-center text-gray-500 col-span-full">You have no booked events.</p>
+                      )}
                     </div>
+                  </div>
 
                   {/* </SubscriberLink> */}
 
